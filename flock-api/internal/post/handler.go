@@ -1,7 +1,6 @@
 package post
 
 import (
-	"buf.build/gen/go/wcygan/flock/connectrpc/go/backend/v1/backendv1connect"
 	"buf.build/gen/go/wcygan/flock/protocolbuffers/go/backend/v1"
 	"connectrpc.com/connect"
 	"context"

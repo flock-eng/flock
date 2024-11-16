@@ -1,7 +1,6 @@
 package profile_page
 
 import (
-	"buf.build/gen/go/wcygan/flock/connectrpc/go/frontend/v1/frontendv1connect"
 	"buf.build/gen/go/wcygan/flock/protocolbuffers/go/frontend/v1"
 	"connectrpc.com/connect"
 	"context"
