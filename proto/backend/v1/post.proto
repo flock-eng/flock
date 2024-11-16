@@ -4,10 +4,101 @@ import "backend/v1/user_summary.proto";
 
 package backend.v1;
 
-// A post made by a user
+// The service responsible for managing posts.
+service PostService {
+  // Create a post.
+  rpc CreatePost(CreatePostRequest) returns (CreatePostResponse);
+
+  // Get a post by ID.
+  rpc GetPost(GetPostRequest) returns (GetPostResponse);
+
+  // Get a batch of posts by IDs.
+  rpc BatchGetPosts(BatchGetPostsRequest) returns (BatchGetPostsResponse);
+
+  // List the most recent posts.
+  rpc ListMostRecentPosts(ListMostRecentPostsRequest) returns (ListMostRecentPostsResponse);
+
+  // List the most recent posts by a user.
+  rpc ListMostRecentPostsByUser(ListMostRecentPostsByUserRequest) returns (ListMostRecentPostsByUserResponse);
+}
+
+// A post is a message posted by a user.
 message Post {
-  string id = 1;
-  UserSummary author = 2; // Author of the post
-  string content = 3; // Post content
+  // The ID of the post.
+  int64 id = 1;
+
+  // The author of the post.
+  UserSummary author = 2;
+
+  // The content of the post.
+  string content = 3;
+
+  // The time the post was created.
   int64 created_at = 4; // Unix epoch timestamp
+}
+
+// A request to create a post.
+message CreatePostRequest {
+  // The author of the post.
+  int64 author_id = 1;
+
+  // The content of the post.
+  string content = 2;
+}
+
+// Response for CreatePost RPC.
+message CreatePostResponse {
+  // The created post.
+  Post post = 1;
+}
+
+// A request to get a post.
+message GetPostRequest {
+  // The ID of the post to get.
+  int64 id = 1;
+}
+
+// Response for GetPost RPC.
+message GetPostResponse {
+  // The requested post.
+  Post post = 1;
+}
+
+// A request to get a batch of posts by IDs.
+message BatchGetPostsRequest {
+  // The IDs of the posts to get.
+  repeated string ids = 1;
+}
+
+// A response containing a batch of posts.
+message BatchGetPostsResponse {
+  // A batch of posts.
+  repeated Post posts = 1;
+}
+
+// A request to list the most recent posts.
+message ListMostRecentPostsRequest {
+  // The maximum number of posts to return.
+  int32 post_limit = 1;
+}
+
+// A response containing the most recent posts.
+message ListMostRecentPostsResponse {
+  // The list of posts.
+  repeated Post posts = 1;
+}
+
+// A request to list the most recent posts by a user.
+message ListMostRecentPostsByUserRequest {
+  // The author whose posts to list.
+  UserSummary author = 1;
+
+  // The maximum number of posts to return.
+  int32 post_limit = 2;
+}
+
+// A response containing the most recent posts by a user.
+message ListMostRecentPostsByUserResponse {
+  // The list of posts.
+  repeated Post posts = 1;
 }
