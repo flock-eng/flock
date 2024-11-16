@@ -17,7 +17,7 @@ COPY . .
 
 # Build the "flock-api" executable
 RUN --mount=type=cache,target=/root/.cache/go-build \
-    CGO_ENABLED=0 GOOS=linux go build -o flock-api ./main.go
+    CGO_ENABLED=0 GOOS=linux go build -o flock-api ./cmd/main.go
 
 # Stage 2: Create a lightweight runtime image
 FROM alpine:3.14
