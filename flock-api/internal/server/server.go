@@ -2,6 +2,7 @@ package server
 
 import (
     "net/http"
+    "time"
     "github.com/flock-eng/flock/flock-api/internal/account"
     "github.com/flock-eng/flock/flock-api/internal/home_page"
     "github.com/flock-eng/flock/flock-api/internal/post"
@@ -14,17 +15,30 @@ type Server struct {
     mux *http.ServeMux
     
     // Services
-    accountService  *account.Service
-    homePageService *home_page.Service
-    postService     *post.Service
-    profileService  *profile_page.Service
+    accountService  AccountService
+    homePageService HomePageService
+    postService     PostService
+    profileService  ProfilePageService
 }
 
 type Config struct {
-    // Add any configuration options here as needed
+    Port            string
+    ReadTimeout     time.Duration
+    WriteTimeout    time.Duration
+    MaxHeaderBytes  int
+    AllowedOrigins  []string
 }
 
 func NewServer(cfg *Config) *Server {
+    if cfg == nil {
+        cfg = &Config{
+            Port:           "8080",
+            ReadTimeout:    10 * time.Second,
+            WriteTimeout:   10 * time.Second,
+            MaxHeaderBytes: 1 << 20, // 1MB
+        }
+    }
+    
     s := &Server{
         mux: http.NewServeMux(),
     }
