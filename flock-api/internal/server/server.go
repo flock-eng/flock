@@ -57,17 +57,27 @@ func (s *Server) initializeServices(cfg *Config) {
 }
 
 func (s *Server) registerHandlers() {
+	interceptors := connect.WithInterceptors(LoggingInterceptor())
+
 	s.mux.Handle(backendv1connect.NewAccountServiceHandler(
-		account.NewHandler(s.accountService)))
+		account.NewHandler(s.accountService),
+		interceptors,
+	))
 
 	s.mux.Handle(frontendv1connect.NewHomePageServiceHandler(
-		home_page.NewHandler(s.homePageService)))
+		home_page.NewHandler(s.homePageService),
+		interceptors,
+	))
 
 	s.mux.Handle(backendv1connect.NewPostServiceHandler(
-		post.NewHandler(s.postService)))
+		post.NewHandler(s.postService),
+		interceptors,
+	))
 
 	s.mux.Handle(frontendv1connect.NewProfilePageServiceHandler(
-		profile_page.NewHandler(s.profileService)))
+		profile_page.NewHandler(s.profileService),
+		interceptors,
+	))
 }
 
 func (s *Server) registerHealthCheck() {
