@@ -26,16 +26,22 @@ func initializeServer() (string, *http.ServeMux) {
 }
 
 func attachHandlers(mux *http.ServeMux) {
-	// ConnectRPC handlers
-	mux.Handle(frontendv1connect.NewProfilePageServiceHandler(&profile_page.Handler{}))
-	mux.Handle(frontendv1connect.NewHomePageServiceHandler(&home_page.Handler{}))
-	mux.Handle(backendv1connect.NewPostServiceHandler(&post.Handler{}))
-	mux.Handle(backendv1connect.NewAccountServiceHandler(&account.Handler{}))
+    // Create services
+    profileService := profile_page.NewService()
+    homeService := home_page.NewService()
+    postService := post.NewService()
+    accountService := account.NewService()
 
-	// Health check
-	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-	})
+    // Create handlers with their services
+    mux.Handle(frontendv1connect.NewProfilePageServiceHandler(profile_page.NewHandler(profileService)))
+    mux.Handle(frontendv1connect.NewHomePageServiceHandler(home_page.NewHandler(homeService)))
+    mux.Handle(backendv1connect.NewPostServiceHandler(post.NewHandler(postService)))
+    mux.Handle(backendv1connect.NewAccountServiceHandler(account.NewHandler(accountService)))
+
+    // Health check
+    mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
+        w.WriteHeader(http.StatusOK)
+    })
 }
 
 func startServer(port string, mux *http.ServeMux) {
