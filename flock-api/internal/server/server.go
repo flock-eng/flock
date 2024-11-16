@@ -26,7 +26,6 @@ type Config struct {
 	ReadTimeout    time.Duration
 	WriteTimeout   time.Duration
 	MaxHeaderBytes int
-	AllowedOrigins []string
 }
 
 func NewServer(cfg *Config) *Server {

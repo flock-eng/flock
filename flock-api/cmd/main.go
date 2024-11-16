@@ -6,21 +6,30 @@ import (
 	"golang.org/x/net/http2/h2c"
 	"log"
 	"net/http"
+	"time"
 )
 
 func main() {
-	cfg := &server.Config{}
+	cfg := &server.Config{
+		Port:           "8080",
+		ReadTimeout:    10 * time.Second,
+		WriteTimeout:   10 * time.Second,
+		MaxHeaderBytes: 1 << 21, // 1MB
+	}
+
 	srv := server.NewServer(cfg)
 
-	port := "8080"
-	log.Printf("Starting server on :%s", port)
+	log.Printf("Serving requests on port %s", cfg.Port)
 
-	err := http.ListenAndServe(
-		":"+port,
-		h2c.NewHandler(srv.Handler(), &http2.Server{}),
-	)
+	httpServer := &http.Server{
+		Addr:           ":" + cfg.Port,
+		Handler:        h2c.NewHandler(srv.Handler(), &http2.Server{}),
+		ReadTimeout:    cfg.ReadTimeout,
+		WriteTimeout:   cfg.WriteTimeout,
+		MaxHeaderBytes: cfg.MaxHeaderBytes,
+	}
 
-	if err != nil {
+	if err := httpServer.ListenAndServe(); err != nil {
 		log.Fatal(err)
 	}
 }
