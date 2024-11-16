@@ -3,6 +3,7 @@ package server
 import (
 	"buf.build/gen/go/wcygan/flock/connectrpc/go/backend/v1/backendv1connect"
 	"buf.build/gen/go/wcygan/flock/connectrpc/go/frontend/v1/frontendv1connect"
+	"connectrpc.com/connect"
 	"github.com/flock-eng/flock/flock-api/internal/account"
 	"github.com/flock-eng/flock/flock-api/internal/home_page"
 	"github.com/flock-eng/flock/flock-api/internal/post"
