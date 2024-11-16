@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+import "backend/v1/post.proto";
+
+package frontend.v1;
+
+// The homepage service is responsible for loading the homepage.
+service HomePageService {
+  // Load the homepage.
+  rpc GetHomePage(GetHomePageRequest) returns (GetHomePageResponse);
+}
+
+message GetHomePageRequest {
+  // Empty
+}
+
+// The homepage message contains the posts and profiles to display on the homepage.
+message GetHomePageResponse {
+  // The posts to display on the homepage.
+  repeated backend.v1.Post posts = 1;
+}

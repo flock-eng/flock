@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+import "backend/v1/user_summary.proto";
+
+package backend.v1;
+
+// A post made by a user
+message Post {
+  string id = 1;
+  UserSummary author = 2; // Author of the post
+  string content = 3; // Post content
+  int64 created_at = 4; // Unix epoch timestamp
+}
