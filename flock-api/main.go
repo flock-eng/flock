@@ -15,14 +15,36 @@ import (
 )
 
 func main() {
+	port, mux := initializeServer()
+	attachHandlers(mux)
+	startServer(port, mux)
+}
+
+func initializeServer() (string, *http.ServeMux) {
 	port := "8080"
 	mux := http.NewServeMux()
-	attachHandlers(mux)
+	return port, mux
+}
 
+func attachHandlers(mux *http.ServeMux) {
+	// ConnectRPC handlers
+	mux.Handle(frontendv1connect.NewProfilePageServiceHandler(&ProfilePageServiceHandler{}))
+	mux.Handle(frontendv1connect.NewHomePageServiceHandler(&HomePageServiceHandler{}))
+	mux.Handle(backendv1connect.NewPostServiceHandler(&PostServiceHandler{}))
+	mux.Handle(backendv1connect.NewAccountServiceHandler(&AccountServiceHandler{}))
+
+	// Health check
+	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
+		// Ready: server is ready to accept requests
+		w.WriteHeader(http.StatusOK)
+	})
+}
+
+func startServer(port string, mux *http.ServeMux) {
 	log.Printf("Starting server on :%s", port)
 
 	err := http.ListenAndServe(
-		"localhost:"+port,
+		":"+port,
 		// Use h2c so we can serve HTTP/2 without TLS.
 		h2c.NewHandler(mux, &http2.Server{}),
 	)
@@ -30,13 +52,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-}
-
-func attachHandlers(mux *http.ServeMux) {
-	mux.Handle(frontendv1connect.NewProfilePageServiceHandler(&ProfilePageServiceHandler{}))
-	mux.Handle(frontendv1connect.NewHomePageServiceHandler(&HomePageServiceHandler{}))
-	mux.Handle(backendv1connect.NewPostServiceHandler(&PostServiceHandler{}))
-	mux.Handle(backendv1connect.NewAccountServiceHandler(&AccountServiceHandler{}))
 }
 
 // ProfilePageServiceHandler implementation

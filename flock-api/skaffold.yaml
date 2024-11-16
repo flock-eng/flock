@@ -1,0 +1,25 @@
+apiVersion: skaffold/v4beta1
+kind: Config
+metadata:
+  name: flock-api
+build:
+  artifacts:
+    - image: flock-api
+      docker:
+        dockerfile: Dockerfile
+  tagPolicy:
+    sha256: {}
+  local:
+    useBuildkit: true
+    useDockerCLI: true
+manifests:
+  rawYaml:
+    - flock-api.yaml
+deploy:
+  kubectl: {}
+portForward:
+  - resourceType: service
+    resourceName: flock-api
+    namespace: default
+    port: 8080
+    localPort: 8080

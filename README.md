@@ -2,6 +2,13 @@
 
 Flock is a social media platform.
 
+## Quickstart
+
+```bash
+minikube start
+skaffold dev
+```
+
 ## Curls
 
 ```bash
