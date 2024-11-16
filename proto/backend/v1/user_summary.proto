@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package backend.v1;
+
+// Basic user information.
+message UserSummary {
+  string id = 1;
+  string username = 2;
+  ProfilePicture profile_picture = 3;
+}
+
+// Profile picture information.
+message ProfilePicture {
+  // The content of the profile picture.
+  oneof picture_type {
+    // Picture type that colors the profile picture with a color
+    string hex_color = 1;
+  }
+}
