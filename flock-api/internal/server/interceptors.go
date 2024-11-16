@@ -17,7 +17,6 @@ type RequestInfo struct {
     Method    string
     ClientIP  string
     UserAgent string
-    Size      int64
 }
 
 func LoggingInterceptor() connect.UnaryInterceptorFunc {
@@ -25,15 +24,12 @@ func LoggingInterceptor() connect.UnaryInterceptorFunc {
         return func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
             start := time.Now()
 
-            // Extract HTTP request from context
-            httpReq := connect.RequestContext(ctx).Header()
-
-            // Gather request information
+            // Extract request information
             info := RequestInfo{
                 ID:        req.Header().Get("X-Request-ID"),
                 Procedure: req.Spec().Procedure,
                 Method:    req.HTTPMethod(),
-                ClientIP:  getClientIP(httpReq),
+                ClientIP:  getClientIP(req.Header()),
                 UserAgent: req.Header().Get("User-Agent"),
             }
 
@@ -57,19 +53,16 @@ func LoggingInterceptor() connect.UnaryInterceptorFunc {
             // Calculate duration
             duration := time.Since(start)
 
-            // Determine status code
-            status := http.StatusOK
+            // Determine status code and error details
+            var status string
             if err != nil {
                 if connectErr, ok := err.(*connect.Error); ok {
-                    status = connect.CodeToHTTP(connectErr.Code())
+                    status = connectErr.Code().String()
                 } else {
-                    status = http.StatusInternalServerError
+                    status = connect.CodeUnknown.String()
                 }
-            }
-
-            // Log the completion
-            if err != nil {
-                log.Printf("[%s] ✗ Failed %s %s from %s (duration: %v, status: %d): %v",
+                
+                log.Printf("[%s] ✗ Failed %s %s from %s (duration: %v, status: %s): %v",
                     info.ID,
                     info.Method,
                     info.Procedure,
@@ -79,7 +72,8 @@ func LoggingInterceptor() connect.UnaryInterceptorFunc {
                     err,
                 )
             } else {
-                log.Printf("[%s] ✓ Completed %s %s from %s (duration: %v, status: %d)",
+                status = connect.CodeOK.String()
+                log.Printf("[%s] ✓ Completed %s %s from %s (duration: %v, status: %s)",
                     info.ID,
                     info.Method,
                     info.Procedure,
