@@ -3,6 +3,7 @@ kind: Config
 metadata:
   name: flock
 
+# This configures the application
 requires:
   - configs:
       - flock-db-configuration
@@ -12,7 +13,8 @@ requires:
     path: flock-api/skaffold.yaml
 
 profiles:
-  - name: bootstrap
+  # This configures the infrastructure required for the application
+  - name: infrastructure
     patches:
       - op: replace
         path: /requires
