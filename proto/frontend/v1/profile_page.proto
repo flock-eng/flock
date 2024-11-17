@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 import "backend/v1/post.proto";
-import "backend/v1/user_details.proto";
+import "backend/v1/profile.proto";
 
 package frontend.v1;
 
@@ -13,7 +13,7 @@ service ProfilePageService {
 // The user's profile page.
 message GetProfilePageResponse {
   // The user's profile information.
-  backend.v1.UserDetails user_details = 1;
+  backend.v1.MiniProfile user_details = 1;
 
   // The user's posts.
   repeated backend.v1.Post posts = 2;

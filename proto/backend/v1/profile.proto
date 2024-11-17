@@ -2,11 +2,19 @@ syntax = "proto3";
 
 package backend.v1;
 
+// Detailed user information. Used to render the Profile page.
+message Profile {
+  MiniProfile summary = 1;
+  optional string bio = 2;
+}
+
 // Basic user information.
-message UserSummary {
+message MiniProfile {
   string id = 1;
   string username = 2;
-  ProfilePicture profile_picture = 3;
+  string first_name = 3;
+  string last_name = 4;
+  ProfilePicture profile_picture = 5;
 }
 
 // Profile picture information.

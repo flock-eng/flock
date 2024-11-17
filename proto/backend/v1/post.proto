@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-import "backend/v1/user_summary.proto";
+import "backend/v1/profile.proto";
 
 package backend.v1;
 
@@ -28,7 +28,7 @@ message Post {
   int64 id = 1;
 
   // The author of the post.
-  UserSummary author = 2;
+  Profile author = 2;
 
   // The content of the post.
   string content = 3;
@@ -91,7 +91,7 @@ message ListMostRecentPostsResponse {
 // A request to list the most recent posts by a user.
 message ListMostRecentPostsByUserRequest {
   // The author whose posts to list.
-  UserSummary author = 1;
+  Profile author = 1;
 
   // The maximum number of posts to return.
   int32 post_limit = 2;
