@@ -4,7 +4,7 @@
 
 ## Change Log
 
-Describe the changes made in this pull request. Include the type of change (feature, bug fix, refactor, etc.) and a brief description of the change.
+*Describe the changes made in this pull request. Include the type of change (feature, bug fix, refactor, etc.) and a brief description of the change.*
 
 - **Feature:** Added user authentication module.
 - **Bug Fix:** Resolved issue with data serialization in the API.
