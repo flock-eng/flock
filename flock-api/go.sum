@@ -1,0 +1,14 @@
+buf.build/gen/go/wcygan/flock/connectrpc/go v1.17.0-20241116034005-79310e910d90.1 h1:ry3Vp/9tA5XyYga4yKADhC6Op4QFo7oxJsWB0/E1/OE=
+buf.build/gen/go/wcygan/flock/connectrpc/go v1.17.0-20241116034005-79310e910d90.1/go.mod h1:Fx7RsFStDnocQCv6RQKqJnJ7SxB0lraLNFOIxGd3sXM=
+buf.build/gen/go/wcygan/flock/protocolbuffers/go v1.35.2-20241116034005-79310e910d90.1 h1:hks1erXBnD94nl9y+9ZbtW7TlRmv5Z7lqu7y8XiWXp0=
+buf.build/gen/go/wcygan/flock/protocolbuffers/go v1.35.2-20241116034005-79310e910d90.1/go.mod h1:Pi14k0KJ22leR/BUS7xkZY1Z54QQFObf3ucp3L5WOPA=
+connectrpc.com/connect v1.17.0 h1:W0ZqMhtVzn9Zhn2yATuUokDLO5N+gIuBWMOnsQrfmZk=
+connectrpc.com/connect v1.17.0/go.mod h1:0292hj1rnx8oFrStN7cB4jjVBeqs+Yx5yDIC2prWDO8=
+github.com/google/go-cmp v0.5.9 h1:O2Tfq5qg4qc4AmwVlvv0oLiVAGB7enBSJ2x2DqQFi38=
+github.com/google/go-cmp v0.5.9/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
+golang.org/x/net v0.31.0 h1:68CPQngjLL0r2AlUKiSxtQFKvzRVbnzLwMUn5SzcLHo=
+golang.org/x/net v0.31.0/go.mod h1:P4fl1q7dY2hnZFxEk4pPSkDHF+QqjitcnDjUQyMM+pM=
+golang.org/x/text v0.20.0 h1:gK/Kv2otX8gz+wn7Rmb3vT96ZwuoxnQlY+HlJVj7Qug=
+golang.org/x/text v0.20.0/go.mod h1:D4IsuqiFMhST5bX19pQ9ikHC2GsaKyk/oF+pn3ducp4=
+google.golang.org/protobuf v1.35.2 h1:8Ar7bF+apOIoThw1EdZl0p1oWvMqTHmpA2fRTyZO8io=
+google.golang.org/protobuf v1.35.2/go.mod h1:9fA7Ob0pmnwhb644+1+CVWFRbNajQ6iRojtC/QF5bRE=
