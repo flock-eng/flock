@@ -12,10 +12,6 @@ skaffold dev
 ## Curls
 
 ```bash
-curl -X POST -H "Content-Type: application/json" http://localhost:8080/backend.v1.AccountService/Login -d '{"username": "test", "password": "test123"}'
-
-curl -X POST -H "Content-Type: application/json" http://localhost:8080/backend.v1.AccountService/CreateAccount -d '{"username": "newuser", "password": "newpassword"}'
-
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/frontend.v1.ProfilePageService/GetProfilePage -d '{"username": "testuser"}'
 
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/frontend.v1.HomePageService/GetHomePage -d '{}'
