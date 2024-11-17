@@ -6,7 +6,14 @@ Flock is a social media platform.
 
 ```bash
 minikube start
+skaffold run -p infrastructure
 skaffold dev
+```
+
+When you are done:
+
+```bash
+skaffold delete -p infrastructure
 ```
 
 ## Curls
