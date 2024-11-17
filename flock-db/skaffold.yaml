@@ -1,0 +1,26 @@
+apiVersion: skaffold/v4beta1
+kind: Config
+metadata:
+  name: postgres-operator-installation
+deploy:
+  helm:
+    releases:
+      - name: cnpg
+        repo: https://cloudnative-pg.github.io/charts
+        remoteChart: cloudnative-pg
+        namespace: cnpg-system
+        createNamespace: true
+        wait: true
+---
+apiVersion: skaffold/v4beta1
+kind: Config
+metadata:
+  name: flock-db-configuration
+deploy:
+  kubectl:
+    flags:
+      apply: ["--namespace=default"]
+manifests:
+  rawYaml:
+    - secret.yaml
+    - flock-db.yaml

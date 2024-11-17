@@ -1,0 +1,16 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: pg-cluster
+spec:
+  instances: 1 # TODO: Change to 3 after development
+  storage:
+    size: 1Gi
+  bootstrap:
+    initdb:
+      database: pingdb
+      owner: pinguser
+      secret:
+        name: pinguser-secret
+      postInitSQL:
+        - ALTER ROLE pinguser WITH LOGIN;

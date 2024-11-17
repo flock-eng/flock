@@ -5,5 +5,18 @@ metadata:
 
 requires:
   - configs:
-      - flock-api
+      - flock-db-configuration
+    path: flock-db/skaffold.yaml
+  - configs:
+      - flock-api-configuration
     path: flock-api/skaffold.yaml
+
+profiles:
+  - name: bootstrap
+    patches:
+      - op: replace
+        path: /requires
+        value:
+          - configs:
+              - postgres-operator-installation
+            path: flock-db/skaffold.yaml

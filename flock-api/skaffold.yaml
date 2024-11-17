@@ -1,7 +1,7 @@
 apiVersion: skaffold/v4beta1
 kind: Config
 metadata:
-  name: flock-api
+  name: flock-api-configuration
 build:
   artifacts:
     - image: flock-api
