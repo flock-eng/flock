@@ -1,16 +1,16 @@
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
-  name: pg-cluster
+  name: flock-db
 spec:
-  instances: 1 # TODO: Change to 3 after development
+  instances: 1
   storage:
     size: 1Gi
   bootstrap:
     initdb:
-      database: pingdb
-      owner: pinguser
+      database: flockdb
+      owner: flockuser
       secret:
-        name: pinguser-secret
+        name: flockuser-secret
       postInitSQL:
-        - ALTER ROLE pinguser WITH LOGIN;
+        - ALTER ROLE flockuser WITH LOGIN;
