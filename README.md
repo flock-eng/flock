@@ -2,10 +2,21 @@
 
 Flock is a social media platform.
 
+## Pre-requisites
+
+It is recommended to install the following tools before running the project:
+
+- [Docker](https://docs.docker.com/get-docker/)
+- [Minikube](https://minikube.sigs.k8s.io/docs/start/)
+- [Skaffold](https://skaffold.dev/docs/install/)
+- [Kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
+- [Helm](https://helm.sh/docs/intro/install/)
+
 ## Quickstart
 
 ```bash
 minikube start
+minikube addons enable ingress
 skaffold run -p infrastructure
 skaffold dev
 ```
@@ -16,7 +27,9 @@ When you are done:
 skaffold delete -p infrastructure
 ```
 
-## Curls
+## Testing
+
+Use these commands to test the services:
 
 ```bash
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/frontend.v1.ProfilePageService/GetProfilePage -d '{"username": "testuser"}'

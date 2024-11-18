@@ -11,6 +11,9 @@ requires:
   - configs:
       - flock-api-configuration
     path: flock-api/skaffold.yaml
+  - configs:
+      - keycloak-configuration
+    path: keycloak/skaffold.yaml
 
 profiles:
   # This configures the infrastructure required for the application
