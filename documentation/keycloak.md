@@ -65,9 +65,35 @@ This seems to be arbitrary, so we can just specify `keycloak` as the name for th
 
 ```yaml
 externalDatabase:
-  host: flock-db-rw
+  host: flock-db-rw.default.svc.cluster.local
   port: 5432
   user: flockuser
   password: flock123
   database: keycloak
+```
+
+## Operator Installaion
+
+From:
+
+- https://www.keycloak.org/operator/installation
+- https://www.keycloak.org/operator/basic-deployment
+
+### 2024/11/17 Failing to setup the operator
+
+```bash
+skaffold dev -m keycloak-configuration
+
+k describe pod flock-kc-0
+...
+Events:
+  Type     Reason     Age                 From               Message
+  ----     ------     ----                ----               -------
+  Normal   Scheduled  40s                 default-scheduler  Successfully assigned default/flock-kc-0 to minikube
+  Normal   Pulled     39s                 kubelet            Successfully pulled image "quay.io/keycloak/keycloak:26.0.5" in 1.419s (1.419s including waiting). Image size: 440923675 bytes.
+  Normal   Pulling    25s (x2 over 40s)   kubelet            Pulling image "quay.io/keycloak/keycloak:26.0.5"
+  Normal   Created    24s (x2 over 39s)   kubelet            Created container keycloak
+  Normal   Started    24s (x2 over 39s)   kubelet            Started container keycloak
+  Normal   Pulled     24s                 kubelet            Successfully pulled image "quay.io/keycloak/keycloak:26.0.5" in 606ms (606ms including waiting). Image size: 440923675 bytes.
+  Warning  Unhealthy  21s (x17 over 38s)  kubelet            Startup probe failed: Get "http://10.244.0.77:9000/health/started": dial tcp 10.244.0.77:9000: connect: connection refused
 ```

@@ -1,0 +1,21 @@
+apiVersion: k8s.keycloak.org/v2alpha1
+kind: Keycloak
+metadata:
+  name: flock-kc
+spec:
+  instances: 1
+  db:
+    vendor: postgres
+    host: flock-db-rw.default.svc.cluster.local
+    usernameSecret:
+      name: flockuser-secret
+      key: username
+    passwordSecret:
+      name: flockuser-secret
+      key: password
+#  http:
+#    tlsSecret: example-tls-secret
+#  hostname:
+#    hostname: test.keycloak.org
+  proxy:
+    headers: xforwarded # double check your reverse proxy sets and overwrites the X-Forwarded-* headers
