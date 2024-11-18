@@ -1,25 +1,10 @@
-#apiVersion: skaffold/v4beta1
-#kind: Config
-#metadata:
-#  name: keycloak-installation
-#deploy:
-#  helm:
-#    releases:
-#      - name: keycloak
-#        repo: https://charts.bitnami.com/bitnami
-#        remoteChart: keycloak
-#        version: 24.0.0
-#        namespace: keycloak
-#        createNamespace: true
-#        wait: true
-#        valuesFiles:
-#          - values.yaml
 apiVersion: skaffold/v4beta1
 kind: Config
 metadata:
   name: keycloak-installation
 manifests:
   rawYaml:
+    - kc-tls-secret.yaml
     - keycloak-crd-1.yaml
     - keycloak-crd-2.yaml
     - keycloak-operator.yaml

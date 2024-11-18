@@ -7,15 +7,18 @@ spec:
   db:
     vendor: postgres
     host: flock-db-rw.default.svc.cluster.local
+    port: 5432
+    database: flockdb
     usernameSecret:
       name: flockuser-secret
       key: username
     passwordSecret:
       name: flockuser-secret
       key: password
-#  http:
-#    tlsSecret: example-tls-secret
-#  hostname:
-#    hostname: test.keycloak.org
-  proxy:
-    headers: xforwarded # double check your reverse proxy sets and overwrites the X-Forwarded-* headers
+  http:
+    httpEnabled: true
+    httpPort: 8180
+    httpsPort: 8543
+    tlsSecret: kc-tls-secret
+  hostname:
+    strict: false
