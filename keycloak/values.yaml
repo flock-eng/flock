@@ -1,7 +1,5 @@
-# KeyCloak Values
-
 postgresql:
-  enabled: false  # Disable the default PostgreSQL deployment
+  enabled: false
 
 externalDatabase:
   host: flock-db-rw.default.svc.cluster.local
@@ -10,4 +8,4 @@ externalDatabase:
   password: flock123
   database: flockdb
 
-replicaCount: 1 # Number of Keycloak instances to deploy
+replicaCount: 1

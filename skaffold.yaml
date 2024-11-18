@@ -6,14 +6,8 @@ metadata:
 # This configures the application
 requires:
   - configs:
-      - flock-db-configuration
-    path: flock-db/skaffold.yaml
-  - configs:
       - flock-api-configuration
     path: flock-api/skaffold.yaml
-  - configs:
-      - keycloak-configuration
-    path: keycloak/skaffold.yaml
 
 profiles:
   # This configures the infrastructure required for the application
@@ -25,3 +19,9 @@ profiles:
           - configs:
               - postgres-operator-installation
             path: flock-db/skaffold.yaml
+          - configs:
+              - flock-db-configuration
+            path: flock-db/skaffold.yaml
+          - configs:
+              - keycloak-installation
+            path: keycloak/skaffold.yaml
