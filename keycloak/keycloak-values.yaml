@@ -9,3 +9,5 @@ externalDatabase:
   user: flockuser
   password: flock123
   database: flockdb
+
+replicaCount: 1 # Number of Keycloak instances to deploy
