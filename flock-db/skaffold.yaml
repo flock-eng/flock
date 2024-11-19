@@ -22,8 +22,3 @@ manifests:
   rawYaml:
     - secret.yaml
     - flock-db.yaml
-portForward:
-  - resourceType: service
-    resourceName: flock-db-rw
-    port: 5432
-    localPort: 5432
