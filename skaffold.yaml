@@ -26,5 +26,8 @@ profiles:
               - flock-db-configuration
             path: flock-db/skaffold.yaml
           - configs:
-              - keycloak-installation
+              - keycloak-crds
+            path: keycloak/skaffold.yaml
+          - configs:
+              - keycloak-operator-installation
             path: keycloak/skaffold.yaml

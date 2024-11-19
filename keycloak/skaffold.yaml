@@ -4,29 +4,18 @@ metadata:
   name: keycloak-crds
 manifests:
   rawYaml:
+    - kc-tls-secret.yaml
     - keycloak-crd-1.yaml
     - keycloak-crd-2.yaml
 deploy:
-  kubectl:
-    hooks:
-      after:
-        - host:
-            command: ["kubectl", "wait", "--for=condition=Established", "--timeout=300s", "crd/keycloaks.k8s.keycloak.org"]
-        - host:
-            command: ["kubectl", "wait", "--for=condition=Established", "--timeout=300s", "crd/keycloakrealmimports.k8s.keycloak.org"]
-        - host:
-            command: ["sleep", "10"]
+  kubectl: {}
 ---
 apiVersion: skaffold/v4beta1
 kind: Config
 metadata:
   name: keycloak-operator-installation
-requires:
-  - configs:
-      - keycloak-crds
 manifests:
   rawYaml:
-    - kc-tls-secret.yaml
     - keycloak-operator.yaml
 deploy:
   kubectl: {}
@@ -35,11 +24,16 @@ apiVersion: skaffold/v4beta1
 kind: Config
 metadata:
   name: keycloak-configuration
-requires:
-  - configs:
-      - keycloak-operator-installation
 manifests:
   rawYaml:
     - keycloak-flock-deployment.yaml
 deploy:
-  kubectl: {}
+  kubectl:
+    hooks:
+      # These hooks are intended to wait for the CRDs to be established before continuing with the operator installation.
+      # Without this, the operator installation may fail due to the CRDs not being available.
+      before:
+        - host:
+            command: [ "kubectl", "wait", "--for=condition=Established", "--timeout=300s", "crd/keycloaks.k8s.keycloak.org" ]
+        - host:
+            command: [ "kubectl", "wait", "--for=condition=Established", "--timeout=300s", "crd/keycloakrealmimports.k8s.keycloak.org" ]
