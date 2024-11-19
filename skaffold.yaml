@@ -24,4 +24,4 @@ profiles:
             path: flock-db/skaffold.yaml
           - configs:
               - keycloak-installation
-            path: keycloak/skaffold.yaml
+            path: flock-kc/skaffold.yaml
