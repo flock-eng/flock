@@ -1,12 +1,30 @@
 apiVersion: skaffold/v4beta1
 kind: Config
 metadata:
-  name: keycloak-installation
+  name: keycloak-crds
+manifests:
+  rawYaml:
+    - keycloak-crd-1.yaml
+    - keycloak-crd-2.yaml
+deploy:
+  kubectl:
+    hooks:
+      after:
+        - host:
+            command: ["kubectl", "wait", "--for=condition=Established", "--timeout=120s", "crd/keycloaks.k8s.keycloak.org"]
+        - host:
+            command: ["kubectl", "wait", "--for=condition=Established", "--timeout=120s", "crd/keycloakrealmimports.k8s.keycloak.org"]
+---
+apiVersion: skaffold/v4beta1
+kind: Config
+metadata:
+  name: keycloak-operator-installation
+requires:
+  - configs:
+      - keycloak-crds
 manifests:
   rawYaml:
     - kc-tls-secret.yaml
-    - keycloak-crd-1.yaml
-    - keycloak-crd-2.yaml
     - keycloak-operator.yaml
 deploy:
   kubectl: {}
@@ -15,6 +33,9 @@ apiVersion: skaffold/v4beta1
 kind: Config
 metadata:
   name: keycloak-configuration
+requires:
+  - configs:
+      - keycloak-operator-installation
 manifests:
   rawYaml:
     - keycloak-flock-deployment.yaml
