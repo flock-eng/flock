@@ -1,0 +1,15 @@
+postgresql:
+  enabled: false
+
+externalDatabase:
+  host: flock-db-rw.default.svc.cluster.local
+  port: 5432
+  user: flockuser
+  password: flock123
+  database: flockdb
+
+replicaCount: 1
+
+auth:
+  adminUser: admin
+  adminPassword: password

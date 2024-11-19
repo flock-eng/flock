@@ -17,9 +17,7 @@ kind: Config
 metadata:
   name: flock-db-configuration
 deploy:
-  kubectl:
-    flags:
-      apply: ["--namespace=default"]
+  kubectl: {}
 manifests:
   rawYaml:
     - secret.yaml
