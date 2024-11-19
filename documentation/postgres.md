@@ -1,6 +1,6 @@
 # Postgres
 
-We use Postgres as the primary database for the application. It runs through the Cloud Native PostgreSQL Operator.
+Postgres is the primary datastore for the application.
 
 ## Useful Commands
 

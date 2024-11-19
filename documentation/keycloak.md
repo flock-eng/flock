@@ -1,5 +1,7 @@
 # KeyCloak
 
+KeyCloak is used as the identity and access management system.
+
 ## Using an external database to power KeyCloak
 
 References:
