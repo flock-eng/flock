@@ -14,6 +14,8 @@ deploy:
             command: ["kubectl", "wait", "--for=condition=Established", "--timeout=300s", "crd/keycloaks.k8s.keycloak.org"]
         - host:
             command: ["kubectl", "wait", "--for=condition=Established", "--timeout=300s", "crd/keycloakrealmimports.k8s.keycloak.org"]
+        - host:
+            command: ["sleep", "10"]
 ---
 apiVersion: skaffold/v4beta1
 kind: Config
