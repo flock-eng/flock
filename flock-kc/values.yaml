@@ -9,3 +9,7 @@ externalDatabase:
   database: flockdb
 
 replicaCount: 1
+
+auth:
+  adminUser: admin
+  adminPassword: password

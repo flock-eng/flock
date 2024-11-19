@@ -71,3 +71,17 @@ externalDatabase:
   password: flock123
   database: keycloak
 ```
+
+## Accessing the Admin Console
+
+```bash
+kubectl port-forward --namespace keycloak svc/keycloak 9091:80
+```
+
+Visit http://localhost:9091
+
+Login with the following credentials:
+
+- Username: `admin`
+- Password: `password`
+
