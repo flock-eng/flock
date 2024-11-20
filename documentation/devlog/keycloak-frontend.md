@@ -1,6 +1,6 @@
 ## [keycloack + frontend TODOS](https://github.com/flock-eng/flock/issues):
 note: update keycloak.md or make a new documentation file after
-### programmatic realm configuration
+### [programmatic realm configuration](https://github.com/flock-eng/flock/issues/6)
 - created a realm-config.json in flock-kc/realms
   - future clients at 8080 & 3000 or alternate ports for example
 - created a realm-config.yaml in flock-kc and deployed it
@@ -33,8 +33,15 @@ kubectl port-forward --namespace keycloak svc/keycloak 9091:80
 - verify the new realm was created and clients were configured
 - now we can test register / login features
 
-### build flock-web
+### [build flock-web](https://github.com/flock-eng/flock/issues/8)
 
+#### frontend tech
+- NextTS (next-auth, etc..)
+- Tailwind/Shadcn
+
+#### notes:
+- initialized the frontend in the folder flock-web
+- 
 
 ### connect to keycloak from flock-web (integration)
 
