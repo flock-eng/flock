@@ -1,3 +1,43 @@
 .idea
 .aider*
 .env
+
+
+# frontend
+
+# Dependencies
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Next.js build output
+.next/
+out/
+
+# Static files cache
+.cache/
+
+# IDE or editor settings
+.vscode/
+.idea/
+.DS_Store
+*.swp
+
+# Test coverage
+coverage/
+
+# Miscellaneous
+*.lock
+*.tsbuildinfo
