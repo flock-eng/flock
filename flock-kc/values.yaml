@@ -13,3 +13,17 @@ replicaCount: 1
 auth:
   adminUser: admin
   adminPassword: password
+
+extraEnvVars:
+  - name: KEYCLOAK_IMPORT
+    value: /opt/keycloak/data/import/realm-config.json
+
+extraVolumeMounts:
+  - name: realm-config
+    mountPath: /opt/keycloak/data/import
+    readOnly: true
+
+extraVolumes:
+  - name: realm-config
+    configMap:
+      name: keycloak-realm-config
