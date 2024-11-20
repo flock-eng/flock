@@ -41,6 +41,16 @@ kubectl port-forward --namespace keycloak svc/keycloak 9091:80
 
 #### notes:
 - initialized the frontend in the folder flock-web
+```bash
+# barebones next app for flock-web
+npx create-next-app@latest flock-web --typescript --tailwind --eslint
+
+cd flock-web
+# install shadcn
+npx shadcn@latest init
+# start the application
+npm run dev
+```
 - 
 
 ### connect to keycloak from flock-web (integration)
@@ -55,3 +65,6 @@ kubectl port-forward --namespace keycloak svc/keycloak 9091:80
 
 * [Keycloak Docs](https://www.keycloak.org/docs/latest/server_admin/#_configuring-realms)
 * [Keycloak NextJS integration example](https://github.com/diego3g/keycloak-nextjs-example/tree/main/src)
+* [NextJS Docs](https://nextjs.org/docs/app/getting-started/installation)
+* [Shadcn Docs](https://ui.shadcn.com/docs/installation/next)
+* 
