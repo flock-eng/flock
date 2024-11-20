@@ -1,4 +1,5 @@
 ## [keycloack + frontend TODOS](https://github.com/flock-eng/flock/issues):
+note: update keycloak.md or make a new documentation file after
 ### programmatic realm configuration
 - created a realm-config.json in flock-kc/realms
   - future clients at 8080 & 3000 or alternate ports for example
@@ -25,7 +26,7 @@ extraVolumes:
 - redeploy keycloak
 ```bash
 helm upgrade --install keycloak bitnami/keycloak -f values.yaml --namespace keycloak --create-namespace```
-- verifying the deployment:
+- verifying the deployment: TODO STILL
 ```bash
 kubectl port-forward --namespace keycloak svc/keycloak 9091:80 
 ```
