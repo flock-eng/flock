@@ -70,7 +70,19 @@ flock-web/
 │   ├── api/
 │   │   ├── auth/
 │   │   │   ├── [...nextauth]/
-│   │   │   │   ├── route.ts
+│   │   │   │   ├── route.ts (make this file)
+│   ├── protected/
+│   │   ├── authCheck.tsx (make this file)
+│   │   ├── socialFeed.tsx (example)
+│   ├── login.tsx (example)
+│   ├── signup.tsx (example)
+│   ├── ...
+├── .env.local (make this file)
+├── next.config.ts
+├── package.json
+├── tsconfig.json
+├── tailwind.config.ts
+├── ...
 ```
 - with the following client secrets in `.env.local`
 ```tsx
