@@ -13,3 +13,16 @@ replicaCount: 1
 auth:
   adminUser: admin
   adminPassword: password
+
+keycloakConfigCli:
+  enabled: true
+  configuration:
+    flock.json: |
+      {
+        "realm": "flock",
+        "enabled": true,
+        "registrationAllowed": true,
+        "loginWithEmailAllowed": true,
+        "duplicateEmailsAllowed": false,
+        "resetPasswordAllowed": true,
+      }
