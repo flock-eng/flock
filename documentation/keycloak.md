@@ -91,7 +91,7 @@ Login with the following credentials:
 
 ## Keycloak Continued(automatic realm import docs):
 
-Steps to access the keycloak console
+### Steps to access the keycloak console
 ```bash
 # ### complete all asks in readme.md first ###
 
@@ -115,7 +115,21 @@ kubectl port-forward --namespace keycloak svc/keycloak 9091:80
 http://localhost:9091
 ```
 
-Frequent debugging actions:
+### Quick Restart / Reapply settings to keycloak-0 pod
+```bash
+# apply the realm config
+kubectl apply -f realm-config.yaml
+
+# update keycloack with the new cfg & restart pod
+helm upgrade keycloak bitnami/keycloak -f values.yaml --namespace keycloak
+
+# once the pods are running, port forward
+kubectl get pods -n keycloak
+kubectl port-forward --namespace keycloak svc/keycloak 9091:80
+```
+navigate to: http://localhost:9091
+
+### Frequent debugging actions:
 ```bash
 # get kubernetes secrets for user/pass
 kubectl get secret keycloak -n keycloak -o jsonpath='{.data.admin-username}' | base64 --decode
