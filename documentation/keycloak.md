@@ -87,3 +87,58 @@ Login with the following credentials:
 - Username: `admin`
 - Password: `password`
 
+---
+
+## Keycloak Continued(automatic realm import docs):
+
+Steps to access the keycloak console
+```bash
+# ### complete all asks in readme.md first ###
+
+# go to the flock-kc directory
+cd /flock-kc
+
+# apply the configmap
+kubectl apply -f realm-config.yaml
+
+# apply the values.yaml config using Helm 
+# effectively restarts pod if changes occur
+helm upgrade keycloak bitnami/keycloak -f values.yaml --namespace keycloak
+
+# confirm that pods are running before continuing
+kubectl get pods -n keycloak
+
+# port forward in another terminal
+kubectl port-forward --namespace keycloak svc/keycloak 9091:80
+
+# navigate to the admin console in your browser
+http://localhost:9091
+```
+
+Frequent debugging actions:
+```bash
+# get kubernetes secrets for user/pass
+kubectl get secret keycloak -n keycloak -o jsonpath='{.data.admin-username}' | base64 --decode
+kubectl get secret keycloak -n keycloak -o jsonpath='{.data.admin-password}' | base64 --decode
+
+# ways to restart the keycloak-0 pod
+helm upgrade keycloak bitnami/keycloak -f values.yaml --namespace keycloak
+# OR
+kubectl delete pod -l app.kubernetes.io/name=keycloak -n keycloak
+
+# check/describe if realm-config cfgmap exists
+kubectl get configmap keycloak-realm-config -n keycloak
+kubectl describe configmap keycloak-realm-config -n keycloak
+
+# verify if mounted in the pod & check contents
+kubectl exec -it -n keycloak keycloak-0 -- ls -l /opt/keycloak/data/import/
+kubectl exec -it -n keycloak keycloak-0 -- cat /opt/keycloak/data/import/realm-config.json
+
+# helm relevant keycloak instances
+helm list --all-namespaces
+helm status keycloak -n keycloak
+helm upgrade keycloak bitnami/keycloak -f values.yaml --namespace keycloak
+
+# exploring the keycloak pod / container debugging
+kubectl exec -it -n keycloak keycloak-0 -- bash
+```
