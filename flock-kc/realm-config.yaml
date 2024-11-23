@@ -6,7 +6,7 @@ metadata:
 data:
   realm-config.json: |
     {
-      "realm": "myrealm",
+      "realm": "flockrealm",
       "enabled": true,
       "registrationAllowed": true,
       "loginWithEmailAllowed": true,

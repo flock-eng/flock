@@ -10,20 +10,61 @@ externalDatabase:
 
 replicaCount: 1
 
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "250m"
+  limits:
+    memory: "1Gi"
+    cpu: "1000m"
+
 auth:
-  adminUser: admin
-  adminPassword: password
+  adminUser: botuser
+  adminPassword: botpass
+
+startupProbe:
+  enabled: true
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 60
+
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 6
 
 extraEnvVars:
   - name: KEYCLOAK_IMPORT
     value: /opt/keycloak/data/import/realm-config.json
+  # startup performance
+  - name: KC_HTTP_RELATIVE_PATH
+    value: /auth
+  - name: KEYCLOAK_EXTRA_ARGS
+    value: "--optimized"
+  - name: KC_PROXY
+    value: "edge"
 
 extraVolumeMounts:
   - name: realm-config
-    mountPath: /opt/keycloak/data/import
+    mountPath: /opt/keycloak/data/import/realm-config.json
+    subPath: realm-config.json
     readOnly: true
 
 extraVolumes:
   - name: realm-config
     configMap:
       name: keycloak-realm-config
+
+# service configuration
+service:
+  type: ClusterIP
+  ports:
+    http: 8080
+    https: 8443
+
+# startup performance
+cache:
+  enabled: true

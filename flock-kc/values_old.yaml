@@ -1,0 +1,30 @@
+postgresql:
+  enabled: false
+
+externalDatabase:
+  host: flock-db-rw.default.svc.cluster.local
+  port: 5432
+  user: flockuser
+  password: flock123
+  database: flockdb
+
+replicaCount: 1
+
+auth:
+  adminUser: botuser
+  adminPassword: botpass
+
+extraEnvVars:
+  - name: KEYCLOAK_IMPORT
+    value: /opt/keycloak/data/import/realm-config.json
+
+extraVolumeMounts:
+  - name: realm-config
+    mountPath: /opt/keycloak/data/import/realm-config.json
+    subPath: realm-config.json
+    readOnly: true
+
+extraVolumes:
+  - name: realm-config
+    configMap:
+      name: keycloak-realm-config

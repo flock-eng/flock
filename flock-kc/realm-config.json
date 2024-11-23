@@ -8,7 +8,7 @@
   "editUsernameAllowed": false,
   "clients": [
     {
-      "clientId": "flock-client",
+      "clientId": "my-backend",
       "enabled": true,
       "clientAuthenticatorType": "client-secret",
       "secret": "my-client-secret",
@@ -18,7 +18,7 @@
       "directAccessGrantsEnabled": true
     },
     {
-      "clientId": "flock-web-client",
+      "clientId": "my-frontend",
       "enabled": true,
       "redirectUris": ["http://localhost:3000/*"],
       "protocol": "openid-connect",
