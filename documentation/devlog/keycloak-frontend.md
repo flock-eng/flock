@@ -1,37 +1,65 @@
 ## [keycloack + frontend TODOS](https://github.com/flock-eng/flock/issues):
-note: update keycloak.md or make a new documentation file after
+note: update keycloak.md after auth has been tested
+
 ### [programmatic realm configuration](https://github.com/flock-eng/flock/issues/6)
-- created a realm-config.json in flock-kc/realms
-  - future clients at 8080 & 3000 or alternate ports for example
-- created a realm-config.yaml in flock-kc and deployed it
-```bash
-kubectl apply -f flock-kc/realm-config.yaml
-```
-- updated the values.yaml file with:
-```yaml
-extraEnvVars:
-  - name: KEYCLOAK_IMPORT
-    value: /opt/keycloak/data/import/realm-config.json
 
-extraVolumeMounts:
-  - name: realm-config
-    mountPath: /opt/keycloak/data/import
-    readOnly: true
+**Environment Setup:**
 
-extraVolumes:
-  - name: realm-config
-    configMap:
-      name: keycloak-realm-config
-```
-- redeploy keycloak
 ```bash
-helm upgrade --install keycloak bitnami/keycloak -f values.yaml --namespace keycloak --create-namespace```
-- verifying the deployment: TODO STILL
-```bash
-kubectl port-forward --namespace keycloak svc/keycloak 9091:80 
+# Start the k8s cluster
+minikube start
+
+# Start the Database
+skaffold run -p infrastructure -m postgres-operator-installation -m flock-db-configuration
+
+# Inner Loop: test KeyCoak
+skaffold dev -p infrastructure -m keycloak-installation
+
+# Port-Forward KeyCloak
+kubectl port-forward --namespace keycloak svc/keycloak 9091:80
+
+# At this point, you go can on to test the new functionality. When you're done, proceed with cleanup.
+
+# Cleanup Everything
+skaffold delete -p infrastructure
+ ```
+
+**Functional Testing:**
+
+Visit http://localhost:9091/ and login to the administrative realm:
+
+```json
+{ 
+  "username": "admin",
+  "password": "password"
+}
 ```
-- verify the new realm was created and clients were configured
-- now we can test register / login features
+
+Visit http://localhost:9091/admin/master/console/#/flock/realm-settings/login and see that user registration is enabled:
+
+<img width="500" alt="image" src="https://github.com/user-attachments/assets/6c1dd78c-b8e1-4188-b3b1-d910b6a046e9">
+
+
+Visit http://localhost:9091/realms/flock/account and register with a new account
+
+| Login Page | Register Page |
+|--------|--------|
+| <img width="500" alt="image" src="https://github.com/user-attachments/assets/aef3bee7-4dd1-46fe-834d-593bc168047c"> | <img width="500" alt="image" src="https://github.com/user-attachments/assets/95c2dee9-4d0c-44a2-a453-2d4493f86c69"> | 
+
+```json
+{ 
+  "username": "foo",
+  "password": "bar",
+  "email": "foo@bar.com",
+  "first_name": "foo",
+  "last_name": "bar"
+}
+```
+Register your account, then
+
+| Account Page | Login Page |
+|--------|--------|
+| <img width="1728" alt="image" src="https://github.com/user-attachments/assets/58295a3a-dd40-42ab-afc3-5d362049b4d2"> | <img width="1728" alt="image" src="https://github.com/user-attachments/assets/de33508f-290f-4c8f-a17b-efaab2df6fd8"> |
 
 ### [build flock-web](https://github.com/flock-eng/flock/issues/8)
 
@@ -126,10 +154,11 @@ export default async function ProtectedPage() {
 
 
 
-#### resources:
+#### links:
 
 * [Keycloak Docs](https://www.keycloak.org/docs/latest/server_admin/#_configuring-realms)
+* [Keycloak-CFG-CLI](https://github.com/adorsys/keycloak-config-cli)
 * [Keycloak NextJS integration example](https://github.com/diego3g/keycloak-nextjs-example/tree/main/src)
+* [Similar Keycloak use cases](https://github.com/flock-eng/flock/issues/6#issuecomment-2495632423)
 * [NextJS Docs](https://nextjs.org/docs/app/getting-started/installation)
 * [Shadcn Docs](https://ui.shadcn.com/docs/installation/next)
-* 
