@@ -200,6 +200,85 @@ docker run -p 3000:3000 flock-web:latest
 navigate to http://localhost:3000/ to see the application
 
 #### Kubernetes setup
+
+**created the k8s folder in flock-web/ and made minimal deployment and service files:**
+
+**Deployment.yaml:**
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flock-web
+  namespace: default
+  labels:
+    app: flock-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flock-web
+  template:
+    metadata:
+      labels:
+        app: flock-web
+    spec:
+      containers:
+        - name: flock-web
+          image: flock-web:latest
+          imagePullPolicy: Never  # for local minikube development
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: "development"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+```
+
+**Service.yaml:**
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: flock-web
+  namespace: default
+  labels:
+    app: flock-web
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 3000
+      protocol: TCP
+      name: http
+  selector:
+    app: flock-web
+```
+
+**Deploy the frontend on kubernetes:**
+```bash
+# follow the readme in the source directory of this project first 
+# note: frontend might already be running if it's in the skaffold file
+
+# load env vars
+eval $(minikube docker-env)
+# build the image
+docker build -t flock-web:latest ./flock-web
+
+# deploy the k8s files
+kubectl apply -f flock-web/k8s/deployment.yaml
+kubectl apply -f flock-web/k8s/service.yaml
+
+# get the service URL
+minikube service flock-web --url
+```
+
+#### add a minimal sign-in, register, and homepage
 todo
 
 ### connect to keycloak from flock-web (integration)

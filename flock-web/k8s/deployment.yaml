@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flock-web
+  namespace: default
+  labels:
+    app: flock-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flock-web
+  template:
+    metadata:
+      labels:
+        app: flock-web
+    spec:
+      containers:
+        - name: flock-web
+          image: flock-web:latest
+          imagePullPolicy: Never  # for local minikube development
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: "development"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
