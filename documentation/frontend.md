@@ -1,5 +1,5 @@
-# flock-web devlog
-- for more loose details, visit /keycloak-frontend.md
+# flock-web docs
+- for more loose details, visit documentation/devlog/keycloak-frontend.md
 
 **Run the frontend locally:**
 ```bash
