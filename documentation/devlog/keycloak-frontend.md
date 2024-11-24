@@ -143,6 +143,46 @@ export default async function ProtectedPage() {
   - making components for sign-in / login
   - making other web components and testing auth further
 
+### configure flock-web dockerfile
+
+**added a minimal dockerfile:**
+```dockerfile
+# Use Node.js base image
+FROM node:18-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files first for better caching
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the application
+COPY . .
+
+# Build the application
+RUN npm run build
+
+# Expose port 3000
+EXPOSE 3000
+
+# Start the application
+CMD ["npm", "start"]
+```
+**test and run the container:**
+
+```bash
+cd flock-web
+# build the image
+docker build -t flock-web:latest .
+
+# run the container
+docker run -p 3000:3000 flock-web:latest
+```
+navigate to http://localhost:3000/
+
 ### connect to keycloak from flock-web (integration)
 
 
