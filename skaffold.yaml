@@ -8,6 +8,9 @@ requires:
   - configs:
       - flock-api-configuration
     path: flock-api/skaffold.yaml
+  - configs:
+      - ingress-configuration
+    path: ingress/skaffold.yaml
 
 profiles:
   # This configures the infrastructure required for the application
@@ -25,3 +28,6 @@ profiles:
           - configs:
               - keycloak-installation
             path: flock-kc/skaffold.yaml
+          - configs:
+              - ingress-installation
+            path: ingress/skaffold.yaml
