@@ -2,12 +2,6 @@ apiVersion: skaffold/v4beta1
 kind: Config
 metadata:
   name: flock-web
-build:
-  artifacts:
-    - image: wcygan/flock-web
-      context: .
-      docker:
-        dockerfile: Dockerfile
 manifests:
   rawYaml:
     - k8s/deployment.yaml

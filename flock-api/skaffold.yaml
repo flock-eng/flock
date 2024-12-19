@@ -7,9 +7,3 @@ manifests:
     - flock-api.yaml
 deploy:
   kubectl: {}
-portForward:
-  - resourceType: service
-    resourceName: flock-api
-    namespace: default
-    port: 8080
-    localPort: 8080
