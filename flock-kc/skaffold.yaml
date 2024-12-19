@@ -9,7 +9,7 @@ deploy:
         repo: https://charts.bitnami.com/bitnami
         remoteChart: keycloak
         version: 24.0.0
-        namespace: keycloak
+        namespace: default
         createNamespace: true
         wait: true
         valuesFiles:

@@ -12,24 +12,15 @@ It is recommended to install the following tools before running the project:
 - [Kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 - [Helm](https://helm.sh/docs/intro/install/)
 
-## Quickstart
+## Tailscale
 
-```bash
-minikube start
-minikube addons enable ingress
-skaffold run -p infrastructure
-skaffold dev
-```
+Internally, we are using [Tailscale](https://tailscale.com/kb/1236/kubernetes-operator) to connect to a remote Kubernetes cluster. You can install Tailscale on your local machine by following the instructions [here](https://tailscale.com/download).
 
-When you are done:
-
-```bash
-skaffold delete -p infrastructure
-```
+The tailnet is scrubbed (it is not actually `your-domain.ts.net`), so the commands below will not work as-is. The tailnet needs to be replaced with the actual tailnet when running the commands.
 
 ## Testing
 
-Use these commands to test the services:
+### API
 
 ```bash
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/frontend.v1.ProfilePageService/GetProfilePage -d '{"username": "testuser"}'
@@ -45,4 +36,15 @@ curl -X POST -H "Content-Type: application/json" http://localhost:8080/backend.v
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/backend.v1.PostService/ListMostRecentPosts -d '{"post_limit": 10}'
 
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/backend.v1.PostService/ListMostRecentPostsByUser -d '{"author": {"id": "1", "username": "testuser"}, "post_limit": 5}'
+
+curl -X POST \
+  -H "Content-Type: application/json" \
+  https://api.your-domain.ts.net/frontend.v1.ProfilePageService/GetProfilePage \
+  -d '{"username": "testuser"}'
 ```
+
+### KeyCloak
+
+Visit https://auth.your-domain.ts.net/ to access the KeyCloak admin console.
+
+Visit https://auth.your-domain.ts.net/realms/flock/account/ to access the KeyCloak account console (it redirects to the KeyCloak login page).
