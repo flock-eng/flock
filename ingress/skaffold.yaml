@@ -1,0 +1,23 @@
+apiVersion: skaffold/v4beta1
+kind: Config
+metadata:
+  name: ingress-installation
+deploy:
+  helm:
+    releases:
+      - name: ingress-nginx
+        namespace: ingress-nginx
+        createNamespace: true
+        repo: https://kubernetes.github.io/ingress-nginx
+        remoteChart: ingress-nginx
+        version: 4.11.3
+---
+apiVersion: skaffold/v4beta1
+kind: Config
+metadata:
+  name: ingress-configuration
+manifests:
+  rawYaml:
+    - ingress.yaml
+deploy:
+  kubectl: {}

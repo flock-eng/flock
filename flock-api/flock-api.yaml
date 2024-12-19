@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: flock-api
-          image: flock-api
+          image: wcygan/flock-api:latest
           ports:
             - containerPort: 8080
           resources:

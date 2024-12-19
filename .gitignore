@@ -1,12 +1,18 @@
+# IDE or editor settings
 .idea
-.aider*
-.env
-
-
-# frontend
+.vscode/
+.DS_Store
+*.swp
 
 # Dependencies
 node_modules/
+
+# Environment variables
+.env
+.env.development.local
+.env.local
+.env.production.local
+.env.test.local
 
 # Logs
 logs/
@@ -15,12 +21,11 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# Miscellaneous
+*.lock
+*.tsbuildinfo
+.aider*
+repomix-output.txt
 
 # Next.js build output
 .next/
@@ -29,15 +34,5 @@ out/
 # Static files cache
 .cache/
 
-# IDE or editor settings
-.vscode/
-.idea/
-.DS_Store
-*.swp
-
 # Test coverage
 coverage/
-
-# Miscellaneous
-*.lock
-*.tsbuildinfo
