@@ -1,4 +1,5 @@
-## [keycloack + frontend TODOS](https://github.com/flock-eng/flock/issues):
+## [keycloack + frontend TODOS](https://github.com/flock-eng/flock/issues)
+
 note: update keycloak.md after auth has been tested
 
 ### [programmatic realm configuration](https://github.com/flock-eng/flock/issues/6)
@@ -26,7 +27,7 @@ skaffold delete -p infrastructure
 
 **Functional Testing:**
 
-Visit http://localhost:9091/ and login to the administrative realm:
+Visit <http://localhost:9091/> and login to the administrative realm:
 
 ```json
 { 
@@ -35,16 +36,15 @@ Visit http://localhost:9091/ and login to the administrative realm:
 }
 ```
 
-Visit http://localhost:9091/admin/master/console/#/flock/realm-settings/login and see that user registration is enabled:
+Visit <http://localhost:9091/admin/master/console/#/flock/realm-settings/login> and see that user registration is enabled:
 
 <img width="500" alt="image" src="https://github.com/user-attachments/assets/6c1dd78c-b8e1-4188-b3b1-d910b6a046e9">
 
-
-Visit http://localhost:9091/realms/flock/account and register with a new account
+Visit <http://localhost:9091/realms/flock/account> and register with a new account
 
 | Login Page | Register Page |
 |--------|--------|
-| <img width="500" alt="image" src="https://github.com/user-attachments/assets/aef3bee7-4dd1-46fe-834d-593bc168047c"> | <img width="500" alt="image" src="https://github.com/user-attachments/assets/95c2dee9-4d0c-44a2-a453-2d4493f86c69"> | 
+| <img width="500" alt="image" src="https://github.com/user-attachments/assets/aef3bee7-4dd1-46fe-834d-593bc168047c"> | <img width="500" alt="image" src="https://github.com/user-attachments/assets/95c2dee9-4d0c-44a2-a453-2d4493f86c69"> |
 
 ```json
 { 
@@ -55,6 +55,7 @@ Visit http://localhost:9091/realms/flock/account and register with a new account
   "last_name": "bar"
 }
 ```
+
 Register your account, then
 
 | Account Page | Login Page |
@@ -64,10 +65,12 @@ Register your account, then
 ### [build flock-web](https://github.com/flock-eng/flock/issues/8)
 
 #### frontend tech
+
 - NextTS (next-auth, etc..)
 - Tailwind/Shadcn
 
 #### initialized the frontend in the folder flock-web DONE
+
 ```bash
 # initialize a barebones next app for flock-web
 npx create-next-app@latest flock-web --typescript --tailwind --eslint
@@ -89,9 +92,11 @@ npm install next-auth
 ```
 
 #### building out web components and keycloak-auth with next-auth TODO
+
 - starting in `flock-web/app/api/auth/[...nextauth]/route.ts` we have this structure
   - The square brackets ([...]) are a NextJS convention for dynamic API routes or catch-all routes
   - and for nextauth integration, the file should be named route.ts
+
 ```
 flock-web/
 ├── app/
@@ -112,16 +117,20 @@ flock-web/
 ├── tailwind.config.ts
 ├── ...
 ```
+
 - with the following client secrets in `.env.local`
+
 ```tsx
 KEYCLOAK_CLIENT_ID=your-client-id
 KEYCLOAK_CLIENT_SECRET=your-client-secret
 KEYCLOAK_ISSUER=http://your-keycloak-domain/realms/your-realm
-NEXTAUTH_URL=http://localhost:8080
+NEXTAUTH_URL=http://localhost:3000
 NEXTAUTH_SECRET=your-nextauth-secret
 ```
+
 - then we can make a authCheck.tsx file in /flock-web/app/protected/authCheck.tsx to check if authentication works
   - TODO:
+
 ```tsx
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/route";
@@ -145,11 +154,12 @@ export default async function ProtectedPage() {
 
 ### configure flock-web dockerfile / kubernetes deployments
 
-
 #### Dockerfile setup
 
 **edited next.config.ts**
+
 - Standalone mode is a special configuration introduced in Next.js to optimize the application for deployment in containerized environments or servers with minimal dependencies.
+
 ```ts
 import type { NextConfig } from "next";
 
@@ -161,7 +171,9 @@ export default nextConfig;
 ```
 
 **added a minimal dockerfile:**
+
 - may need to edit this dockerfile as we build additional features
+
 ```dockerfile
 # Use Node.js base image
 FROM node:18-alpine
@@ -181,29 +193,32 @@ COPY . .
 # Build the application
 RUN npm run build
 
-# Expose port 8080
-EXPOSE 8080
+# Expose port 3000
+EXPOSE 3000
 
 # Start the application
 CMD ["npm", "start"]
 ```
 
 **test and run the container:**
+
 ```bash
 cd flock-web
 # build the image
 docker build -t flock-web:latest .
 
 # run the container
-docker run -p 8080:8080 flock-web:latest
+docker run -p 3000:3000 flock-web:latest
 ```
-navigate to http://localhost:8080/ to see the application
+
+navigate to <http://localhost:3000/> to see the application
 
 #### Kubernetes setup
 
 **created the k8s folder in flock-web/ and made minimal deployment and service files:**
 
 **Deployment.yaml:**
+
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -227,7 +242,7 @@ spec:
           image: flock-web:latest
           imagePullPolicy: Never  # for local minikube development
           ports:
-            - containerPort: 8080
+            - containerPort: 3000
           env:
             - name: NODE_ENV
               value: "development"
@@ -241,6 +256,7 @@ spec:
 ```
 
 **Service.yaml:**
+
 ```yaml
 apiVersion: v1
 kind: Service
@@ -253,7 +269,7 @@ spec:
   type: ClusterIP
   ports:
     - port: 80
-      targetPort: 8080
+      targetPort: 3000
       protocol: TCP
       name: http
   selector:
@@ -261,6 +277,7 @@ spec:
 ```
 
 **Deploy the frontend on kubernetes:**
+
 ```bash
 # follow the readme in the source directory of this project first 
 # note: frontend might already be running if it's in the skaffold file
@@ -279,24 +296,20 @@ minikube service flock-web --url
 ```
 
 #### add a minimal sign-in, register, and homepage
+
 todo
 
 ### connect to keycloak from flock-web (integration)
 
-
 ### connect flock-api to flock-web to render pages
-
 
 ### buildout rest of flock-web post integration testing for auth
 
+#### links
 
-
-
-#### links:
-
-* [Keycloak Docs](https://www.keycloak.org/docs/latest/server_admin/#_configuring-realms)
-* [Keycloak-CFG-CLI](https://github.com/adorsys/keycloak-config-cli)
-* [Keycloak NextJS integration example](https://github.com/diego3g/keycloak-nextjs-example/tree/main/src)
-* [Similar Keycloak use cases](https://github.com/flock-eng/flock/issues/6#issuecomment-2495632423)
-* [NextJS Docs](https://nextjs.org/docs/app/getting-started/installation)
-* [Shadcn Docs](https://ui.shadcn.com/docs/installation/next)
+- [Keycloak Docs](https://www.keycloak.org/docs/latest/server_admin/#_configuring-realms)
+- [Keycloak-CFG-CLI](https://github.com/adorsys/keycloak-config-cli)
+- [Keycloak NextJS integration example](https://github.com/diego3g/keycloak-nextjs-example/tree/main/src)
+- [Similar Keycloak use cases](https://github.com/flock-eng/flock/issues/6#issuecomment-2495632423)
+- [NextJS Docs](https://nextjs.org/docs/app/getting-started/installation)
+- [Shadcn Docs](https://ui.shadcn.com/docs/installation/next)
