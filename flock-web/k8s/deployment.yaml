@@ -17,8 +17,7 @@ spec:
     spec:
       containers:
         - name: flock-web
-          image: flock-web:latest
-          imagePullPolicy: Never  # for local minikube development
+          image: wcygan/flock-web:latest
           ports:
             - containerPort: 3000
           env:
