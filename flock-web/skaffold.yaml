@@ -14,9 +14,3 @@ manifests:
     - k8s/service.yaml
 deploy:
   kubectl: {}
-portForward:
-  - resourceType: service
-    resourceName: flock-web
-    namespace: default
-    port: 80
-    localPort: 3000

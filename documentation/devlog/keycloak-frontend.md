@@ -117,7 +117,7 @@ flock-web/
 KEYCLOAK_CLIENT_ID=your-client-id
 KEYCLOAK_CLIENT_SECRET=your-client-secret
 KEYCLOAK_ISSUER=http://your-keycloak-domain/realms/your-realm
-NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL=http://localhost:8080
 NEXTAUTH_SECRET=your-nextauth-secret
 ```
 - then we can make a authCheck.tsx file in /flock-web/app/protected/authCheck.tsx to check if authentication works
@@ -181,8 +181,8 @@ COPY . .
 # Build the application
 RUN npm run build
 
-# Expose port 3000
-EXPOSE 3000
+# Expose port 8080
+EXPOSE 8080
 
 # Start the application
 CMD ["npm", "start"]
@@ -195,9 +195,9 @@ cd flock-web
 docker build -t flock-web:latest .
 
 # run the container
-docker run -p 3000:3000 flock-web:latest
+docker run -p 8080:8080 flock-web:latest
 ```
-navigate to http://localhost:3000/ to see the application
+navigate to http://localhost:8080/ to see the application
 
 #### Kubernetes setup
 
@@ -227,7 +227,7 @@ spec:
           image: flock-web:latest
           imagePullPolicy: Never  # for local minikube development
           ports:
-            - containerPort: 3000
+            - containerPort: 8080
           env:
             - name: NODE_ENV
               value: "development"
@@ -253,7 +253,7 @@ spec:
   type: ClusterIP
   ports:
     - port: 80
-      targetPort: 3000
+      targetPort: 8080
       protocol: TCP
       name: http
   selector:
