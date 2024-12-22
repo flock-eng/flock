@@ -20,6 +20,9 @@ profiles:
         path: /requires
         value:
           - configs:
+              - kube-prometheus-stack
+            path: monitoring/skaffold.yaml
+          - configs:
               - postgres-operator-installation
             path: flock-db/skaffold.yaml
           - configs:
