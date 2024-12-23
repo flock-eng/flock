@@ -35,3 +35,14 @@ jobs:
           tags: wcygan/flock-api:latest
           cache-from: type=registry,ref=wcygan/flock-api:latest
           cache-to: type=inline
+      -
+        name: Build and Push the flock-web image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./flock-web
+          file: ./flock-web/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: wcygan/flock-web:latest
+          cache-from: type=registry,ref=wcygan/flock-web:latest
+          cache-to: type=inline

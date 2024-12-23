@@ -1,31 +1,39 @@
 # syntax=docker/dockerfile:1
 
+#####################################################
 # Stage 1: Build the Go application
-FROM golang:1.23.3 as builder
+#####################################################
+FROM golang:1.23.3 AS builder
 
-# Set the Current Working Directory inside the container
-WORKDIR /app/flock-api
+# Create an app directory
+WORKDIR /app
 
-# Cache dependencies by copying go.mod and go.sum first, and downloading modules
+# Copy the module files first for caching
 COPY go.mod go.sum ./
-
-# Install the Go dependencies
 RUN go mod download
 
-# Copy the entire monorepo into the container's working directory
+# Copy the rest of the code
 COPY . .
 
 # Build the "flock-api" executable
 RUN --mount=type=cache,target=/root/.cache/go-build \
-    CGO_ENABLED=0 GOOS=linux go build -o flock-api ./cmd/main.go
+    CGO_ENABLED=0 GOOS=linux go build -o /flock-api ./cmd/main.go
 
+#####################################################
 # Stage 2: Create a lightweight runtime image
+#####################################################
 FROM alpine:3.14
 
-# Copy the built executable and migrations from the builder stage
-COPY --from=builder /app/flock-api/flock-api /app/flock-api
+# (Optional) Add a non-root user for better security
+RUN addgroup -S flock && adduser -S flock -G flock
 
 WORKDIR /app
+COPY --from=builder /flock-api /app/flock-api
 
-# Set the entrypoint to run the executable
+# Switch to non-root user
+USER flock
+
+# Expose port 8080
+EXPOSE 8080
+
 ENTRYPOINT ["/app/flock-api"]

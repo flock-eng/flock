@@ -1,9 +1,10 @@
 apiVersion: skaffold/v4beta1
 kind: Config
 metadata:
-  name: flock-api-configuration
+  name: flock-web
 manifests:
   rawYaml:
-    - flock-api.yaml
+    - k8s/deployment.yaml
+    - k8s/service.yaml
 deploy:
   kubectl: {}
