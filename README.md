@@ -22,6 +22,17 @@ The tailnet is scrubbed (it is not actually `your-domain.ts.net`), so the comman
 
 ### API
 
+The API can be reached through our Ingress:
+
+```bash
+curl -X POST \
+  -H "Content-Type: application/json" \
+  https://api.your-domain.ts.net/frontend.v1.ProfilePageService/GetProfilePage \
+  -d '{"username": "testuser"}'
+```
+
+Here are other commands used for testing:
+
 ```bash
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/frontend.v1.ProfilePageService/GetProfilePage -d '{"username": "testuser"}'
 
@@ -36,11 +47,6 @@ curl -X POST -H "Content-Type: application/json" http://localhost:8080/backend.v
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/backend.v1.PostService/ListMostRecentPosts -d '{"post_limit": 10}'
 
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/backend.v1.PostService/ListMostRecentPostsByUser -d '{"author": {"id": "1", "username": "testuser"}, "post_limit": 5}'
-
-curl -X POST \
-  -H "Content-Type: application/json" \
-  https://api.your-domain.ts.net/frontend.v1.ProfilePageService/GetProfilePage \
-  -d '{"username": "testuser"}'
 ```
 
 ### KeyCloak
