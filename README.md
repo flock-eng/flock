@@ -27,30 +27,38 @@ The API can be reached through our Ingress:
 ```bash
 curl -X POST \
   -H "Content-Type: application/json" \
-  https://api.your-domain.ts.net/frontend.v1.ProfilePageService/GetProfilePage \
-  -d '{"username": "testuser"}'
+  "https://$(kubectl get ing flock-api-ingress -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')/frontend.v1.ProfilePageService/GetProfilePage" \
+  -d '{"username":"testuser"}'
 ```
 
 Here are other commands used for testing:
 
 ```bash
-curl -X POST -H "Content-Type: application/json" http://localhost:8080/frontend.v1.ProfilePageService/GetProfilePage -d '{"username": "testuser"}'
+curl -X POST -H "Content-Type: application/json" https://$(kubectl get ing flock-api-ingress -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')/frontend.v1.ProfilePageService/GetProfilePage -d '{"username": "testuser"}'
 
-curl -X POST -H "Content-Type: application/json" http://localhost:8080/frontend.v1.HomePageService/GetHomePage -d '{}'
+curl -X POST -H "Content-Type: application/json" https://$(kubectl get ing flock-api-ingress -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')/frontend.v1.HomePageService/GetHomePage -d '{}'
 
-curl -X POST -H "Content-Type: application/json" http://localhost:8080/backend.v1.PostService/CreatePost -d '{"author_id": 1, "content": "This is a new post"}'
+curl -X POST -H "Content-Type: application/json" https://$(kubectl get ing flock-api-ingress -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')/backend.v1.PostService/CreatePost -d '{"author_id": 1, "content": "This is a new post"}'
 
-curl -X POST -H "Content-Type: application/json" http://localhost:8080/backend.v1.PostService/GetPost -d '{"id": 123}'
+curl -X POST -H "Content-Type: application/json" https://$(kubectl get ing flock-api-ingress -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')/backend.v1.PostService/GetPost -d '{"id": 123}'
 
-curl -X POST -H "Content-Type: application/json" http://localhost:8080/backend.v1.PostService/BatchGetPosts -d '{"ids": ["123", "456", "789"]}'
+curl -X POST -H "Content-Type: application/json" https://$(kubectl get ing flock-api-ingress -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')/backend.v1.PostService/BatchGetPosts -d '{"ids": ["123", "456", "789"]}'
 
-curl -X POST -H "Content-Type: application/json" http://localhost:8080/backend.v1.PostService/ListMostRecentPosts -d '{"post_limit": 10}'
+curl -X POST -H "Content-Type: application/json" https://$(kubectl get ing flock-api-ingress -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')/backend.v1.PostService/ListMostRecentPosts -d '{"post_limit": 10}'
 
-curl -X POST -H "Content-Type: application/json" http://localhost:8080/backend.v1.PostService/ListMostRecentPostsByUser -d '{"author": {"id": "1", "username": "testuser"}, "post_limit": 5}'
+curl -X POST -H "Content-Type: application/json" https://$(kubectl get ing flock-api-ingress -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')/backend.v1.PostService/ListMostRecentPostsByUser -d '{"author": {"id": "1", "username": "testuser"}, "post_limit": 5}'
 ```
 
 ### KeyCloak
 
-Visit https://auth.your-domain.ts.net/ to access the KeyCloak admin console.
+Access the KeyCloak admin console:
 
-Visit https://auth.your-domain.ts.net/realms/flock/account/ to access the KeyCloak account console (it redirects to the KeyCloak login page).
+```bash
+open "https://$(kubectl get ing keycloak -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')"
+```
+
+Access the KeyCloak account console:
+
+```bash
+open "https://$(kubectl get ing keycloak -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')/realms/flock/account/"
+```
