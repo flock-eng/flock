@@ -1,0 +1,71 @@
+# Teleprsenence
+
+## Why
+
+Telepresence is a tool that allows you to run a service locally while connecting to a remote Kubernetes cluster. This is useful for debugging or iterating on services that are running in a remote cluster.
+
+## How
+
+## Installation
+
+```bash
+# Install the telepresence CLI
+brew install telepresenceio/telepresence/telepresence-oss
+
+# Install the traffic manager
+telepresence helm install
+
+# Install the traffic agent
+telepresence connect
+
+# Check the status of the traffic agent
+telepresence list
+```
+
+If needed, it can be uninstalled with:
+
+```bash
+# Uninstall the traffic manager
+telepresence helm uninstall
+```
+
+### Flock-Web
+
+Make sure the app is running locally:
+
+```bash
+cd flock-web
+npm install
+npm run dev
+```
+
+Create an intercept for the service:
+
+```bash
+telepresence intercept flock-web \
+  --namespace default \
+  --service flock-web \
+  --port 3000:http
+```
+
+Next, visit <https://app.domain.ts.net/> to see the service running locally.
+
+The correct address for this can be derived through either of these commands:
+
+```bash
+open "https://$(kubectl get ing flock-web-ingress --no-headers \
+  | awk '{print $4}')"
+
+open "https://$(kubectl get ing flock-web-ingress \
+  -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')"
+```
+
+Finally, begin making changes to the service locally. The changes will be reflected in the remote cluster when you connect over the ingress.
+
+When you're done, do this to clean up the intercept:
+
+```bash
+telepresence leave flock-web
+```
+
+## Flock-API
