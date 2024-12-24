@@ -62,3 +62,37 @@ Access the KeyCloak account console:
 ```bash
 open "https://$(kubectl get ing keycloak -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')/realms/flock/account/"
 ```
+
+### Telepresence
+
+For UI:
+
+```bash
+telepresence intercept flock-web \
+  --namespace default \
+  --service flock-web \
+  --port 3000:http
+
+cd flock-web
+npm install
+npm run dev
+```
+
+For API:
+
+```bash
+telepresence intercept flock-api \
+  --namespace default \
+  --service flock-api \
+  --port 8080:8080
+
+cd flock-api
+go run cmd/main.go
+```
+
+When you're done:
+
+```bash
+telepresence leave flock-web
+telepresence leave flock-api
+```
