@@ -46,3 +46,13 @@ Finally, I can fetch the value with this command:
 ```bash
 kubectl get secret tailnet-domain -o jsonpath="{.data.URL}" | base64 --decode
 ```
+
+## Other Secrets
+
+```bash
+kubectl get secret keycloak-credentials -o jsonpath="{.data.issuer}" | base64 --decode
+kubectl get secret keycloak-credentials -o jsonpath="{.data.client_id}" | base64 --decode
+kubectl get secret keycloak-credentials -o jsonpath="{.data.client_secret}" | base64 --decode
+kubectl get secret nextauth-config -o jsonpath="{.data.url}" | base64 --decode
+kubectl get secret nextauth-config -o jsonpath="{.data.secret}" | base64 --decode
+```
