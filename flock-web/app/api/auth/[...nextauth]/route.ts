@@ -9,7 +9,7 @@ const handler = NextAuth({
       issuer: process.env.KEYCLOAK_ISSUER!,
     }),
   ],
-  debug: true,
+  debug: false,
   session: {
     strategy: "jwt",
   },
@@ -29,9 +29,6 @@ const handler = NextAuth({
   },
   events: {
     async signOut({ token }) {
-      console.log("Logging out! Goodbye!");
-      console.log(token);
-
       // Perform KeyCloak-specific logout actions
       if (token.idToken) {
         try {
