@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { Home, Bell, MessageSquare, User, Settings } from 'lucide-react'
 import { Button } from "@/components/ui/button"
+import { LogoutButton } from "./logout-button"
 
 export function Sidebar() {
   return (
@@ -45,6 +46,8 @@ export function Sidebar() {
         </nav>
 
         <Button className="w-full">New Post</Button>
+
+        <LogoutButton />
       </div>
     </div>
   )
