@@ -9,7 +9,7 @@ const handler = NextAuth({
       issuer: process.env.KEYCLOAK_ISSUER!,
     }),
   ],
-  debug: false,
+  debug: true,
   session: {
     strategy: "jwt",
   },
