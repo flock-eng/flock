@@ -1,14 +1,18 @@
 "use client";
 
 import { useSession } from "next-auth/react";
+import { Session } from "next-auth";
 import { Spinner } from "@/components/ui/spinner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
 
-export function HomePage({ session: initialSession }) {
-  const { data: session, status } = useSession();
-  const currentSession = session || initialSession;
+interface HomePageProps {
+  session: Session | null; // or Session | undefined
+}
+
+export function HomePage({ session: initialSession }: HomePageProps) {
+  const { status } = useSession();
 
   // Show the spinner only if the session is still loading and there's no preloaded data
   if (status === "loading" && !initialSession) {

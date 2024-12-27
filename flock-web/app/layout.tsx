@@ -12,14 +12,13 @@ export const metadata: Metadata = {
 }
 
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession();
   return (
     <html lang="en">
       <body className={inter.className}>
