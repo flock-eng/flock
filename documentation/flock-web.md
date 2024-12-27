@@ -12,7 +12,7 @@ open "https://$(kubectl get ing flock-web-ingress -o jsonpath='{.status.loadBala
 
 ## Local Development with Telepresence
 
-Ensure you have a .env.local file in the `flock-web` folder with the following contents (values are hidden):
+Ensure you have a `.env.local` file in the `flock-web` folder with the following contents (values are hidden):
 
 ```bash
 KEYCLOAK_CLIENT_ID=flock-web
