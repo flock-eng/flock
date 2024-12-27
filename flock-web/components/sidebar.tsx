@@ -5,7 +5,7 @@ import { Home, Bell, MessageSquare, User, Settings } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { LogoutButton } from "./logout-button"
 import { useSession } from "next-auth/react"
-import { Skeleton } from "@/components/ui/skeleton"
+import { Spinner } from "@/components/ui/spinner"
 
 export function Sidebar() {
   const { data: session, status } = useSession()
@@ -18,7 +18,9 @@ export function Sidebar() {
         </div>
 
         {status === "loading" ? (
-          <Skeleton className="h-8 w-full" />
+          <div className="flex items-center justify-center px-2 py-2 text-sm text-muted-foreground bg-muted/50 rounded-lg">
+            <Spinner className="mr-2" /> Loading...
+          </div>
         ) : session?.user?.name ? (
           <div className="px-2 py-2 text-sm text-muted-foreground bg-muted/50 rounded-lg">
             Hello, <span className="font-medium text-primary">{session.user.name}</span>
