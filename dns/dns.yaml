@@ -1,4 +1,4 @@
-# 
+# See: https://tailscale.com/kb/1438/kubernetes-operator-cluster-egress#expose-a-tailnet-https-service-to-your-cluster-workloads
 apiVersion: tailscale.com/v1alpha1
 kind: DNSConfig
 metadata:
