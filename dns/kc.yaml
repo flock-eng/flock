@@ -1,0 +1,10 @@
+# This manifest allows our NextJS app to resolve the MagicDNS name for the Keycloak service.
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    tailscale.com/tailnet-fqdn: "auth.<custom-domain>.ts.net"
+  name: kc-egress
+spec:
+  externalName: unused
+  type: ExternalName

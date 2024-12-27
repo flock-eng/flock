@@ -23,6 +23,32 @@ spec:
           env:
             - name: NODE_ENV
               value: "development"
+            - name: KEYCLOAK_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-credentials
+                  key: client_id
+            - name: KEYCLOAK_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-credentials
+                  key: client_secret
+            - name: KEYCLOAK_ISSUER
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-credentials
+                  key: issuer
+            # NextAuth configuration
+            - name: NEXTAUTH_URL
+              valueFrom:
+                secretKeyRef:
+                  name: nextauth-config
+                  key: url
+            - name: AUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: nextauth-config
+                  key: secret
           resources:
             requests:
               memory: "256Mi"
