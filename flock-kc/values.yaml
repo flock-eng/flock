@@ -1,3 +1,6 @@
+# Down: skaffold delete -p infrastructure -m keycloak-installation
+# Up: skaffold run -p infrastructure -m keycloak-installation
+
 postgresql:
   enabled: false
 
@@ -30,6 +33,12 @@ keycloakConfigCli:
 ingress:
   enabled: true
   ingressClassName: tailscale
+  
+  # Enable cluster-internal traffic forwarding (Specifically for NextJS <==> Keycloak integration)
+  annotations:
+    tailscale.com/experimental-forward-cluster-traffic-via-ingress: "true"
+  
+  # Specifiy the hostname for the ingress
   hostname: auth.<custom-domain>.ts.net
   tls: true
   extraTls:
@@ -42,6 +51,7 @@ ingress:
         name: keycloak
         port:
           name: http
+
 
 production: false
 proxy: edge
