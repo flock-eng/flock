@@ -23,6 +23,9 @@ profiles:
         path: /requires
         value:
           - configs:
+              - secrets
+            path: secrets/skaffold.yaml
+          - configs:
               - kube-prometheus-stack
             path: monitoring/skaffold.yaml
           - configs:
