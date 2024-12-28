@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@buf/wcygan_flock.connectrpc_es": "^1.6.1-20241117221420-e1bb6aefee6e.2"
+  }
+}
