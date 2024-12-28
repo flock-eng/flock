@@ -1,15 +1,21 @@
 "use client"
 
 import Link from "next/link"
-import { Home, Bell, MessageSquare, User, Settings } from 'lucide-react'
+import { Home, Bell, MessageSquare, User, Settings } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { LogoutButton } from "./logout-button"
 import { useSession } from "next-auth/react"
 import { Spinner } from "@/components/ui/spinner"
+import { Session } from "next-auth"
 
-export function Sidebar({ session: initialSession }) {
-  const { data: session, status } = useSession();
-  const currentSession = session || initialSession;
+interface SidebarProps {
+  session: Session | null
+}
+
+export function Sidebar({ session: initialSession }: SidebarProps) {
+  const { data: session, status } = useSession()
+  const currentSession = session || initialSession
+  // ...
 
   // Show the spinner only if the session is still loading and there's no preloaded data
   if (status === "loading" && !initialSession) {
