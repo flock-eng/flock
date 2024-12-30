@@ -21,6 +21,6 @@ message GetProfilePageResponse {
 
 // Request for getting a user's profile page.
 message GetProfilePageRequest {
-  // The username of the profile to fetch
-  string username = 1;
+  // The key of the profile to fetch
+  backend.v1.ProfileKey profile = 1;
 }
