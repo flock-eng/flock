@@ -20,6 +20,14 @@ The tailnet is scrubbed (it is not actually `your-domain.ts.net`), so the comman
 
 ## Testing
 
+### UI
+
+Visit the UI here:
+
+```bash
+open "https://$(kubectl get ing flock-web-ingress -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')"
+```
+
 ### API
 
 The API can be reached through our Ingress:
