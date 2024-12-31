@@ -4,13 +4,11 @@ import { getCustomServerSession } from "@/lib/auth";
 import { getColorFromUsername } from "@/lib/utils";
 
 export default async function ProfilePage({ params }: { params: { id: string } }) {
-  // Await the async operation
   const session = await getCustomServerSession();
+
+  // This needs to be async
+  const { id } = await params;
   
-  // Access params.id directly (it's synchronous)
-  const id = params.id;
-  
-  // Now we can safely use the values
   const isCurrentUser = id === session?.user?.user_id;
   
   return (
