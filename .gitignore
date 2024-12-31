@@ -7,6 +7,9 @@
 # Dependencies
 node_modules/
 
+# Build files
+gen
+
 # Environment variables
 **/.env
 .env
