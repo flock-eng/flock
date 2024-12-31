@@ -28,6 +28,8 @@ const handler = NextAuth({
         token.refreshToken = account.refresh_token;
       }
 
+      console.log('JWT:', token);
+
       return token;
     },
     async session({ session, token }) {
