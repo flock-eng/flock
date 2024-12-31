@@ -22,13 +22,18 @@ service PostService {
   rpc ListMostRecentPostsByUser(ListMostRecentPostsByUserRequest) returns (ListMostRecentPostsByUserResponse);
 }
 
+// A unique key for a post.
+message PostKey {
+  string id = 1;
+}
+
 // A post is a message posted by a user.
 message Post {
   // The ID of the post.
-  int64 id = 1;
+  PostKey id = 1;
 
   // The author of the post.
-  Profile author = 2;
+  MiniProfile author = 2;
 
   // The content of the post.
   string content = 3;
@@ -40,7 +45,7 @@ message Post {
 // A request to create a post.
 message CreatePostRequest {
   // The author of the post.
-  int64 author_id = 1;
+  ProfileKey author = 1;
 
   // The content of the post.
   string content = 2;
@@ -55,7 +60,7 @@ message CreatePostResponse {
 // A request to get a post.
 message GetPostRequest {
   // The ID of the post to get.
-  int64 id = 1;
+  PostKey id = 1;
 }
 
 // Response for GetPost RPC.
@@ -67,7 +72,7 @@ message GetPostResponse {
 // A request to get a batch of posts by IDs.
 message BatchGetPostsRequest {
   // The IDs of the posts to get.
-  repeated string ids = 1;
+  repeated PostKey ids = 1;
 }
 
 // A response containing a batch of posts.
@@ -91,7 +96,7 @@ message ListMostRecentPostsResponse {
 // A request to list the most recent posts by a user.
 message ListMostRecentPostsByUserRequest {
   // The author whose posts to list.
-  Profile author = 1;
+  ProfileKey author = 1;
 
   // The maximum number of posts to return.
   int32 post_limit = 2;
