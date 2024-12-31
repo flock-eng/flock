@@ -33,8 +33,15 @@ const handler = NextAuth({
       return token;
     },
     async session({ session, token }) {
-      session.user = token;
-      session.user.name = token.name;
+      // Include all token properties in the session
+      session.user = {
+        ...session.user,
+        ...token,
+        username: token.username,
+        accessToken: token.accessToken,
+        idToken: token.idToken,
+        refreshToken: token.refreshToken
+      };
 
       console.log('Session:', session);
       return session;
