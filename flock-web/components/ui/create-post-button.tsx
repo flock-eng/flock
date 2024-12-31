@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ApiClient } from "@/lib/api-client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import {cn} from "@/lib/utils";
 
 export function CreatePostButton({ authorId }: { authorId: string }) {
   const [isOpen, setIsOpen] = React.useState(false);
