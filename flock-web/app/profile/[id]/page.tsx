@@ -30,6 +30,11 @@ export default async function ProfilePage({ params }: { params: { id: string } }
             <p className="text-muted-foreground">
               @{session?.user?.username}
             </p>
+            {isCurrentUser && (
+              <div className="text-center text-green-600 font-medium mt-2">
+                Welcome to your profile!
+              </div>
+            )}
           </div>
 
           <div className="space-y-4">
