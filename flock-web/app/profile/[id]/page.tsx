@@ -4,8 +4,14 @@ import { getCustomServerSession } from "@/lib/auth";
 import { getColorFromUsername } from "@/lib/utils";
 
 export default async function ProfilePage({ params }: { params: { id: string } }) {
-  const session = await getCustomServerSession();
-  const isCurrentUser = params.id === session?.user?.user_id;
+  // Await all async operations first
+  const [session, id] = await Promise.all([
+    getCustomServerSession(),
+    params.id
+  ]);
+
+  // Now we can safely use the values
+  const isCurrentUser = id === session?.user?.user_id;
   
   return (
     <div className="flex-1 flex gap-4 p-4">
