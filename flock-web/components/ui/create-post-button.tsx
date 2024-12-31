@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button";
-import { createPost } from "@/lib/post-client";
+import { ApiClient } from "@/lib/api-client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -11,7 +11,7 @@ export function CreatePostButton({ authorId }: { authorId: string }) {
   const handleSubmit = async () => {
     if (content.trim()) {
       try {
-        await createPost(authorId, content);
+        await ApiClient.posts.create(authorId, content);
         setIsOpen(false);
         setContent("");
       } catch (error) {
@@ -23,7 +23,7 @@ export function CreatePostButton({ authorId }: { authorId: string }) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="default">Create Post</Button>
+        <Button variant="default" className="w-full">New Post</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

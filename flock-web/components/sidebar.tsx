@@ -8,6 +8,7 @@ import { Session } from "next-auth"
 import { LogoutButton } from "./logout-button"
 import { Spinner } from "@/components/ui/spinner"
 import {useSession} from "next-auth/react";
+import { CreatePostButton } from "@/components/ui/create-post-button";
 
 export function Sidebar() {
   const { data, status } = useSession()
@@ -43,7 +44,7 @@ export function Sidebar() {
           <SidebarNavButton href="/settings" icon={Settings}>Settings</SidebarNavButton>
         </nav>
 
-        <Button className="w-full">New Post</Button>
+        <CreatePostButton authorId={session?.user?.id || ""} />
 
         <LogoutButton />
       </div>
