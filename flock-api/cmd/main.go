@@ -21,17 +21,14 @@ func main() {
 		MaxHeaderBytes: 1 << 21, // 1MB
 	}
 
-	// Build your server and retrieve its mux-based handler.
 	srv := server.NewServer(cfg)
-
-	// Wrap that handler with h2c + CORS
-	muxHandler := srv.Handler()                                // The ServeMux from your internal/server/server.go
-	corsHandler := withCORS(muxHandler)                        // github.com/rs/cors wrapper
-	h2cHandler := h2c.NewHandler(corsHandler, &http2.Server{}) // h2c for HTTP/2 cleartext
+	muxHandler := srv.Handler()
+	corsHandler := withCORS(muxHandler)
+	h2cHandler := h2c.NewHandler(corsHandler, &http2.Server{})
 
 	httpServer := &http.Server{
 		Addr:           ":" + cfg.Port,
-		Handler:        h2cHandler, // <--- This is crucial
+		Handler:        h2cHandler,
 		ReadTimeout:    cfg.ReadTimeout,
 		WriteTimeout:   cfg.WriteTimeout,
 		MaxHeaderBytes: cfg.MaxHeaderBytes,
@@ -49,8 +46,8 @@ func withCORS(h http.Handler) http.Handler {
 		AllowedMethods:   connectcors.AllowedMethods(),
 		AllowedHeaders:   connectcors.AllowedHeaders(),
 		ExposedHeaders:   connectcors.ExposedHeaders(),
-		AllowCredentials: true, // Set to true if your application requires credentials like cookies
-		MaxAge:           7200, // Cache preflight response for 2 hours
+		AllowCredentials: true,
+		MaxAge:           7200,
 	})
 	return c.Handler(h)
 }
@@ -63,8 +60,8 @@ func init() {
 			log.Fatalf("Error loading .env file")
 		} else {
 			log.Println("Loaded .env file")
-			// print os.Getenv("FRONTEND_ORIGIN")
-			log.Println(os.Getenv("FRONTEND_ORIGIN"))
 		}
-	}
+	} else {
+	    log.Println(".env file not found, skipping")
+    }
 }

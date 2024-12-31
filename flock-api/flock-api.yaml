@@ -17,6 +17,12 @@ spec:
           image: wcygan/flock-api:latest
           ports:
             - containerPort: 8080
+          env:
+            - name: FRONTEND_ORIGIN
+              valueFrom:
+                secretKeyRef:
+                  name: tailnet-domain
+                  key: frontend-origin
           resources:
             requests:
               cpu: 100m
