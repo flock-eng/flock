@@ -12,7 +12,7 @@ function hashUsername(username: string): string {
 
 export default async function ProfilePage({ params }: { params: { id: string } }) {
   const session = await getCustomServerSession();
-  const isCurrentUser = params.id === session?.user?.id;
+  const isCurrentUser = params.id === session?.user?.user_id;
   const profileColor = hashUsername(session?.user?.username || 'user');
   
   return (
