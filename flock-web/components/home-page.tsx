@@ -13,13 +13,6 @@ export function HomePage() {
   return (
     <div className="flex-1 flex gap-4 p-4">
       <main className="flex-1 max-w-2xl mx-auto">
-        <div className="mb-4">
-          <Input
-            type="search"
-            placeholder="Search Flock"
-            className="w-full bg-muted/50"
-          />
-        </div>
         <div className="space-y-4">
           {posts.map((post) => (
             <Card key={post.id!.id} className="p-4">

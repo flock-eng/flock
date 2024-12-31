@@ -1,6 +1,7 @@
 "use client"
 
 import { Home, Bell, MessageSquare, User, Settings } from "lucide-react"
+import { Input } from "@/components/ui/input"
 import { SidebarNavButton } from "@/components/ui/sidebar-nav-button"
 import { Session } from "next-auth"
 import { LogoutButton } from "./logout-button"
@@ -26,6 +27,14 @@ export function Sidebar() {
         <div className="flex items-center gap-2 px-2 py-4">
           <div className="h-6 w-6 rounded-full bg-emerald-500" />
           <span className="font-semibold text-xl">Flock</span>
+        </div>
+
+        <div className="mb-4">
+          <Input
+            type="search"
+            placeholder="Search Flock"
+            className="w-full bg-muted/50"
+          />
         </div>
 
         {session?.user?.name ? (
