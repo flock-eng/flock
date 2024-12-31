@@ -29,12 +29,14 @@ export function CreatePostButton({ authorId }: { authorId: string }) {
         <DialogHeader>
           <DialogTitle>Create a New Post</DialogTitle>
         </DialogHeader>
-        <Input
-          as="textarea"
+        <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="What's on your mind?"
-          className="mb-4 min-h-[100px]"
+          className={cn(
+            "flex h-[100px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+            "mb-4"
+          )}
         />
         <Button onClick={handleSubmit} disabled={!content.trim()}>
           Submit
