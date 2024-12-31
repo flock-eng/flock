@@ -22,9 +22,9 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AuthProvider>
+        <AuthProvider session={session}>
           <div className="flex min-h-screen">
-            <Sidebar session={session} />
+            <Sidebar />
             {children}
           </div>
         </AuthProvider>
