@@ -11,7 +11,9 @@ export function CreatePostButton({authorId}: { authorId: string }) {
     const handleSubmit = async () => {
         if (content.trim()) {
             try {
+                console.log("Creating post...");
                 await ApiClient.posts.create(authorId, content);
+                console.log("Post created!");
                 setIsOpen(false);
                 setContent("");
             } catch (error) {
