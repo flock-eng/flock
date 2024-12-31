@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@buf/wcygan_flock.connectrpc_es": "^1.6.1-20241231000219-b035f3c109ea.2",
     "@bufbuild/connect-web": "^0.13.0",
     "@bufbuild/protobuf": "^1.10.0",
     "@radix-ui/react-avatar": "^1.1.2",

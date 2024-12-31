@@ -1,6 +1,7 @@
 import { createPromiseClient } from "@bufbuild/connect";
 import { createConnectTransport } from "@bufbuild/connect-web";
 import {PostService} from "@buf/wcygan_flock.connectrpc_es/backend/v1/post_connect";
+import { PostKey } from "@buf/wcygan_flock.bufbuild_es/backend/v1/post_pb";
 
 const API_URL = "api." + process.env.FLOCK_API_URL;
 
@@ -18,10 +19,12 @@ function createClient() {
 /**
  * Calls the CreatePost method on the backend.
  */
-export async function createPost(authorId: bigint, content: string) {
+export async function createPost(authorId: string, content: string) {
     const client = createClient();
+    const key = new PostKey({ id: authorId });
+
     const res = await client.createPost({
-        authorId,
+        author: key,
         content,
     });
     return res.post;
