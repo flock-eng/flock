@@ -5,7 +5,6 @@ import { usePosts } from "@/hooks/usePosts";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
-import { formatDistanceToNow } from "date-fns";
 
 export function HomePage() {
   const posts = usePosts();
