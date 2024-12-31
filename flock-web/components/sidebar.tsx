@@ -1,9 +1,7 @@
 "use client"
 
-import Link from "next/link"
 import { Home, Bell, MessageSquare, User, Settings } from "lucide-react"
 import { SidebarNavButton } from "@/components/ui/sidebar-nav-button"
-import { Button } from "@/components/ui/button"
 import { Session } from "next-auth"
 import { LogoutButton } from "./logout-button"
 import { Spinner } from "@/components/ui/spinner"

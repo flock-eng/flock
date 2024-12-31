@@ -3,9 +3,12 @@ import { createConnectTransport } from "@bufbuild/connect-web";
 import {PostService} from "@buf/wcygan_flock.connectrpc_es/backend/v1/post_connect";
 import { PostKey } from "@buf/wcygan_flock.bufbuild_es/backend/v1/post_pb";
 
-const API_URL = "api." + process.env.FLOCK_API_URL;
+const API_URL = "api." + process.env.FLOCK_API_URL!;
+
 if (!API_URL) {
   throw new Error("FLOCK_API_URL environment variable is not defined");
+} else {
+    console.log("API_URL is defined: ", API_URL);
 }
 
 /**
