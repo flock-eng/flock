@@ -1,51 +1,60 @@
 "use client";
 
-import { useSession } from "next-auth/react";
-import { Session } from "next-auth";
-import { Spinner } from "@/components/ui/spinner";
 import { Input } from "@/components/ui/input";
+import { usePosts } from "@/hooks/usePosts";
 import { Button } from "@/components/ui/button";
-import { Avatar } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Card } from "@/components/ui/card";
 
-interface HomePageProps {
-  session: Session | null; // or Session | undefined
-}
-
-export function HomePage({ session: initialSession }: HomePageProps) {
-  const { status } = useSession();
-
-  // Show the spinner only if the session is still loading and there's no preloaded data
-  if (status === "loading" && !initialSession) {
-    return <Spinner />;
-  }
+export function HomePage() {
+  const posts = usePosts();
 
   return (
     <div className="flex-1 flex gap-4 p-4">
-      {/* Main content area */}
       <main className="flex-1 max-w-2xl mx-auto">
         <div className="mb-4">
-          <Input 
-            type="search" 
-            placeholder="Search Flock" 
+          <Input
+            type="search"
+            placeholder="Search Flock"
             className="w-full bg-muted/50"
           />
         </div>
         <div className="space-y-4">
-          {/* Placeholder for feed content */}
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="p-4 border rounded-lg bg-card">
-              <div className="h-20 flex items-center justify-center text-muted-foreground">
-                Post content will go here
+          {posts.map((post) => (
+            <Card key={post.id!.id} className="p-4">
+              <div className="flex gap-3">
+                <Avatar className="h-10 w-10">
+                  <AvatarFallback>
+                    {post.author!.firstName[0]}{post.author!.lastName[0]}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-semibold">
+                      {post.author!.firstName} {post.author!.lastName}
+                    </h3>
+                    <span className="text-muted-foreground text-sm">
+                      @{post.author!.username}
+                    </span>
+                    <span className="text-muted-foreground text-sm">
+                      · {new Date(Number(post.createdAt)).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-sm">{post.content}</p>
+                </div>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       </main>
 
-      {/* Right sidebar */}
       <aside className="hidden lg:block w-[350px] shrink-0">
         <div className="sticky top-4 space-y-4">
-          <div className="p-4 border rounded-lg bg-card">
+          <Card>
             <h2 className="font-semibold mb-4">Advertisement</h2>
             <div className="bg-primary/5 p-4 rounded-lg text-center space-y-2">
               <h3 className="font-semibold text-lg">Buy Bitcoin for 5% off!</h3>
@@ -54,9 +63,9 @@ export function HomePage({ session: initialSession }: HomePageProps) {
                 Learn More
               </Button>
             </div>
-          </div>
-          
-          <div className="p-4 border rounded-lg bg-card">
+          </Card>
+
+          <Card>
             <h2 className="font-semibold mb-4">Who to follow</h2>
             <div className="space-y-4">
               {[1, 2, 3].map((i) => (
@@ -72,7 +81,7 @@ export function HomePage({ session: initialSession }: HomePageProps) {
                 </div>
               ))}
             </div>
-          </div>
+          </Card>
         </div>
       </aside>
     </div>

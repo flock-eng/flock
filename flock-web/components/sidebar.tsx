@@ -1,24 +1,19 @@
 "use client"
 
-import Link from "next/link"
 import { Home, Bell, MessageSquare, User, Settings } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { LogoutButton } from "./logout-button"
-import { useSession } from "next-auth/react"
-import { Spinner } from "@/components/ui/spinner"
+import { SidebarNavButton } from "@/components/ui/sidebar-nav-button"
 import { Session } from "next-auth"
+import { LogoutButton } from "./logout-button"
+import { Spinner } from "@/components/ui/spinner"
+import {useSession} from "next-auth/react";
+import { CreatePostButton } from "@/components/ui/create-post-button";
 
-interface SidebarProps {
-  session: Session | null
-}
+export function Sidebar() {
+  const { data, status } = useSession()
+  const session = data as Session | null
 
-export function Sidebar({ session: initialSession }: SidebarProps) {
-  const { data: session, status } = useSession()
-  const currentSession = session || initialSession
-  // ...
-
-  // Show the spinner only if the session is still loading and there's no preloaded data
-  if (status === "loading" && !initialSession) {
+  // Show the spinner only if the session is still loading
+  if (status === "loading") {
     return (
       <div className="flex items-center justify-center px-2 py-2 text-sm text-muted-foreground bg-muted/50 rounded-lg">
         <Spinner className="mr-2" /> Loading...
@@ -33,46 +28,21 @@ export function Sidebar({ session: initialSession }: SidebarProps) {
           <span className="font-semibold text-xl">Flock</span>
         </div>
 
-        {currentSession?.user?.name ? (
+        {session?.user?.name ? (
           <div className="px-2 py-2 text-sm text-muted-foreground bg-muted/50 rounded-lg">
-            Hello, <span className="font-medium text-primary">{currentSession.user.name}</span>
+            Hello, <span className="font-medium text-primary">{session.user.name}</span>
           </div>
         ) : null}
 
         <nav className="space-y-2">
-          <Link href="/">
-            <Button variant="ghost" className="w-full justify-start gap-2">
-              <Home className="h-5 w-5" />
-              Home
-            </Button>
-          </Link>
-          <Link href="/notifications">
-            <Button variant="ghost" className="w-full justify-start gap-2">
-              <Bell className="h-5 w-5" />
-              Notifications
-            </Button>
-          </Link>
-          <Link href="/messages">
-            <Button variant="ghost" className="w-full justify-start gap-2">
-              <MessageSquare className="h-5 w-5" />
-              Messages
-            </Button>
-          </Link>
-          <Link href="/profile">
-            <Button variant="ghost" className="w-full justify-start gap-2">
-              <User className="h-5 w-5" />
-              Profile
-            </Button>
-          </Link>
-          <Link href="/settings">
-            <Button variant="ghost" className="w-full justify-start gap-2">
-              <Settings className="h-5 w-5" />
-              Settings
-            </Button>
-          </Link>
+          <SidebarNavButton href="/" icon={Home}>Home</SidebarNavButton>
+          <SidebarNavButton href="/notifications" icon={Bell}>Notifications</SidebarNavButton>
+          <SidebarNavButton href="/messages" icon={MessageSquare}>Messages</SidebarNavButton>
+          <SidebarNavButton href="/profile" icon={User}>Profile</SidebarNavButton>
+          <SidebarNavButton href="/settings" icon={Settings}>Settings</SidebarNavButton>
         </nav>
 
-        <Button className="w-full">New Post</Button>
+        <CreatePostButton authorId={session?.user?.id || ""} />
 
         <LogoutButton />
       </div>

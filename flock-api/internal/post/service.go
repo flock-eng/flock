@@ -4,6 +4,8 @@ import (
 	backendv1 "buf.build/gen/go/wcygan/flock/protocolbuffers/go/backend/v1"
 	"context"
 	"errors"
+	"fmt"
+	"time"
 )
 
 type Service struct{}
@@ -13,7 +15,26 @@ func NewService() *Service {
 }
 
 func (s *Service) CreatePost(ctx context.Context, request *backendv1.CreatePostRequest) (*backendv1.CreatePostResponse, error) {
-	return nil, errors.New("backend.v1.PostService.CreatePost is not implemented")
+	fmt.Printf("Received request to create post with content: %s\n", request.Content)
+
+	dummyPost := &backendv1.Post{
+		Id: &backendv1.PostKey{Id: "dummy-id"},
+		Author: &backendv1.MiniProfile{
+			Key:            &backendv1.ProfileKey{Id: "dummy-author-id"},
+			Username:       "foobar",
+			FirstName:      "foo",
+			LastName:       "bar",
+			ProfilePicture: nil,
+		},
+		Content:   "This is a dummy post content.",
+		CreatedAt: time.Now().Unix(),
+	}
+
+	response := &backendv1.CreatePostResponse{
+		Post: dummyPost,
+	}
+
+	return response, nil
 }
 
 func (s *Service) GetPost(ctx context.Context, request *backendv1.GetPostRequest) (*backendv1.GetPostResponse, error) {

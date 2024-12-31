@@ -1,0 +1,1 @@
+kubectl port-forward svc/flock-db-rw 5432:5432
