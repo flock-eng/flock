@@ -1,5 +1,6 @@
 import * as React from "react";
 import {Button} from "@/components/ui/button";
+import toast from "react-hot-toast";
 import {ApiClient} from "@/lib/api-client";
 import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import {cn} from "@/lib/utils";
@@ -16,8 +17,10 @@ export function CreatePostButton({authorId}: { authorId: string }) {
                 console.log("Post created!");
                 setIsOpen(false);
                 setContent("");
+                toast.success("Post created successfully!");
             } catch (error) {
                 console.error("Failed to create post:", error);
+                toast.error("Failed to create post");
             }
         }
     };

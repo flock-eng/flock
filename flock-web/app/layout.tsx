@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import "./globals.css"
 import { Sidebar } from "@/components/sidebar"
 import { AuthProvider } from "./auth-provider"
+import { ToastProvider } from "@/components/ui/toaster"
 import {getCustomServerSession} from "@/app/api/auth/[...nextauth]/route";
 
 const inter = Inter({ subsets: ["latin"] })
@@ -27,6 +28,7 @@ export default async function RootLayout({
             <Sidebar />
             {children}
           </div>
+          <ToastProvider />
         </AuthProvider>
       </body>
     </html>
