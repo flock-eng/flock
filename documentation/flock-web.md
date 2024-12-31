@@ -18,7 +18,7 @@ Ensure you have a `.env.local` file in the `flock-web` folder with the following
 KEYCLOAK_CLIENT_ID=flock-web
 KEYCLOAK_CLIENT_SECRET=<from keycloak>
 KEYCLOAK_ISSUER=<flock realm URL>
-NEXTAUTH_URL=<flock-web url>
+NEXT_PUBLIC_FLOCK_API_URL=<tailnet domain>
 AUTH_SECRET=<ask wcygan>
 ```
 
