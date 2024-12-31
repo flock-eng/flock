@@ -38,7 +38,7 @@ export function Sidebar() {
           <SidebarNavButton href="/" icon={Home}>Home</SidebarNavButton>
           <SidebarNavButton href="/notifications" icon={Bell}>Notifications</SidebarNavButton>
           <SidebarNavButton href="/messages" icon={MessageSquare}>Messages</SidebarNavButton>
-          <SidebarNavButton href="/profile" icon={User}>Profile</SidebarNavButton>
+          <SidebarNavButton href={`/profile/${session?.user?.id}`} icon={User}>Profile</SidebarNavButton>
           <SidebarNavButton href="/settings" icon={Settings}>Settings</SidebarNavButton>
         </nav>
 
