@@ -24,7 +24,10 @@ export function HomePage() {
             <Card key={post.id!.id} className="p-4">
               <div className="flex gap-3">
                 <Avatar className="h-10 w-10">
-                  <AvatarFallback>
+                  <AvatarFallback 
+                    style={{ backgroundColor: getColorFromUsername(post.author!.username) }}
+                    className="text-white"
+                  >
                     {post.author!.firstName[0]}{post.author!.lastName[0]}
                   </AvatarFallback>
                 </Avatar>
@@ -71,7 +74,12 @@ export function HomePage() {
               {[1, 2, 3].map((i) => (
                 <div key={i} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Avatar className="h-8 w-8" />
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback 
+                        style={{ backgroundColor: getColorFromUsername("username") }}
+                        className="text-white"
+                      />
+                    </Avatar>
                     <div className="text-sm">
                       <div className="font-medium">User Name</div>
                       <div className="text-muted-foreground">@username</div>
