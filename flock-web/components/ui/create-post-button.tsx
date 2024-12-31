@@ -2,7 +2,7 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { ApiClient } from "@/lib/api-client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 
 export function CreatePostButton({ authorId }: { authorId: string }) {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -29,11 +29,12 @@ export function CreatePostButton({ authorId }: { authorId: string }) {
         <DialogHeader>
           <DialogTitle>Create a New Post</DialogTitle>
         </DialogHeader>
-        <Textarea
+        <Input
+          as="textarea"
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="What's on your mind?"
-          className="mb-4"
+          className="mb-4 min-h-[100px]"
         />
         <Button onClick={handleSubmit} disabled={!content.trim()}>
           Submit
