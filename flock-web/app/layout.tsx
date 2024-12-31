@@ -4,7 +4,7 @@ import "./globals.css"
 import { Sidebar } from "@/components/sidebar"
 import { AuthProvider } from "./auth-provider"
 import { ToastProvider } from "@/components/ui/toaster"
-import {getCustomServerSession} from "@/app/api/auth/[...nextauth]/route";
+import { getServerSession } from "@/lib/auth";
 
 const inter = Inter({ subsets: ["latin"] })
 
