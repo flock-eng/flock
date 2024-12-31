@@ -5,6 +5,7 @@ import { usePosts } from "@/hooks/usePosts";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
+import { getColorFromUsername } from "@/lib/utils";
 
 export function HomePage() {
   const posts = usePosts();
