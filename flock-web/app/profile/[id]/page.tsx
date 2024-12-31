@@ -3,11 +3,15 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { getCustomServerSession } from "@/lib/auth";
 import { getColorFromUsername } from "@/lib/utils";
 
-export default async function ProfilePage({ params }: { params: { id: string } }) {
+type ProfilePageProps = {
+  params: Promise<{ id: string }>;
+};
+
+export default async function ProfilePage({ params }: ProfilePageProps) {
   const session = await getCustomServerSession();
 
   // Access params.id directly (it's synchronous)
-  const { id } = params;
+  const { id } = await params;
   
   const isCurrentUser = id === session?.user?.user_id;
   
