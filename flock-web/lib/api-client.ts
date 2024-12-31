@@ -3,6 +3,7 @@ import { Post } from "@/types";
 export const ApiClient = {
   posts: {
     list: async (): Promise<Post[]> => {
+      const now = new Date();
       return [
         { 
           id: "1", 
@@ -13,7 +14,7 @@ export const ApiClient = {
             lastName: "Doe",
             username: "johndoe"
           },
-          createdAt: new Date() 
+          createdAt: new Date(now.setFullYear(now.getFullYear() - 3))
         },
         { 
           id: "2", 
@@ -24,7 +25,7 @@ export const ApiClient = {
             lastName: "Smith",
             username: "janesmith"
           },
-          createdAt: new Date() 
+          createdAt: new Date(now.setMonth(now.getMonth() - 6))
         },
         { 
           id: "3", 
@@ -35,7 +36,7 @@ export const ApiClient = {
             lastName: "Johnson",
             username: "alicej"
           },
-          createdAt: new Date() 
+          createdAt: new Date(now.setDate(now.getDate() - 15))
         },
         { 
           id: "4", 
@@ -46,7 +47,7 @@ export const ApiClient = {
             lastName: "Brown",
             username: "bobbrown"
           },
-          createdAt: new Date() 
+          createdAt: new Date(now.setHours(now.getHours() - 2))
         },
         { 
           id: "5", 
@@ -57,7 +58,7 @@ export const ApiClient = {
             lastName: "Davis",
             username: "charlied"
           },
-          createdAt: new Date() 
+          createdAt: new Date(now.setMinutes(now.getMinutes() - 30))
         },
       ];
     },
