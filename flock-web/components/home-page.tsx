@@ -11,7 +11,7 @@ export function HomePage() {
   const posts = usePosts();
 
   return (
-    <div className="flex-1 flex gap-4 p-4">
+    <div className="flex gap-4 p-4">
       <main className="flex-1 max-w-2xl mx-auto">
         <div className="space-y-4">
           {posts.map((post) => (

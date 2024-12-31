@@ -16,7 +16,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   const isCurrentUser = id === session?.user?.user_id;
   
   return (
-    <div className="flex-1 flex gap-4 p-4">
+    <div className="flex gap-4 p-4">
       <main className="flex-1 max-w-2xl mx-auto">
         <Card className="p-8">
           <div className="flex flex-col items-center gap-4 mb-8">

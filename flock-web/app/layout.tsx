@@ -4,6 +4,7 @@ import "./globals.css"
 import { Sidebar } from "@/components/sidebar"
 import { AuthProvider } from "./auth-provider"
 import { ToastProvider } from "@/components/ui/toaster"
+import { Header } from "@/components/header"
 import {getCustomServerSession} from "@/lib/auth";
 
 const inter = Inter({ subsets: ["latin"] })
@@ -26,7 +27,12 @@ export default async function RootLayout({
         <AuthProvider session={session}>
           <div className="flex min-h-screen">
             <Sidebar />
-            {children}
+            <div className="flex-1">
+              <Header />
+              <main className="flex-1">
+                {children}
+              </main>
+            </div>
           </div>
           <ToastProvider />
         </AuthProvider>

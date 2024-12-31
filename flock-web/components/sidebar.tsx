@@ -29,13 +29,6 @@ export function Sidebar() {
           <span className="font-semibold text-xl">Flock</span>
         </div>
 
-        <div className="mb-4">
-          <Input
-            type="search"
-            placeholder="Search Flock"
-            className="w-full bg-muted/50"
-          />
-        </div>
 
         {session?.user?.name ? (
           <div className="px-2 py-2 text-sm text-muted-foreground bg-muted/50 rounded-lg">
