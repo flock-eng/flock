@@ -28,15 +28,13 @@ const handler = NextAuth({
         token.refreshToken = account.refresh_token;
       }
 
-      console.log('JWT token:', token);
-
       return token;
     },
     async session({ session, token }) {
       session.user = token;
       session.user.name = token.name;
 
-        console.log('Session:', session);
+      console.log('Session:', session);
       return session;
     },
   },
