@@ -38,7 +38,11 @@ export function HomePage() {
                       @{post.author.username}
                     </span>
                     <span className="text-muted-foreground text-sm">
-                      · {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
+                      · {new Date(post.createdAt).toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                      })}
                     </span>
                   </div>
                   <p className="mt-1 text-sm">{post.content}</p>
