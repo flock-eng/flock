@@ -17,7 +17,7 @@ export function SidebarNavButton({ href, icon: Icon, children }: SidebarNavButto
     <Link href={href}>
       <Button 
         variant="ghost" 
-        className={`w-full justify-start gap-2 ${isActive ? 'bg-accent/50 hover:bg-accent/50' : ''}`}
+        className={`w-full justify-start gap-2 ${isActive ? 'bg-accent/70 hover:bg-accent/70' : ''}`}
       >
         <Icon className="h-5 w-5" />
         {children}
