@@ -21,20 +21,20 @@ export function HomePage() {
         </div>
         <div className="space-y-4">
           {posts.map((post) => (
-            <Card key={post.id.id} className="p-4">
+            <Card key={post.id!.id} className="p-4">
               <div className="flex gap-3">
                 <Avatar className="h-10 w-10">
                   <AvatarFallback>
-                    {post.author.firstName[0]}{post.author.lastName[0]}
+                    {post.author!.firstName[0]}{post.author!.lastName[0]}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <h3 className="font-semibold">
-                      {post.author.firstName} {post.author.lastName}
+                      {post.author!.firstName} {post.author!.lastName}
                     </h3>
                     <span className="text-muted-foreground text-sm">
-                      @{post.author.username}
+                      @{post.author!.username}
                     </span>
                     <span className="text-muted-foreground text-sm">
                       · {new Date(Number(post.createdAt)).toLocaleDateString('en-US', {

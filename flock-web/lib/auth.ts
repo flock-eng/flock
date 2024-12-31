@@ -1,4 +1,4 @@
-import { AuthOptions } from "next-auth";
+import {AuthOptions, getServerSession} from "next-auth";
 import KeycloakProvider from "next-auth/providers/keycloak";
 
 export const authOptions: AuthOptions = {
@@ -24,6 +24,7 @@ export const authOptions: AuthOptions = {
   callbacks: {
     async jwt({ token, account, profile }) {
       if (account && profile) {
+        // @ts-expect-error: Property 'username' does not exist on type 'Token'
         token.username = profile.preferred_username
         token.accessToken = account.access_token;
         token.idToken = account.id_token;
@@ -34,8 +35,11 @@ export const authOptions: AuthOptions = {
       return token;
     },
     async session({ session, token }) {
+        // @ts-expect-error: Property 'accessToken' does not exist on type 'Session'
       session.accessToken = token.accessToken
+      // @ts-expect-error: Property 'user' does not exist on type 'Session'
       session.user.user_id = token.sub
+      // @ts-expect-error: Property 'user' does not exist on type 'Session'
       session.user.username = token.username
       return session;
     },
@@ -62,3 +66,8 @@ export const authOptions: AuthOptions = {
     },
   },
 };
+
+// Function to get the server session using the provided authentication options
+// This is necessary to ensure that the data within the session callback (from authOptions) is available
+// like the `accessToken`, `username`, and `user_id` for the user
+export const getCustomServerSession = () => getServerSession(authOptions)
