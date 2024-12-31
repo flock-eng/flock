@@ -2,7 +2,6 @@
 
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
-import { getPosts } from "@/lib/post-client";
 import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
 
@@ -14,9 +13,7 @@ type Post = {
 export function HomePage() {
   const [posts, setPosts] = useState<Post[]>([]);
 
-  useEffect(() => {
-    getPosts().then((fetchedPosts) => setPosts(fetchedPosts));
-  }, []);
+  // Somewhere in here we could call "get posts" for homepage
 
   return (
     <div className="flex-1 flex gap-4 p-4">
