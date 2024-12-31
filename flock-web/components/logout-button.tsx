@@ -24,7 +24,7 @@ export function LogoutButton() {
   return (
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button variant="ghost" className="w-full justify-start gap-2 text-red-500 hover:text-red-600 hover:bg-red-100">
+          <Button variant="ghost" className="w-full justify-start gap-2 text-red-500 hover:text-red-600 hover:bg-red-100" aria-label="Logout">
             <LogOut className="h-5 w-5" />
             Logout
           </Button>

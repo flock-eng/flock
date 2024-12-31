@@ -11,7 +11,6 @@ export function AuthProvider({
   children: ReactNode
   session: Session | null
 }) {
-  console.log("AuthProvider Session: ", session)
   return (
     <SessionProvider session={session}>
       {children}

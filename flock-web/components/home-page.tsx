@@ -1,11 +1,17 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
+import { useEffect, useState } from "react";
+import { getPosts } from "@/lib/post-client"; // Assuming there's a function to fetch posts
 import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
 
 export function HomePage() {
-  return (
+  const [posts, setPosts] = useState<Post[]>([]);
+
+  useEffect(() => {
+    getPosts().then((fetchedPosts) => setPosts(fetchedPosts));
+  }, []);
     <div className="flex-1 flex gap-4 p-4">
       {/* Main content area */}
       <main className="flex-1 max-w-2xl mx-auto">
@@ -18,10 +24,10 @@ export function HomePage() {
         </div>
         <div className="space-y-4">
           {/* Placeholder for feed content */}
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="p-4 border rounded-lg bg-card">
+          {posts.map((post) => (
+            <div key={post.id} className="p-4 border rounded-lg bg-card">
               <div className="h-20 flex items-center justify-center text-muted-foreground">
-                Post content will go here
+                {post.content}
               </div>
             </div>
           ))}

@@ -10,9 +10,13 @@ export function CreatePostButton({ authorId }: { authorId: string }) {
 
   const handleSubmit = async () => {
     if (content.trim()) {
-      await createPost(authorId, content);
-      setIsOpen(false);
-      setContent("");
+      try {
+        await createPost(authorId, content);
+        setIsOpen(false);
+        setContent("");
+      } catch (error) {
+        console.error("Failed to create post:", error);
+      }
     }
   };
 
