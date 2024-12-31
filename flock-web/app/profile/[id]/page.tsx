@@ -14,6 +14,7 @@ export default async function ProfilePage({ params }: { params: { id: string } }
   const session = await getCustomServerSession();
   const isCurrentUser = params.id === session?.user?.user_id;
   const profileColor = hashUsername(session?.user?.username || 'user');
+  console.log("Color: ", profileColor);
   
   return (
     <div className="flex-1 flex gap-4 p-4">
