@@ -38,11 +38,11 @@ curl -X POST -H "Content-Type: application/json" https://$(kubectl get ing flock
 
 curl -X POST -H "Content-Type: application/json" https://$(kubectl get ing flock-api-ingress -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')/frontend.v1.HomePageService/GetHomePage -d '{}'
 
-curl -X POST -H "Content-Type: application/json" https://$(kubectl get ing flock-api-ingress -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')/backend.v1.PostService/CreatePost -d '{"author_id": 1, "content": "This is a new post"}'
+curl -X POST -H "Content-Type: application/json" https://$(kubectl get ing flock-api-ingress -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')/backend.v1.PostService/CreatePost -d '{"author": {"id": "1"}, "content": "This is a new post"}'
 
-curl -X POST -H "Content-Type: application/json" https://$(kubectl get ing flock-api-ingress -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')/backend.v1.PostService/GetPost -d '{"id": 123}'
+curl -X POST -H "Content-Type: application/json" https://$(kubectl get ing flock-api-ingress -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')/backend.v1.PostService/GetPost -d '{"id": {"id": "123"}}'
 
-curl -X POST -H "Content-Type: application/json" https://$(kubectl get ing flock-api-ingress -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')/backend.v1.PostService/BatchGetPosts -d '{"ids": ["123", "456", "789"]}'
+curl -X POST -H "Content-Type: application/json" https://$(kubectl get ing flock-api-ingress -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')/backend.v1.PostService/BatchGetPosts -d '{"ids": [{"id": "123"}, {"id": "456"}, {"id": "789"}]}'
 
 curl -X POST -H "Content-Type: application/json" https://$(kubectl get ing flock-api-ingress -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')/backend.v1.PostService/ListMostRecentPosts -d '{"post_limit": 10}'
 
