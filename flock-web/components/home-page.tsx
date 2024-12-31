@@ -2,9 +2,14 @@
 
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
-import { getPosts } from "@/lib/post-client"; // Assuming there's a function to fetch posts
+import { getPosts } from "@/lib/post-client";
 import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
+
+type Post = {
+  id: string;
+  content: string;
+};
 
 export function HomePage() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -12,6 +17,8 @@ export function HomePage() {
   useEffect(() => {
     getPosts().then((fetchedPosts) => setPosts(fetchedPosts));
   }, []);
+
+  return (
     <div className="flex-1 flex gap-4 p-4">
       {/* Main content area */}
       <main className="flex-1 max-w-2xl mx-auto">
