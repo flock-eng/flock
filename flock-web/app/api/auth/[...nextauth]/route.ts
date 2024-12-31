@@ -14,17 +14,29 @@ const handler = NextAuth({
     strategy: "jwt",
   },
   callbacks: {
-    async jwt({ token, account }) {
+    async jwt({ token, account, profile }) {
+      // If it's the initial sign-in, `account` and `profile` will be available.
+      // We can store the desired information in the token here.
+      if (profile?.preferred_username) {
+        token.username = profile.preferred_username;
+      }
+
+      // Store your token properties
       if (account) {
         token.accessToken = account.access_token;
         token.idToken = account.id_token;
         token.refreshToken = account.refresh_token;
       }
+
+      console.log('JWT token:', token);
+
       return token;
     },
     async session({ session, token }) {
       session.user = token;
       session.user.name = token.name;
+
+        console.log('Session:', session);
       return session;
     },
   },
