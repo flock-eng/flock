@@ -1,28 +1,22 @@
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { getCustomServerSession } from "@/lib/auth";
-
-function hashUsername(username: string): string {
-  let hash = 0;
-  for (let i = 0; i < username.length; i++) {
-    hash = username.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  return (hash & 0x00FFFFFF).toString(16).toUpperCase().padStart(6, '0');
-}
+import { getColorFromUsername } from "@/lib/utils";
 
 export default async function ProfilePage({ params }: { params: { id: string } }) {
   const session = await getCustomServerSession();
   const isCurrentUser = params.id === session?.user?.user_id;
-  const profileColor = hashUsername(session?.user?.username || 'user');
-  console.log("Color: ", profileColor);
   
   return (
     <div className="flex-1 flex gap-4 p-4">
       <main className="flex-1 max-w-2xl mx-auto">
         <Card className="p-8">
           <div className="flex flex-col items-center gap-4 mb-8">
-            <Avatar className="h-24 w-24" style={{ backgroundColor: `#${profileColor}` }}>
-              <AvatarFallback className="text-3xl">
+            <Avatar className="h-24 w-24">
+              <AvatarFallback 
+                style={{ backgroundColor: getColorFromUsername(session?.user?.username || 'user') }}
+                className="text-3xl text-white"
+              >
                 {session?.user?.name?.charAt(0)}
               </AvatarFallback>
             </Avatar>
