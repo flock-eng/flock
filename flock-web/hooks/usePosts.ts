@@ -6,7 +6,8 @@ export function usePosts() {
   const [posts, setPosts] = useState<Post[]>([]);
 
   useEffect(() => {
-    ApiClient.posts.listMostRecentPosts({ postLimit: 10 }).then((response) => {
+    ApiClient.homePage.getHomePage({ postLimit: 10 }).then((response) => {
+      console.log("response: ", response);
       setPosts(response.posts);
     });
   }, []);

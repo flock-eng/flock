@@ -13,15 +13,15 @@ export function HomePage() {
     <div className="flex-1 flex gap-4 p-4">
       <main className="flex-1 max-w-2xl mx-auto">
         <div className="mb-4">
-          <Input 
-            type="search" 
-            placeholder="Search Flock" 
+          <Input
+            type="search"
+            placeholder="Search Flock"
             className="w-full bg-muted/50"
           />
         </div>
         <div className="space-y-4">
           {posts.map((post) => (
-            <Card key={post.id} className="p-4">
+            <Card key={post.id.id} className="p-4">
               <div className="flex gap-3">
                 <Avatar className="h-10 w-10">
                   <AvatarFallback>
@@ -37,11 +37,11 @@ export function HomePage() {
                       @{post.author.username}
                     </span>
                     <span className="text-muted-foreground text-sm">
-                      · {new Date(post.createdAt).toLocaleDateString('en-US', { 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
-                      })}
+                      · {new Date(Number(post.createdAt)).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
                     </span>
                   </div>
                   <p className="mt-1 text-sm">{post.content}</p>
@@ -64,7 +64,7 @@ export function HomePage() {
               </Button>
             </div>
           </Card>
-          
+
           <Card>
             <h2 className="font-semibold mb-4">Who to follow</h2>
             <div className="space-y-4">

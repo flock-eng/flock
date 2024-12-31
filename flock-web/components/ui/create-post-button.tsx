@@ -4,6 +4,8 @@ import toast from "react-hot-toast";
 import {ApiClient} from "@/lib/api-client";
 import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import {cn} from "@/lib/utils";
+import { PostKey } from "@buf/wcygan_flock.bufbuild_es/backend/v1/post_pb";
+
 
 export function CreatePostButton({authorId}: { authorId: string }) {
     const [isOpen, setIsOpen] = React.useState(false);
@@ -13,7 +15,13 @@ export function CreatePostButton({authorId}: { authorId: string }) {
         if (content.trim()) {
             try {
                 console.log("Creating post...");
-                await ApiClient.posts.create(authorId, content);
+                const key = new PostKey({ id: authorId });
+                await ApiClient.posts.createPost(
+                    {
+                        author: key,
+                        content,
+                    }
+                );
                 console.log("Post created!");
                 setIsOpen(false);
                 setContent("");
