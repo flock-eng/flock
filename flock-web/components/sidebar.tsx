@@ -36,9 +36,9 @@ export function Sidebar() {
 
         <nav className="space-y-2">
           <SidebarNavButton href="/" icon={Home}>Home</SidebarNavButton>
+          <SidebarNavButton href={`/profile/${session?.user?.user_id}`} icon={User}>Profile</SidebarNavButton>
           <SidebarNavButton href="/notifications" icon={Bell}>Notifications</SidebarNavButton>
           <SidebarNavButton href="/messages" icon={MessageSquare}>Messages</SidebarNavButton>
-          <SidebarNavButton href={`/profile/${session?.user?.user_id}`} icon={User}>Profile</SidebarNavButton>
           <SidebarNavButton href="/settings" icon={Settings}>Settings</SidebarNavButton>
         </nav>
 
