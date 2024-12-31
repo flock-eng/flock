@@ -4,16 +4,14 @@ import Link from "next/link"
 import { Home, Bell, MessageSquare, User, Settings } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { LogoutButton } from "./logout-button"
-import { useAuthSession } from "@/app/auth-provider"
 import { Spinner } from "@/components/ui/spinner"
+import {useSession} from "next-auth/react";
 
 export function Sidebar() {
-  const { session, status } = useAuthSession()
-  const currentSession = session
-  // ...
+  const { data, status } = useSession()
 
-  // Show the spinner only if the session is still loading and there's no preloaded data
-  if (status === "loading" && !initialSession) {
+  // Show the spinner only if the session is still loading
+  if (status === "loading") {
     return (
       <div className="flex items-center justify-center px-2 py-2 text-sm text-muted-foreground bg-muted/50 rounded-lg">
         <Spinner className="mr-2" /> Loading...
@@ -28,9 +26,9 @@ export function Sidebar() {
           <span className="font-semibold text-xl">Flock</span>
         </div>
 
-        {currentSession?.user?.name ? (
+        {data?.user?.name ? (
           <div className="px-2 py-2 text-sm text-muted-foreground bg-muted/50 rounded-lg">
-            Hello, <span className="font-medium text-primary">{currentSession.user.name}</span>
+            Hello, <span className="font-medium text-primary">{data.user.name}</span>
           </div>
         ) : null}
 

@@ -1,12 +1,20 @@
-import NextAuth from "next-auth"
-import KeycloakProvider from "next-auth/providers/keycloak"
+import NextAuth, {AuthOptions, getServerSession} from "next-auth";
+import KeycloakProvider from "next-auth/providers/keycloak";
 
-const handler = NextAuth({
+export const authOptions: AuthOptions = {
   providers: [
     KeycloakProvider({
       clientId: process.env.KEYCLOAK_CLIENT_ID!,
       clientSecret: process.env.KEYCLOAK_CLIENT_SECRET!,
       issuer: process.env.KEYCLOAK_ISSUER!,
+      profile: profile => {
+        return {
+          id: profile.sub,
+          name: profile.name,
+          email: profile.email,
+          username: profile.preferred_username,
+        }
+      }
     }),
   ],
   debug: false,
@@ -15,35 +23,23 @@ const handler = NextAuth({
   },
   callbacks: {
     async jwt({ token, account, profile }) {
-      // If it's the initial sign-in, `account` and `profile` will be available.
-      // We can store the desired information in the token here.
-      if (profile?.preferred_username) {
-        token.username = profile.preferred_username;
-      }
 
-      // Store your token properties
-      if (account) {
+      // On initial sign-in
+      if (account && profile) {
+        token.username = profile.preferred_username
         token.accessToken = account.access_token;
         token.idToken = account.id_token;
         token.refreshToken = account.refresh_token;
+        token.id = profile.sub
+        token.sub = profile.sub
       }
-
-      console.log('JWT:', token);
 
       return token;
     },
     async session({ session, token }) {
-      // Include all token properties in the session
-      session.user = {
-        ...session.user,
-        ...token,
-        username: token.username,
-        accessToken: token.accessToken,
-        idToken: token.idToken,
-        refreshToken: token.refreshToken
-      };
-
-      console.log('Session:', session);
+      session.accessToken = token.accessToken
+      session.user.user_id = token.sub
+      session.user.username = token.username
       return session;
     },
   },
@@ -73,6 +69,14 @@ const handler = NextAuth({
       }
     },
   },
-});
+};
 
-export { handler as GET, handler as POST };
+// Initialize NextAuth with the provided authentication options
+const handler = NextAuth(authOptions);
+
+// Function to get the server session using the provided authentication options
+// This is necessary to ensure that the data within the session callback (from authOptions) is available
+// like the `accessToken`, `username`, and `user_id` for the user
+const getCustomServerSession = () => getServerSession(authOptions)
+
+export { handler as GET, handler as POST, getCustomServerSession };

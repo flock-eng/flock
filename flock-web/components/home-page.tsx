@@ -1,19 +1,10 @@
 "use client";
 
-import { useAuthSession } from "@/app/auth-provider";
-import { Spinner } from "@/components/ui/spinner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
 
 export function HomePage() {
-  const { status } = useAuthSession();
-
-  // Show the spinner only if the session is still loading
-  if (status === "loading") {
-    return <Spinner />;
-  }
-
   return (
     <div className="flex-1 flex gap-4 p-4">
       {/* Main content area */}

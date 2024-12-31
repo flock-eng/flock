@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import "./globals.css"
 import { Sidebar } from "@/components/sidebar"
 import { AuthProvider } from "./auth-provider"
+import {getCustomServerSession} from "@/app/api/auth/[...nextauth]/route";
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -11,14 +12,13 @@ export const metadata: Metadata = {
   description: "A social platform for real-time interaction and engagement",
 }
 
-import { getServerSession } from "next-auth";
-
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession();
+  const session = await getCustomServerSession();
+
   return (
     <html lang="en">
       <body className={inter.className}>
