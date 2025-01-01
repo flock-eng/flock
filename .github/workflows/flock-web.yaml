@@ -1,0 +1,118 @@
+name: Flock Web
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - "flock-web/**"
+  pull_request:
+    branches: [ main ]
+    paths:
+      - "flock-web/**"
+
+jobs:
+  # 1) Build & test for Pull Request (no push to registry)
+  build-flock-web-pr:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Cache npm dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('flock-web/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
+      # Optional: install deps, lint, test, etc.
+      # - name: Install dependencies
+      #   run: |
+      #     cd flock-web
+      #     npm install
+      #
+      # - name: Lint
+      #   run: |
+      #     cd flock-web
+      #     npm run lint
+      #
+      # - name: Test
+      #   run: |
+      #     cd flock-web
+      #     npm run test
+
+      - name: Build Docker image (no push)
+        uses: docker/build-push-action@v5
+        with:
+          context: ./flock-web
+          file: ./flock-web/Dockerfile
+          load: true  # Load image into local Docker for testing
+          tags: wcygan/flock-web:pr
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # 2) Build & Push on push to main
+  build-and-push-flock-web:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Cache npm dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('flock-web/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
+      # Optional: install deps, lint, test, etc.
+      # - name: Install dependencies
+      #   run: |
+      #     cd flock-web
+      #     npm install
+      #
+      # - name: Lint
+      #   run: |
+      #     cd flock-web
+      #     npm run lint
+      #
+      # - name: Test
+      #   run: |
+      #     cd flock-web
+      #     npm run test
+
+      - name: Determine version
+        id: version
+        run: echo "VERSION=$(date +'%Y%m%d.%H%M%S')" >> $GITHUB_ENV
+
+      - name: Build and Push the flock-web image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./flock-web
+          file: ./flock-web/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          cache-from: type=registry,ref=wcygan/flock-web:latest
+          cache-to: type=inline
+          tags: |
+            wcygan/flock-web:latest
+            wcygan/flock-web:${{ env.VERSION }}
