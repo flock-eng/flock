@@ -8,19 +8,3 @@ manifests:
     - k8s/service.yaml
 deploy:
   kubectl: {}
-
-# This profile is used to build and push the image to Docker Hub
-# Run: skaffold run -p build-push
-# It isn't explicitly needed because GHA also builds and pushes the image,
-# but can be useful for debugging / local development
-profiles:
-  - name: build-push
-    build:
-      artifacts:
-        - image: wcygan/flock-web
-          docker:
-            dockerfile: Dockerfile
-      tagPolicy:
-        sha256: {}
-      local:
-        push: true

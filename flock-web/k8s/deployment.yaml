@@ -23,7 +23,7 @@ spec:
           env:
             - name: NODE_ENV
               value: "development"
-            - name: NEXT_PUBLIC_FLOCK_API_URL=
+            - name: NEXT_PUBLIC_FLOCK_API_URL
               valueFrom:
                 secretKeyRef:
                   name: tailnet-domain
