@@ -15,6 +15,7 @@ spec:
       containers:
         - name: flock-api
           image: wcygan/flock-api:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:
