@@ -1,7 +1,6 @@
 "use client"
 
 import { Home, Bell, MessageSquare, User, Settings, Search } from "lucide-react"
-import { Input } from "@/components/ui/input"
 import { SidebarNavButton } from "@/components/ui/sidebar-nav-button"
 import { Session } from "next-auth"
 import { LogoutButton } from "./logout-button"
