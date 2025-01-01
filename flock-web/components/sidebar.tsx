@@ -1,6 +1,7 @@
 "use client"
 
-import { Home, Bell, MessageSquare, User, Settings } from "lucide-react"
+import { Home, Bell, MessageSquare, User, Settings, Search } from "lucide-react"
+import { Input } from "@/components/ui/input"
 import { SidebarNavButton } from "@/components/ui/sidebar-nav-button"
 import { Session } from "next-auth"
 import { LogoutButton } from "./logout-button"
@@ -28,6 +29,7 @@ export function Sidebar() {
           <span className="font-semibold text-xl">Flock</span>
         </div>
 
+
         {session?.user?.name ? (
           <div className="px-2 py-2 text-sm text-muted-foreground bg-muted/50 rounded-lg">
             Hello, <span className="font-medium text-primary">{session.user.name}</span>
@@ -36,9 +38,10 @@ export function Sidebar() {
 
         <nav className="space-y-2">
           <SidebarNavButton href="/" icon={Home}>Home</SidebarNavButton>
+          <SidebarNavButton href={`/profile/${session?.user?.user_id}`} icon={User}>Profile</SidebarNavButton>
+          <SidebarNavButton href="/discover" icon={Search}>Discover</SidebarNavButton>
           <SidebarNavButton href="/notifications" icon={Bell}>Notifications</SidebarNavButton>
           <SidebarNavButton href="/messages" icon={MessageSquare}>Messages</SidebarNavButton>
-          <SidebarNavButton href="/profile" icon={User}>Profile</SidebarNavButton>
           <SidebarNavButton href="/settings" icon={Settings}>Settings</SidebarNavButton>
         </nav>
 

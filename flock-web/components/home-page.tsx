@@ -5,26 +5,23 @@ import { usePosts } from "@/hooks/usePosts";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
+import { getColorFromUsername } from "@/lib/utils";
 
 export function HomePage() {
   const posts = usePosts();
 
   return (
-    <div className="flex-1 flex gap-4 p-4">
+    <div className="flex gap-4 p-4">
       <main className="flex-1 max-w-2xl mx-auto">
-        <div className="mb-4">
-          <Input
-            type="search"
-            placeholder="Search Flock"
-            className="w-full bg-muted/50"
-          />
-        </div>
         <div className="space-y-4">
           {posts.map((post) => (
             <Card key={post.id!.id} className="p-4">
               <div className="flex gap-3">
                 <Avatar className="h-10 w-10">
-                  <AvatarFallback>
+                  <AvatarFallback 
+                    style={{ backgroundColor: getColorFromUsername(post.author!.username) }}
+                    className="text-white"
+                  >
                     {post.author!.firstName[0]}{post.author!.lastName[0]}
                   </AvatarFallback>
                 </Avatar>
@@ -71,7 +68,12 @@ export function HomePage() {
               {[1, 2, 3].map((i) => (
                 <div key={i} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Avatar className="h-8 w-8" />
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback 
+                        style={{ backgroundColor: getColorFromUsername("username") }}
+                        className="text-white"
+                      />
+                    </Avatar>
                     <div className="text-sm">
                       <div className="font-medium">User Name</div>
                       <div className="text-muted-foreground">@username</div>
