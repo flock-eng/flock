@@ -8,8 +8,6 @@ const transport = createConnectTransport({
   baseUrl: process.env.NEXT_PUBLIC_FLOCK_API_URL!,
 });
 
-// console.log("Origin:", window.location.host);
-
 export const ApiClient = {
   posts: createPromiseClient(PostService, transport),
   homePage: createPromiseClient(HomePageService, transport),
