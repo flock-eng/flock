@@ -27,21 +27,21 @@ Many of these values are obviously defined in `yaml` files, but I will list how 
 kubectl get clusters -o json | jq -r '.items[].metadata.name'
 ```
 
-Yields `flock-db`
+Yields `flock-auth`
 
 We can also check the services:
 
 ```bash
 k get svc
 NAME          TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
-flock-db-r    ClusterIP   10.109.79.102   <none>        5432/TCP   13m
-flock-db-ro   ClusterIP   10.98.228.131   <none>        5432/TCP   13m
-flock-db-rw   ClusterIP   10.107.226.79   <none>        5432/TCP   13m
+flock-auth-r    ClusterIP   10.109.79.102   <none>        5432/TCP   13m
+flock-auth-ro   ClusterIP   10.98.228.131   <none>        5432/TCP   13m
+flock-auth-rw   ClusterIP   10.107.226.79   <none>        5432/TCP   13m
 ```
 
-Basically, `flock-db-rw` is good to use because it is read-write, like the primary host of the database.
+Basically, `flock-auth-rw` is good to use because it is read-write, like the primary host of the database.
 
-So, we will use `flock-db-rw` as the host.
+So, we will use `flock-auth-rw` as the host.
 
 ### Username
 
@@ -67,7 +67,7 @@ This seems to be arbitrary, so we can just specify `keycloak` as the name for th
 
 ```yaml
 externalDatabase:
-  host: flock-db-rw
+  host: flock-auth-rw
   port: 5432
   user: flockuser
   password: flock123

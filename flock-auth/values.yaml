@@ -1,12 +1,12 @@
 cluster:
-  name: flock-db
-  instances: 3
+  name: flock-auth
+  instances: 1
   storage:
     storageClass: "openebs-hostpath"
-    size: "8Gi"
+    size: "4Gi"
   bootstrap:
     initdb:
-      database: flockdb
+      database: authentication
       owner: flockuser
       secret:
         name: flockuser-secret
@@ -15,7 +15,7 @@ cluster:
   resources:
     limits:
       cpu: 500m
-      memory: 2Gi
+      memory: 4Gi
     requests:
       cpu: 500m
-      memory: 2Gi
+      memory: 4Gi

@@ -30,10 +30,10 @@ profiles:
             path: monitoring/skaffold.yaml
           - configs:
               - postgres-operator-installation
-            path: flock-db/skaffold.yaml
+            path: flock-auth/skaffold.yaml
           - configs:
-              - flock-db-configuration
-            path: flock-db/skaffold.yaml
+              - flock-auth-configuration
+            path: flock-auth/skaffold.yaml
           - configs:
               - keycloak-installation
             path: flock-kc/skaffold.yaml
