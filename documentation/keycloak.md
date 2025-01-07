@@ -2,6 +2,47 @@
 
 KeyCloak is used as the identity and access management system.
 
+## Steps after Cluster Deploymetnt
+
+```bash
+open "https://$(kubectl get ing keycloak -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')"
+```
+
+--> Navigate to the `Administration Console` for the `flock` realm 
+--> Clients 
+--> Create Client
+  ... Client ID: `flock-web`, 
+  ... Authentication Flow: Standard Flow 
+  ... Client Authentication: On
+  ... Valid Redirect URIs: `https://app.domain.net/*`
+  ... Web Origins: `https://app.domain.net`
+--> Save
+--> Clients
+--> flock-web
+--> Credentials
+--> Copy the Client Secret
+--> Update the 1password item read by KeyCloak.client_secret:
+
+Verify the secret matches what you put in 1password:
+
+```bash
+k delete -f secrets/keycloak.yaml
+k apply -f secrets/keycloak.yaml
+kubectl get secret keycloak-credentials -o jsonpath="{.data.client_secret}" | base64 --decode
+```
+
+If it looks good, then restart the `flock-web` pods:
+
+```bash
+kubectl rollout restart deployment/flock-web
+```
+
+Open the Flock realm:
+
+```bash
+open "https://$(kubectl get ing keycloak -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')/realms/flock/account/"
+```
+
 ## Using an external database to power KeyCloak
 
 References:
