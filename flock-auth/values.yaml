@@ -4,14 +4,13 @@ cluster:
   storage:
     storageClass: "openebs-hostpath"
     size: "4Gi"
-  bootstrap:
-    initdb:
-      database: authentication
-      owner: flockuser
-      secret:
-        name: flockuser-secret
-      postInitSQL:
-        - ALTER ROLE flockuser WITH LOGIN;
+  initdb:
+    database: authentication
+    owner: flockuser
+    secret:
+      name: flockuser-secret
+    postInitSQL:
+      - ALTER ROLE flockuser WITH LOGIN;
   resources:
     limits:
       cpu: 500m

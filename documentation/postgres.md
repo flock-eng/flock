@@ -7,27 +7,27 @@ Postgres is the primary datastore for the application.
 Open a `psql` shell:
 
 ```bash
-kubectl cnpg psql flock-auth
+kubectl cnpg psql flock-auth-cluster -n flock-auth
 ```
 
 Run a command through `psql`:
 
 ```bash
-kubectl cnpg psql flock-auth -- -c "\du"
-kubectl cnpg psql flock-auth -- -d authentication -c "\dt"
+kubectl cnpg psql flock-auth-cluster -n flock-auth -- -c "\du"
+kubectl cnpg psql flock-auth-cluster -n flock-auth -- -d authentication -c "\dt"
 ```
 
 ## Connecting in IntellIJ
 
 ```bash
-kubectl port-forward svc/flock-auth-rw 5432:5432 
+kubectl port-forward svc/flock-auth-cluster-rw -n flock-auth 5432:5432
 ```
 
 Provide this in IntelliJ's database connection settings:
 
 • Host: `localhost` 
 • Port: `5432` 
-• Database: `flockdb`
+• Database: `authentication`
 • Username: `flockuser`
 • Password: `flock123`
 
