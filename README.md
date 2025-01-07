@@ -12,6 +12,13 @@ It is recommended to install the following tools before running the project:
 - [Kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 - [Helm](https://helm.sh/docs/intro/install/)
 
+## Deployment
+
+```bash
+skaffold run -p infrastructure
+skaffold run
+```
+
 ## Tailscale
 
 Internally, we are using [Tailscale](https://tailscale.com/kb/1236/kubernetes-operator) to connect to a remote Kubernetes cluster. You can install Tailscale on your local machine by following the instructions [here](https://tailscale.com/download).
