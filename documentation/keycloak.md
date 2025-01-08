@@ -2,6 +2,47 @@
 
 KeyCloak is used as the identity and access management system.
 
+## Steps after Cluster Deploymetnt
+
+```bash
+open "https://$(kubectl get ing keycloak -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')"
+```
+
+--> Navigate to the `Administration Console` for the `flock` realm 
+--> Clients 
+--> Create Client
+  ... Client ID: `flock-web`, 
+  ... Authentication Flow: Standard Flow 
+  ... Client Authentication: On
+  ... Valid Redirect URIs: `https://app.domain.net/*`
+  ... Web Origins: `https://app.domain.net`
+--> Save
+--> Clients
+--> flock-web
+--> Credentials
+--> Copy the Client Secret
+--> Update the 1password item read by KeyCloak.client_secret:
+
+Verify the secret matches what you put in 1password:
+
+```bash
+k delete -f secrets/keycloak.yaml
+k apply -f secrets/keycloak.yaml
+kubectl get secret keycloak-credentials -o jsonpath="{.data.client_secret}" | base64 --decode
+```
+
+If it looks good, then restart the `flock-web` pods:
+
+```bash
+kubectl rollout restart deployment/flock-web
+```
+
+Open the Flock realm:
+
+```bash
+open "https://$(kubectl get ing keycloak -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')/realms/flock/account/"
+```
+
 ## Using an external database to power KeyCloak
 
 References:
@@ -27,21 +68,21 @@ Many of these values are obviously defined in `yaml` files, but I will list how 
 kubectl get clusters -o json | jq -r '.items[].metadata.name'
 ```
 
-Yields `flock-db`
+Yields `flock-auth`
 
 We can also check the services:
 
 ```bash
 k get svc
 NAME          TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
-flock-db-r    ClusterIP   10.109.79.102   <none>        5432/TCP   13m
-flock-db-ro   ClusterIP   10.98.228.131   <none>        5432/TCP   13m
-flock-db-rw   ClusterIP   10.107.226.79   <none>        5432/TCP   13m
+flock-auth-r    ClusterIP   10.109.79.102   <none>        5432/TCP   13m
+flock-auth-ro   ClusterIP   10.98.228.131   <none>        5432/TCP   13m
+flock-auth-rw   ClusterIP   10.107.226.79   <none>        5432/TCP   13m
 ```
 
-Basically, `flock-db-rw` is good to use because it is read-write, like the primary host of the database.
+Basically, `flock-auth-rw` is good to use because it is read-write, like the primary host of the database.
 
-So, we will use `flock-db-rw` as the host.
+So, we will use `flock-auth-rw` as the host.
 
 ### Username
 
@@ -67,7 +108,7 @@ This seems to be arbitrary, so we can just specify `keycloak` as the name for th
 
 ```yaml
 externalDatabase:
-  host: flock-db-rw
+  host: flock-auth-rw
   port: 5432
   user: flockuser
   password: flock123

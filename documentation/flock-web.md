@@ -52,3 +52,19 @@ open "https://$(kubectl get ing flock-web-ingress -o jsonpath='{.status.loadBala
 Because our NextJS app is rendered server-side, we had to follow [Expose a tailnet HTTPS service to your cluster workloads](https://tailscale.com/kb/1438/kubernetes-operator-cluster-egress#expose-a-tailnet-https-service-to-your-cluster-workloads) to expose the KeyCloak service to NextJs within the cluster.
 
 This way we can avoid errors like `getaddrinfo ENOTFOUND auth.<custom-domain>.ts.net`
+
+This involved updating the CoreDNS Corefile to include the following:
+
+```bash
+# Pseudo-code
+
+# 1: Get the IP address of the DNSConfig
+IP: kubectl get dnsconfig tailscale-dns-test -o json | jq '.status.nameserver.ip' -r | pbcopy
+
+# 2: Edit the CoreDNS configmap
+ts.net {
+        errors
+        cache 30
+        forward . IP
+      }
+```
