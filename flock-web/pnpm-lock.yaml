@@ -11,6 +11,21 @@ importers:
       '@buf/wcygan_flock.bufbuild_es':
         specifier: 2.2.3-20241231000219-b035f3c109ea.1
         version: 2.2.3-20241231000219-b035f3c109ea.1(@bufbuild/protobuf@2.2.3)
+      '@bufbuild/connect':
+        specifier: ^0.13.0
+        version: 0.13.0(@bufbuild/protobuf@2.2.3)
+      '@bufbuild/connect-web':
+        specifier: ^0.13.0
+        version: 0.13.0(@bufbuild/protobuf@2.2.3)
+      '@bufbuild/protobuf':
+        specifier: ^2.2.3
+        version: 2.2.3
+      '@connectrpc/connect':
+        specifier: ^2.0.1
+        version: 2.0.1(@bufbuild/protobuf@2.2.3)
+      '@connectrpc/connect-web':
+        specifier: ^2.0.1
+        version: 2.0.1(@bufbuild/protobuf@2.2.3)(@connectrpc/connect@2.0.1(@bufbuild/protobuf@2.2.3))
       '@tailwindcss/forms':
         specifier: ^0.5.9
         version: 0.5.10(tailwindcss@3.4.17)
@@ -94,8 +109,31 @@ packages:
     peerDependencies:
       '@bufbuild/protobuf': ^2.2.3
 
+  '@bufbuild/connect-web@0.13.0':
+    resolution: {integrity: sha512-Ys9VFDWYktD9yFQSLOlkpsD42LonDNMCysLCfjXFuxlupYuf4f7qg0zkT5bESyTfqk4xtRDSSGR3xygaj/ONIQ==}
+    deprecated: Connect has moved to its own org @connectrpc and has a stable v1. Run `npx @connectrpc/connect-migrate@latest` to update. See https://github.com/connectrpc/connect-es/releases/tag/v0.13.1 for details.
+    peerDependencies:
+      '@bufbuild/protobuf': ^1.2.1
+
+  '@bufbuild/connect@0.13.0':
+    resolution: {integrity: sha512-eZSMbVLyUFtXiZNORgCEvv580xKZeYQdMOWj2i/nxOcpXQcrEzTMTA7SZzWv4k4gveWCOSRoWmYDeOhfWXJv0g==}
+    deprecated: Connect has moved to its own org @connectrpc and has a stable v1. Run `npx @connectrpc/connect-migrate@latest` to update. See https://github.com/connectrpc/connect-es/releases/tag/v0.13.1 for details.
+    peerDependencies:
+      '@bufbuild/protobuf': ^1.2.1
+
   '@bufbuild/protobuf@2.2.3':
     resolution: {integrity: sha512-tFQoXHJdkEOSwj5tRIZSPNUuXK3RaR7T1nUrPgbYX1pUbvqqaaZAsfo+NXBPsz5rZMSKVFrgK1WL8Q/MSLvprg==}
+
+  '@connectrpc/connect-web@2.0.1':
+    resolution: {integrity: sha512-FmUR9TyuHu/3efr9cYZcqqAccgsswLSm3PQBXGuya5h57AjQWROW6ejL6Fg0d+A9EwsxRmJktefmFszXUMlU9Q==}
+    peerDependencies:
+      '@bufbuild/protobuf': ^2.2.0
+      '@connectrpc/connect': 2.0.1
+
+  '@connectrpc/connect@2.0.1':
+    resolution: {integrity: sha512-o+MauvcOnfN4vjpS8ngoX+ubhcCDvnexlLwtk/VnkCLjoRMUz2PKqi87Si58ViWq0vzmGYPRf2LNwhJk5kcCXA==}
+    peerDependencies:
+      '@bufbuild/protobuf': ^2.2.0
 
   '@esbuild/aix-ppc64@0.21.5':
     resolution: {integrity: sha512-1SDgH6ZSPTlggy1yI6+Dbkiz8xzpHJEVAlF/AM1tHPLsf5STom9rwtjE4hKAF20FfXXNTFqEYXyJNWh1GiZedQ==}
@@ -1710,7 +1748,25 @@ snapshots:
     dependencies:
       '@bufbuild/protobuf': 2.2.3
 
+  '@bufbuild/connect-web@0.13.0(@bufbuild/protobuf@2.2.3)':
+    dependencies:
+      '@bufbuild/connect': 0.13.0(@bufbuild/protobuf@2.2.3)
+      '@bufbuild/protobuf': 2.2.3
+
+  '@bufbuild/connect@0.13.0(@bufbuild/protobuf@2.2.3)':
+    dependencies:
+      '@bufbuild/protobuf': 2.2.3
+
   '@bufbuild/protobuf@2.2.3': {}
+
+  '@connectrpc/connect-web@2.0.1(@bufbuild/protobuf@2.2.3)(@connectrpc/connect@2.0.1(@bufbuild/protobuf@2.2.3))':
+    dependencies:
+      '@bufbuild/protobuf': 2.2.3
+      '@connectrpc/connect': 2.0.1(@bufbuild/protobuf@2.2.3)
+
+  '@connectrpc/connect@2.0.1(@bufbuild/protobuf@2.2.3)':
+    dependencies:
+      '@bufbuild/protobuf': 2.2.3
 
   '@esbuild/aix-ppc64@0.21.5':
     optional: true

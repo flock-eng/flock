@@ -1,40 +1,24 @@
-# sv
+# Flock Web
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+References:
 
-Uses `pnpm` as the package manager.
+- [SvelteKit](https://kit.svelte.dev/)
+- [SvelteKit Adapters](https://kit.svelte.dev/docs/adapters)
+- [Vitest](https://vitest.dev/)
+- [pnpm](https://pnpm.io/)
+- [sv](https://github.com/sveltejs/cli)
+- [Connect](https://connectrpc.com/)
+- [Buf](https://buf.build/) 
 
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
-
-```bash
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `pnpm install` (or `ppnpm install` or `yarn`), start a development server:
+## Quick Start
 
 ```bash
+pnpm install
 pnpm run dev
-
-# or start the server and open the app in a new browser tab
-pnpm run dev -- --open
 ```
 
-## Building
-
-To create a production version of your app:
+## Unit Tests
 
 ```bash
-pnpm run build
+pnpm run test
 ```
-
-You can preview the production build with `pnpm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.

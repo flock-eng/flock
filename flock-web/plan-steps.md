@@ -581,8 +581,9 @@ Create a `README.md` with setup instructions, explaining how to run the project 
     - [x] Configure pnpm for Buf Registry
     - [x] Install Packages
 7. Create API Clients
-    - [ ] Set Up the Transport and Clients
-    - [ ] Create Mock API Clients
+    - [x] Set Up the Transport and Clients
+    - [x] Create Mock API Clients
+    - [x] Add tests for the mock API clients
 8. Implement the Home Page
     - [ ] Create the Home Page Component
     - [ ] Create the Post Component
@@ -593,23 +594,27 @@ Create a `README.md` with setup instructions, explaining how to run the project 
     - [ ] Notifications Page
     - [ ] Messages Page
     - [ ] Settings Page
-11. Integrate Authentication with Keycloak
+11. Kubernetes Integration
+    - [ ] Create a Dockerfile
+    - [ ] Create Kubernetes Manifests
+    - [ ] Configure WebSocket Support for HMR
+12. Frontend uses ConnectRPC to call the Backend API  
+    - [ ] Create a Kubernetes Secret for the API Base URL
+    - [ ] Add an environment variable for the API Base URL in the Kubernetes Deployment
+    - [ ] Add an ingress rule for the frontend in the Kubernetes Ingress
+13. Integrate Authentication with Keycloak
     - [ ] Choose an Authentication Library
     - [ ] Configure Authentication
     - [ ] Configure Environment Variables
     - [ ] Protect Routes and Access Session
-12. Kubernetes Integration
-    - [ ] Create a Dockerfile
-    - [ ] Create Kubernetes Manifests
-    - [ ] Configure WebSocket Support for HMR
-13. Set Up Development Tools
+14. Set Up Development Tools
     - [ ] Configure Vite for HMR Over Network
     - [ ] Use Telepresence for Local Development
     - [ ] Set Up Skaffold (Optional)
-14. Set Up CI/CD Pipeline
-15. Testing and Linting
+15. Set Up CI/CD Pipeline
+16. Testing and Linting
     - [ ] Run ESLint and Prettier
     - [ ] Implement Unit Tests
-16. Documentation and README
+17. Documentation and README
 
 By following these steps, you'll systematically build the UI for the Flock Social Media Platform from scratch, adhering to best practices and ensuring smooth integration with the backend and authentication services. This detailed plan will also assist AI coding assistants like Cursor in generating appropriate code and maintaining consistency throughout the project.
