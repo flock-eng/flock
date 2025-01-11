@@ -44,14 +44,14 @@
     ];
 </script>
 
-<nav class="flex flex-col w-[280px] h-screen border-r border-gray-200 bg-white px-4">
+<nav class="sidebar-container">
     <div class="py-4">
         <h1 class="text-2xl font-bold text-blue-500">Flock</h1>
     </div>
 
     <!-- User Greeting -->
     <div class="mb-6 flex items-center gap-3">
-        <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold">
+        <div class="user-avatar">
             {user.initials}
         </div>
         <div>
@@ -65,7 +65,7 @@
             <li>
                 <a
                     href={route.path}
-                    class="flex items-center gap-4 px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors"
+                    class="nav-link"
                     class:bg-gray-50={$activeRoute === route.path || 
                         (route.path.startsWith('/profile') && $activeRoute.startsWith('/profile'))}
                     class:font-semibold={$activeRoute === route.path || 
@@ -77,7 +77,7 @@
                         viewBox="0 0 24 24" 
                         stroke-width="1.5" 
                         stroke="currentColor"
-                        class="w-6 h-6"
+                        class="nav-icon"
                     >
                         <path stroke-linecap="round" stroke-linejoin="round" d={route.icon} />
                     </svg>
@@ -87,12 +87,12 @@
         {/each}
 
         <li class="pt-4">
-            <button class="w-full bg-blue-500 text-white rounded-xl py-3 px-8 font-semibold hover:bg-blue-600 transition-colors">
+            <button class="btn-primary w-full">
                 New Post
             </button>
         </li>
         <li>
-            <button class="w-full text-red-500 hover:text-red-600 py-3 px-8 font-semibold transition-colors text-left">
+            <button class="btn-danger w-full text-left">
                 Logout
             </button>
         </li>

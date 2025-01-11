@@ -1,3 +1,62 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+
+@layer components {
+  /* Layout */
+  .app-layout {
+    @apply grid grid-cols-[250px_1fr_300px] gap-5 min-h-screen p-5 bg-gray-50;
+  }
+
+  .sidebar-container {
+    @apply bg-white rounded-xl p-5 flex flex-col shadow-sm;
+  }
+
+  .main-content {
+    @apply bg-white rounded-xl shadow-sm flex flex-col;
+  }
+
+  /* Navigation */
+  .nav-link {
+    @apply flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors;
+  }
+
+  .nav-icon {
+    @apply w-5 h-5;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    @apply bg-black text-white rounded-lg py-3 px-4 font-medium hover:bg-gray-800 transition-colors flex items-center justify-center gap-2;
+  }
+
+  .btn-danger {
+    @apply text-red-500 py-3 px-4 rounded-lg hover:bg-red-50 transition-colors flex items-center justify-center gap-2;
+  }
+
+  /* Search */
+  .search-container {
+    @apply relative;
+  }
+
+  .search-icon {
+    @apply absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400;
+  }
+
+  .search-input {
+    @apply w-full pl-10 pr-4 py-2.5 bg-gray-100 border border-gray-200 rounded-lg focus:outline-none focus:border-gray-300 transition-colors;
+  }
+
+  /* User Profile */
+  .user-avatar {
+    @apply w-10 h-10 rounded-full bg-gray-800 text-white flex items-center justify-center font-medium;
+  }
+
+  .user-info {
+    @apply font-medium;
+  }
+
+  .user-handle {
+    @apply text-sm text-gray-500;
+  }
+}
