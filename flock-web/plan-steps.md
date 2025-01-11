@@ -568,18 +568,18 @@ Create a `README.md` with setup instructions, explaining how to run the project 
     - [x] Navigate to the Project Directory
     - [x] Install Dependencies
 2. Integrate Tailwind CSS
-    - [ ] Install Tailwind CSS and Dependencies
-    - [ ] Configure Tailwind CSS
-    - [ ] Include Tailwind in Your CSS
-    - [ ] Import `app.css` in `+layout.svelte`
+    - [x] Install Tailwind CSS and Dependencies
+    - [x] Configure Tailwind CSS
+    - [x] Include Tailwind in Your CSS
+    - [x] Import `app.css` in `+layout.svelte`
 3. Set Up Project Structure
 4. Configure TypeScript
 5. Implement Global Layout and Navigation
-    - [ ] Create a Sidebar Component
-    - [ ] Update the Layout File
+    - [x] Create a Sidebar Component
+    - [x] Update the Layout File
 6. Install and Set Up ConnectRPC and Protocol Buffers
-    - [ ] Configure pnpm for Buf Registry
-    - [ ] Install Packages
+    - [x] Configure pnpm for Buf Registry
+    - [x] Install Packages
 7. Create API Clients
     - [ ] Set Up the Transport and Clients
     - [ ] Create Mock API Clients
