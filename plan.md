@@ -41,6 +41,8 @@ Flock is a scalable, real-time social media platform focused on user engagement.
 - **Integrate TailwindCSS:**
   - Install TailwindCSS and configure it to work with SvelteKit.
   - Use JIT mode for faster builds and efficient styling.
+- **Package Manager:**
+  - Use `pnpm` as the package manager.
 
 ### File Structure
 
@@ -132,9 +134,9 @@ Flock is a scalable, real-time social media platform focused on user engagement.
 - **Install Packages:**
 
     ```bash
-    npm config set @buf:registry https://buf.build/gen/npm/v1/
-    npm install @buf/wcygan_flock.bufbuild_es@latest
-    npm install @bufbuild/connect-web
+    pnpm config set @buf:registry https://buf.build/gen/pnpm/v1/
+    pnpm install @buf/wcygan_flock.bufbuild_es@latest
+    pnpm install @bufbuild/connect-web
     ```
 
 - **Setup API Clients:**
@@ -217,16 +219,18 @@ Flock is a scalable, real-time social media platform focused on user engagement.
 # Dockerfile
 FROM node:18-alpine AS builder
 WORKDIR /app
+RUN corepack enable && corepack prepare pnpm@latest --activate
 COPY package*.json svelte.config.js vite.config.js ./
-RUN npm ci
+RUN pnpm install --frozen-lockfile
 COPY . .
-RUN npm run build
+RUN pnpm run build
 
 FROM node:18-alpine AS runner
 WORKDIR /app
+RUN corepack enable && corepack prepare pnpm@latest --activate
 COPY --from=builder /app/build ./build
 COPY package*.json ./
-RUN npm ci --only=production
+RUN pnpm install --frozen-lockfile --prod
 EXPOSE 3000
 CMD ["node", "build/index.js"]
 ```

@@ -2,6 +2,8 @@
 
 Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
 
+Uses `pnpm` as the package manager.
+
 ## Creating a project
 
 If you're seeing this, you've probably already done this step. Congrats!

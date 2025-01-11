@@ -6,9 +6,9 @@ Below is a breakdown of the Plan into atomic steps that you can follow to build 
 
 ### 1. Project Initialization
 
-#### 1.1. Install Node.js and npm (if not already installed)
+#### 1.1. Install Node.js and pnpm (if not already installed)
 
-Ensure you have Node.js (version 18.x) and npm installed on your system.
+Ensure you have Node.js (version 18.x) and pnpm installed on your system.
 
 #### 1.2. Create a New SvelteKit Project
 
@@ -36,7 +36,7 @@ cd flock-web
 #### 1.4. Install Dependencies
 
 ```bash
-npm install
+pnpm install
 ```
 
 ### 2. Integrate Tailwind CSS
@@ -44,7 +44,7 @@ npm install
 #### 2.1. Install Tailwind CSS and Dependencies
 
 ```bash
-npm install -D tailwindcss postcss autoprefixer
+pnpm install -D tailwindcss postcss autoprefixer
 npx tailwindcss init tailwind.config.cjs -p
 ```
 
@@ -182,17 +182,17 @@ File: `src/routes/+layout.svelte`
 
 ### 6. Install and Set Up ConnectRPC and Protocol Buffers
 
-#### 6.1. Configure npm for Buf Registry
+#### 6.1. Configure pnpm for Buf Registry
 
 ```bash
-npm config set @buf:registry https://buf.build/gen/npm/v1/
+pnpm config set @buf:registry https://buf.build/gen/pnpm/v1/
 ```
 
 #### 6.2. Install Packages
 
 ```bash
-npm install @buf/wcygan_flock.bufbuild_es@latest
-npm install @bufbuild/connect-web
+pnpm install @buf/wcygan_flock.bufbuild_es@latest
+pnpm install @bufbuild/connect-web
 ```
 
 ### 7. Create API Clients
@@ -368,7 +368,7 @@ Create similar pages in their respective routes.
 Install `@auth/core` and `@auth/sveltekit`:
 
 ```bash
-npm install @auth/core @auth/sveltekit
+pnpm install @auth/core @auth/sveltekit
 ```
 
 #### 11.2. Configure Authentication
@@ -417,17 +417,19 @@ File: `Dockerfile`
 # Stage 1: Build
 FROM node:18-alpine AS builder
 WORKDIR /app
-COPY package*.json svelte.config.js vite.config.js tsconfig.json ./
-RUN npm ci
+RUN corepack enable && corepack prepare pnpm@latest --activate
+COPY package.json pnpm-lock.yaml svelte.config.js vite.config.js tsconfig.json ./
+RUN pnpm install --frozen-lockfile
 COPY . .
-RUN npm run build
+RUN pnpm run build
 
 # Stage 2: Run
 FROM node:18-alpine AS runner
 WORKDIR /app
+RUN corepack enable && corepack prepare pnpm@latest --activate
 COPY --from=builder /app/build ./build
-COPY package*.json ./
-RUN npm ci --only=production
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile --prod
 EXPOSE 3000
 CMD ["node", "build"]
 ```
@@ -561,10 +563,10 @@ Create a `README.md` with setup instructions, explaining how to run the project 
 ## Checklist of Steps
 
 1. Project Initialization
-    - [ ] Install Node.js and npm
-    - [ ] Create a New SvelteKit Project (flock-web)
-    - [ ] Navigate to the Project Directory
-    - [ ] Install Dependencies
+    - [x] Install Node.js and pnpm
+    - [x] Create a New SvelteKit Project (flock-web)
+    - [x] Navigate to the Project Directory
+    - [x] Install Dependencies
 2. Integrate Tailwind CSS
     - [ ] Install Tailwind CSS and Dependencies
     - [ ] Configure Tailwind CSS
@@ -576,7 +578,7 @@ Create a `README.md` with setup instructions, explaining how to run the project 
     - [ ] Create a Sidebar Component
     - [ ] Update the Layout File
 6. Install and Set Up ConnectRPC and Protocol Buffers
-    - [ ] Configure npm for Buf Registry
+    - [ ] Configure pnpm for Buf Registry
     - [ ] Install Packages
 7. Create API Clients
     - [ ] Set Up the Transport and Clients
