@@ -7,27 +7,24 @@
 	<Sidebar />
 	<main class="flex-1 max-w-3xl border-x border-gray-200 bg-white min-h-screen">
 		<div class="sticky top-0 z-10 backdrop-blur-sm bg-white/90 border-b border-gray-200">
-			<div class="flex items-center gap-4 px-6 py-3">
-				<div class="flex-1">
-					<div class="relative">
-						<svg xmlns="http://www.w3.org/2000/svg" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-						</svg>
-						<input 
-							type="search" 
-							placeholder="Search Flock..." 
-							class="w-full pl-10 pr-4 py-2 bg-gray-100 border border-transparent rounded-xl focus:bg-white focus:border-gray-200 focus:ring-0 transition-colors"
-						>
-					</div>
+			<div class="px-6 py-3">
+				<div class="relative">
+					<svg xmlns="http://www.w3.org/2000/svg" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+					</svg>
+					<input 
+						type="search" 
+						placeholder="Search Flock..." 
+						class="w-full pl-10 pr-4 py-2 bg-gray-100 border border-transparent rounded-xl focus:bg-white focus:border-gray-200 focus:ring-0 transition-colors"
+					>
 				</div>
-				<h1 class="text-xl font-bold">Home</h1>
 			</div>
 		</div>
 		<div class="px-6">
 			<slot />
 		</div>
 	</main>
-	<aside class="hidden lg:block w-[380px] pl-8 pr-4 py-4">
+	<aside class="hidden lg:block w-[280px] pl-8 pr-4 py-4">
 		<div class="sticky top-4 space-y-6">
 			<!-- Advertisement -->
 			<div class="bg-white rounded-xl p-4 border border-gray-200">
