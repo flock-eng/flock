@@ -585,15 +585,15 @@ Create a `README.md` with setup instructions, explaining how to run the project 
     - [x] Create Mock API Clients
     - [x] Add tests for the mock API clients
 8. Implement the Home Page
-    - [ ] Create the Home Page Component
-    - [ ] Create the Post Component
+    - [x] Create the Home Page Component
+    - [x] Create the Post Component
 9. Implement the Profile Page
     - [ ] Create the Profile Page Route
 10. Implement Under Construction Pages
-    - [ ] Discover Page
-    - [ ] Notifications Page
-    - [ ] Messages Page
-    - [ ] Settings Page
+    - [x] Discover Page
+    - [x] Notifications Page
+    - [x] Messages Page
+    - [x] Settings Page
 11. Kubernetes Integration
     - [ ] Create a Dockerfile
     - [ ] Create Kubernetes Manifests
