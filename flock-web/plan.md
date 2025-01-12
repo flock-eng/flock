@@ -43,6 +43,9 @@ Flock is a scalable, real-time social media platform focused on user engagement.
   - Use JIT mode for faster builds and efficient styling.
 - **Package Manager:**
   - Use `pnpm` as the package manager.
+- **Development**
+  - Use `pnpm dev` to start the development server.
+  - Use `pnpm verify` to verify the codebase (format, lint, check). This is useful after new features and refactors are implemented.
 
 ### File Structure
 
