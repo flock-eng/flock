@@ -588,7 +588,7 @@ Create a `README.md` with setup instructions, explaining how to run the project 
     - [x] Create the Home Page Component
     - [x] Create the Post Component
 9. Implement the Profile Page
-    - [ ] Create the Profile Page Route
+    - [x] Create the Profile Page Route
 10. Implement Under Construction Pages
     - [x] Discover Page
     - [x] Notifications Page

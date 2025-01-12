@@ -22,3 +22,15 @@ pnpm run dev
 ```bash
 pnpm run test
 ```
+
+## Docker Build
+
+```bash
+docker build . -t wcygan/flock-web:latest
+```
+
+## Docker Run
+
+```bash
+docker run -p 3000:3000 wcygan/flock-web:latest
+```
