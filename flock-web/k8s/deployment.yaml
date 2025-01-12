@@ -17,13 +17,27 @@ spec:
     spec:
       containers:
         - name: flock-web
-          image: wcygan/flock-web:latest
+          image: wcygan/flock-web:svelte-v2
           imagePullPolicy: Always
           ports:
-            - containerPort: 3000
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 20
           env:
             - name: NODE_ENV
-              value: "development"
+              value: "production"
             - name: VITE_PUBLIC_API_BASE_URL
               valueFrom:
                 secretKeyRef:
