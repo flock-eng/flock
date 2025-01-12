@@ -14,7 +14,7 @@ References:
 
 ```bash
 pnpm install
-pnpm run dev
+pnpm dev
 ```
 
 ## Unit Tests
@@ -33,4 +33,16 @@ docker build . -t wcygan/flock-web:latest
 
 ```bash
 docker run -p 3000:3000 wcygan/flock-web:latest
+```
+
+## Linting
+
+```bash
+pnpm lint
+```
+
+## Formatting
+
+```bash
+pnpm format
 ```
