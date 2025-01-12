@@ -10,7 +10,9 @@
 
     onMount(async () => {
         try {
-            const response = await ApiClient.homePage.getHomePage({});
+            const response = await ApiClient.homePage.getHomePage({
+                $typeName: 'frontend.v1.GetHomePageRequest'
+            });
             posts = response.posts;
         } catch (e) {
             error = e instanceof Error ? e.message : 'Failed to load posts';
