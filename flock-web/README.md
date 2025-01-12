@@ -8,7 +8,7 @@ References:
 - [pnpm](https://pnpm.io/)
 - [sv](https://github.com/sveltejs/cli)
 - [Connect](https://connectrpc.com/)
-- [Buf](https://buf.build/) 
+- [Buf](https://buf.build/)
 
 ## Quick Start
 

@@ -55,13 +55,11 @@ Update `tailwind.config.cjs`:
 ```javascript
 /** @type {import('tailwindcss').Config} */
 export default {
-    content: [
-        './src/**/*.{html,js,svelte,ts}',
-    ],
-    theme: {
-        extend: {},
-    },
-    plugins: [],
+	content: ['./src/**/*.{html,js,svelte,ts}'],
+	theme: {
+		extend: {}
+	},
+	plugins: []
 };
 ```
 
@@ -79,18 +77,18 @@ Create a new file `src/app.css` (if not already present) and add:
 
 ```svelte
 <script>
-    // No script needed
+	// No script needed
 </script>
 
-<style>
-    /* Empty, styles are imported via app.css */
-</style>
-
 <svelte:head>
-    <link rel="stylesheet" href="/app.css">
+	<link rel="stylesheet" href="/app.css" />
 </svelte:head>
 
 <slot />
+
+<style>
+	/* Empty, styles are imported via app.css */
+</style>
 ```
 
 ### 3. Set Up Project Structure
@@ -120,16 +118,16 @@ Ensure strict TypeScript settings in `tsconfig.json`:
 
 ```json
 {
-    "extends": "./.svelte-kit/tsconfig.json",
-    "compilerOptions": {
-        "strict": true,
-        "moduleResolution": "node",
-        "esModuleInterop": true,
-        "forceConsistentCasingInFileNames": true,
-        "resolveJsonModule": true,
-        "skipLibCheck": true,
-        "sourceMap": true
-    }
+	"extends": "./.svelte-kit/tsconfig.json",
+	"compilerOptions": {
+		"strict": true,
+		"moduleResolution": "node",
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"resolveJsonModule": true,
+		"skipLibCheck": true,
+		"sourceMap": true
+	}
 }
 ```
 
@@ -141,24 +139,24 @@ File: `src/lib/components/Sidebar.svelte`
 
 ```svelte
 <script lang="ts">
-    import { page } from '$app/stores';
-    import { derived } from 'svelte/store';
+	import { page } from '$app/stores';
+	import { derived } from 'svelte/store';
 
-    const activeRoute = derived(page, ($page) => $page.url.pathname);
+	const activeRoute = derived(page, ($page) => $page.url.pathname);
 </script>
 
-<nav class="flex flex-col w-64 h-screen bg-gray-800 text-white">
-    <div class="p-4 font-bold text-xl">Flock</div>
-    <ul class="flex-1">
-        <li class="{activeRoute === '/' ? 'bg-gray-700' : ''}">
-            <a href="/" class="block p-4 hover:bg-gray-700">Home</a>
-        </li>
-        <li class="{activeRoute.startsWith('/profile') ? 'bg-gray-700' : ''}">
-            <a href="/profile/username" class="block p-4 hover:bg-gray-700">Profile</a>
-        </li>
-        <!-- Additional links for other pages -->
-    </ul>
-    <!-- Optional footer content -->
+<nav class="flex h-screen w-64 flex-col bg-gray-800 text-white">
+	<div class="p-4 text-xl font-bold">Flock</div>
+	<ul class="flex-1">
+		<li class={activeRoute === '/' ? 'bg-gray-700' : ''}>
+			<a href="/" class="block p-4 hover:bg-gray-700">Home</a>
+		</li>
+		<li class={activeRoute.startsWith('/profile') ? 'bg-gray-700' : ''}>
+			<a href="/profile/username" class="block p-4 hover:bg-gray-700">Profile</a>
+		</li>
+		<!-- Additional links for other pages -->
+	</ul>
+	<!-- Optional footer content -->
 </nav>
 ```
 
@@ -168,15 +166,15 @@ File: `src/routes/+layout.svelte`
 
 ```svelte
 <script lang="ts">
-    import '../app.css';
-    import Sidebar from '$lib/components/Sidebar.svelte';
+	import '../app.css';
+	import Sidebar from '$lib/components/Sidebar.svelte';
 </script>
 
 <div class="flex h-screen">
-    <Sidebar />
-    <main class="flex-1 overflow-auto">
-        <slot />
-    </main>
+	<Sidebar />
+	<main class="flex-1 overflow-auto">
+		<slot />
+	</main>
 </div>
 ```
 
@@ -209,13 +207,13 @@ import { HomePageService } from '@buf/wcygan_flock.bufbuild_es/frontend/v1/home_
 import { ProfilePageService } from '@buf/wcygan_flock.bufbuild_es/frontend/v1/profile_page_connect';
 
 const transport = createConnectTransport({
-    baseUrl: import.meta.env.VITE_PUBLIC_API_BASE_URL,
+	baseUrl: import.meta.env.VITE_PUBLIC_API_BASE_URL
 });
 
 export const ApiClient = {
-    posts: createPromiseClient(PostService, transport),
-    homePage: createPromiseClient(HomePageService, transport),
-    profilePage: createPromiseClient(ProfilePageService, transport),
+	posts: createPromiseClient(PostService, transport),
+	homePage: createPromiseClient(HomePageService, transport),
+	profilePage: createPromiseClient(ProfilePageService, transport)
 };
 ```
 
@@ -227,38 +225,38 @@ File: `src/lib/api/api-client-mock.ts`
 import type { Post } from '@buf/wcygan_flock.bufbuild_es/backend/v1/post_pb';
 
 export const ApiClientMock = {
-    homePage: {
-        getHomePage: async () => ({
-            posts: [
-                {
-                    id: '1',
-                    content: 'Welcome to Flock!',
-                    authorId: 'user1',
-                    createdAt: new Date().toISOString(),
-                },
-                // Add more fake posts as needed
-            ],
-        }),
-    },
-    profilePage: {
-        getProfilePage: async ({ username }) => ({
-            user: {
-                id: 'user1',
-                username,
-                bio: 'This is a mock bio.',
-            },
-            posts: [
-                {
-                    id: '2',
-                    content: 'My first post!',
-                    authorId: 'user1',
-                    createdAt: new Date().toISOString(),
-                },
-                // Add more fake posts as needed
-            ],
-        }),
-    },
-    // Add mocks for other services if needed
+	homePage: {
+		getHomePage: async () => ({
+			posts: [
+				{
+					id: '1',
+					content: 'Welcome to Flock!',
+					authorId: 'user1',
+					createdAt: new Date().toISOString()
+				}
+				// Add more fake posts as needed
+			]
+		})
+	},
+	profilePage: {
+		getProfilePage: async ({ username }) => ({
+			user: {
+				id: 'user1',
+				username,
+				bio: 'This is a mock bio.'
+			},
+			posts: [
+				{
+					id: '2',
+					content: 'My first post!',
+					authorId: 'user1',
+					createdAt: new Date().toISOString()
+				}
+				// Add more fake posts as needed
+			]
+		})
+	}
+	// Add mocks for other services if needed
 };
 ```
 
@@ -270,24 +268,24 @@ File: `src/routes/+page.svelte`
 
 ```svelte
 <script lang="ts">
-    import { onMount } from 'svelte';
-    import { ApiClientMock as ApiClient } from '$lib/api/api-client-mock';
-    import PostComponent from '$lib/components/PostComponent.svelte';
-    import type { Post } from '@buf/wcygan_flock.bufbuild_es/backend/v1/post_pb';
+	import { onMount } from 'svelte';
+	import { ApiClientMock as ApiClient } from '$lib/api/api-client-mock';
+	import PostComponent from '$lib/components/PostComponent.svelte';
+	import type { Post } from '@buf/wcygan_flock.bufbuild_es/backend/v1/post_pb';
 
-    let posts: Post[] = [];
+	let posts: Post[] = [];
 
-    onMount(async () => {
-        const response = await ApiClient.homePage.getHomePage({ postLimit: 10 });
-        posts = response.posts;
-    });
+	onMount(async () => {
+		const response = await ApiClient.homePage.getHomePage({ postLimit: 10 });
+		posts = response.posts;
+	});
 </script>
 
-<h1 class="text-2xl font-bold p-4">Home</h1>
+<h1 class="p-4 text-2xl font-bold">Home</h1>
 <div class="space-y-4 p-4">
-    {#each posts as post}
-        <PostComponent {post} />
-    {/each}
+	{#each posts as post}
+		<PostComponent {post} />
+	{/each}
 </div>
 ```
 
@@ -297,15 +295,15 @@ File: `src/lib/components/PostComponent.svelte`
 
 ```svelte
 <script lang="ts">
-    import type { Post } from '@buf/wcygan_flock.bufbuild_es/backend/v1/post_pb';
+	import type { Post } from '@buf/wcygan_flock.bufbuild_es/backend/v1/post_pb';
 
-    export let post: Post;
+	export let post: Post;
 </script>
 
-<div class="border rounded p-4 shadow">
-    <div class="font-semibold">{post.authorId}</div>
-    <div class="text-gray-600 text-sm">{new Date(post.createdAt).toLocaleString()}</div>
-    <p class="mt-2">{post.content}</p>
+<div class="rounded border p-4 shadow">
+	<div class="font-semibold">{post.authorId}</div>
+	<div class="text-sm text-gray-600">{new Date(post.createdAt).toLocaleString()}</div>
+	<p class="mt-2">{post.content}</p>
 </div>
 ```
 
@@ -317,30 +315,30 @@ File: `src/routes/profile/[username]/+page.svelte`
 
 ```svelte
 <script lang="ts">
-    import { onMount } from 'svelte';
-    import { ApiClientMock as ApiClient } from '$lib/api/api-client-mock';
-    import { page } from '$app/stores';
-    import { get } from 'svelte/store';
-    import PostComponent from '$lib/components/PostComponent.svelte';
-    import type { Post } from '@buf/wcygan_flock.bufbuild_es/backend/v1/post_pb';
+	import { onMount } from 'svelte';
+	import { ApiClientMock as ApiClient } from '$lib/api/api-client-mock';
+	import { page } from '$app/stores';
+	import { get } from 'svelte/store';
+	import PostComponent from '$lib/components/PostComponent.svelte';
+	import type { Post } from '@buf/wcygan_flock.bufbuild_es/backend/v1/post_pb';
 
-    const { username } = get(page).params;
-    let user;
-    let posts: Post[] = [];
+	const { username } = get(page).params;
+	let user;
+	let posts: Post[] = [];
 
-    onMount(async () => {
-        const response = await ApiClient.profilePage.getProfilePage({ username });
-        user = response.user;
-        posts = response.posts;
-    });
+	onMount(async () => {
+		const response = await ApiClient.profilePage.getProfilePage({ username });
+		user = response.user;
+		posts = response.posts;
+	});
 </script>
 
-<h1 class="text-2xl font-bold p-4">{user.username}'s Profile</h1>
+<h1 class="p-4 text-2xl font-bold">{user.username}'s Profile</h1>
 <p class="p-4">{user.bio}</p>
 <div class="space-y-4 p-4">
-    {#each posts as post}
-        <PostComponent {post} />
-    {/each}
+	{#each posts as post}
+		<PostComponent {post} />
+	{/each}
 </div>
 ```
 
@@ -353,8 +351,7 @@ For each of the under-construction pages, create a simple page displaying an "Un
 File: `src/routes/discover/+page.svelte`
 
 ```svelte
-<h1 class="text-2xl font-bold p-4">Discover</h1>
-<p class="p-4">Under Construction</p>
+<h1 class="p-4 text-2xl font-bold">Discover</h1><p class="p-4">Under Construction</p>
 ```
 
 #### 10.2. Repeat for Notifications, Messages, and Settings Pages
@@ -381,13 +378,13 @@ import KeycloakProvider from '@auth/core/providers/keycloak';
 import type { Handle } from '@sveltejs/kit';
 
 export const handle: Handle = SvelteKitAuth({
-    providers: [
-        KeycloakProvider({
-            clientId: process.env.KEYCLOAK_CLIENT_ID,
-            clientSecret: process.env.KEYCLOAK_CLIENT_SECRET,
-            issuer: process.env.KEYCLOAK_ISSUER,
-        }),
-    ],
+	providers: [
+		KeycloakProvider({
+			clientId: process.env.KEYCLOAK_CLIENT_ID,
+			clientSecret: process.env.KEYCLOAK_CLIENT_SECRET,
+			issuer: process.env.KEYCLOAK_ISSUER
+		})
+	]
 });
 ```
 
@@ -524,13 +521,13 @@ File: `vite.config.js`
 import { sveltekit } from '@sveltejs/kit/vite';
 
 export default {
-    plugins: [sveltekit()],
-    server: {
-        hmr: {
-            host: 'localhost',
-            clientPort: 3000,
-        },
-    },
+	plugins: [sveltekit()],
+	server: {
+		hmr: {
+			host: 'localhost',
+			clientPort: 3000
+		}
+	}
 };
 ```
 
@@ -563,32 +560,32 @@ Create a `README.md` with setup instructions, explaining how to run the project 
 ## Checklist of Steps
 
 1. Project Initialization
-    - [x] Install Node.js and pnpm
-    - [x] Create a New SvelteKit Project (flock-web)
-    - [x] Navigate to the Project Directory
-    - [x] Install Dependencies
+   - [x] Install Node.js and pnpm
+   - [x] Create a New SvelteKit Project (flock-web)
+   - [x] Navigate to the Project Directory
+   - [x] Install Dependencies
 2. Integrate Tailwind CSS
-    - [x] Install Tailwind CSS and Dependencies
-    - [x] Configure Tailwind CSS
-    - [x] Include Tailwind in Your CSS
-    - [x] Import `app.css` in `+layout.svelte`
+   - [x] Install Tailwind CSS and Dependencies
+   - [x] Configure Tailwind CSS
+   - [x] Include Tailwind in Your CSS
+   - [x] Import `app.css` in `+layout.svelte`
 3. Set Up Project Structure
 4. Configure TypeScript
 5. Implement Global Layout and Navigation
-    - [x] Create a Sidebar Component
-    - [x] Update the Layout File
+   - [x] Create a Sidebar Component
+   - [x] Update the Layout File
 6. Install and Set Up ConnectRPC and Protocol Buffers
-    - [x] Configure pnpm for Buf Registry
-    - [x] Install Packages
+   - [x] Configure pnpm for Buf Registry
+   - [x] Install Packages
 7. Create API Clients
-    - [x] Set Up the Transport and Clients
-    - [x] Create Mock API Clients
-    - [x] Add tests for the mock API clients
+   - [x] Set Up the Transport and Clients
+   - [x] Create Mock API Clients
+   - [x] Add tests for the mock API clients
 8. Implement the Home Page
-    - [x] Create the Home Page Component
-    - [x] Create the Post Component
+   - [x] Create the Home Page Component
+   - [x] Create the Post Component
 9. Implement the Profile Page
-    - [x] Create the Profile Page Route
+   - [x] Create the Profile Page Route
 10. Implement Under Construction Pages
     - [x] Discover Page
     - [x] Notifications Page
@@ -598,7 +595,7 @@ Create a `README.md` with setup instructions, explaining how to run the project 
     - [ ] Create a Dockerfile
     - [ ] Create Kubernetes Manifests
     - [ ] Configure WebSocket Support for HMR
-12. Frontend uses ConnectRPC to call the Backend API  
+12. Frontend uses ConnectRPC to call the Backend API
     - [ ] Create a Kubernetes Secret for the API Base URL
     - [ ] Add an environment variable for the API Base URL in the Kubernetes Deployment
     - [ ] Add an ingress rule for the frontend in the Kubernetes Ingress

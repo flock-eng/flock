@@ -133,67 +133,67 @@ Flock is a scalable, real-time social media platform focused on user engagement.
 
 - **Install Packages:**
 
-    ```bash
-    pnpm config set @buf:registry https://buf.build/gen/pnpm/v1/
-    pnpm install @buf/wcygan_flock.bufbuild_es@latest
-    pnpm install @bufbuild/connect-web
-    ```
+  ```bash
+  pnpm config set @buf:registry https://buf.build/gen/pnpm/v1/
+  pnpm install @buf/wcygan_flock.bufbuild_es@latest
+  pnpm install @bufbuild/connect-web
+  ```
 
 - **Setup API Clients:**
 
-    ```ts
-    // src/lib/api-client.ts
-    import { createPromiseClient } from "@bufbuild/connect";
-    import { createConnectTransport } from "@bufbuild/connect-web";
-    import { PostService } from "@buf/wcygan_flock.bufbuild_es/backend/v1/post_connect";
-    import { HomePageService } from "@buf/wcygan_flock.bufbuild_es/frontend/v1/home_page_connect";
-    import { ProfilePageService } from "@buf/wcygan_flock.bufbuild_es/frontend/v1/profile_page_connect";
+  ```ts
+  // src/lib/api-client.ts
+  import { createPromiseClient } from '@bufbuild/connect';
+  import { createConnectTransport } from '@bufbuild/connect-web';
+  import { PostService } from '@buf/wcygan_flock.bufbuild_es/backend/v1/post_connect';
+  import { HomePageService } from '@buf/wcygan_flock.bufbuild_es/frontend/v1/home_page_connect';
+  import { ProfilePageService } from '@buf/wcygan_flock.bufbuild_es/frontend/v1/profile_page_connect';
 
-    const transport = createConnectTransport({
-        baseUrl: import.meta.env.VITE_PUBLIC_API_BASE_URL,
-    });
+  const transport = createConnectTransport({
+  	baseUrl: import.meta.env.VITE_PUBLIC_API_BASE_URL
+  });
 
-    export const ApiClient = {
-        posts: createPromiseClient(PostService, transport),
-        homePage: createPromiseClient(HomePageService, transport),
-        profilePage: createPromiseClient(ProfilePageService, transport),
-    };
-    ```
+  export const ApiClient = {
+  	posts: createPromiseClient(PostService, transport),
+  	homePage: createPromiseClient(HomePageService, transport),
+  	profilePage: createPromiseClient(ProfilePageService, transport)
+  };
+  ```
 
 - **Stubbed API Calls:**
 
-    ```ts
-    // src/lib/api-client-mock.ts
-    // Mock implementations returning fake data
-    export const ApiClientMock = {
-        // ...implement mock methods
-    };
-    ```
+  ```ts
+  // src/lib/api-client-mock.ts
+  // Mock implementations returning fake data
+  export const ApiClientMock = {
+  	// ...implement mock methods
+  };
+  ```
 
 - **Usage in Svelte Components:**
 
-    ```svelte
-    <!-- src/routes/+page.svelte -->
-    <script lang="ts">
-        import { onMount } from 'svelte';
-        import { ApiClientMock as ApiClient } from '$lib/api-client-mock';
-        import PostComponent from '$components/PostComponent.svelte';
-        import type { Post } from "@buf/wcygan_flock.bufbuild_es/backend/v1/post_pb";
+  ```svelte
+  <!-- src/routes/+page.svelte -->
+  <script lang="ts">
+  	import { onMount } from 'svelte';
+  	import { ApiClientMock as ApiClient } from '$lib/api-client-mock';
+  	import PostComponent from '$components/PostComponent.svelte';
+  	import type { Post } from '@buf/wcygan_flock.bufbuild_es/backend/v1/post_pb';
 
-        let posts: Post[] = [];
+  	let posts: Post[] = [];
 
-        onMount(async () => {
-            const response = await ApiClient.homePage.getHomePage({ postLimit: 10 });
-            posts = response.posts;
-        });
-    </script>
+  	onMount(async () => {
+  		const response = await ApiClient.homePage.getHomePage({ postLimit: 10 });
+  		posts = response.posts;
+  	});
+  </script>
 
-    <div>
-        {#each posts as post}
-            <PostComponent {post} />
-        {/each}
-    </div>
-    ```
+  <div>
+  	{#each posts as post}
+  		<PostComponent {post} />
+  	{/each}
+  </div>
+  ```
 
 ### Authentication with Keycloak
 
@@ -249,32 +249,33 @@ CMD ["node", "build/index.js"]
 ### WebSocket Connection for HMR During Development
 
 - **Configure Vite for HMR:**
+
   - Adjust `vite.config.js` to enable HMR over network if developing remotely.
   - Set `server.hmr.host` and `server.hmr.clientPort` appropriately.
 
 - **Ingress Annotations for WebSocket Support:**
 
-    ```yaml
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
-    nginx.ingress.kubernetes.io/proxy-http-version: "1.1"
-    nginx.ingress.kubernetes.io/proxy-connection: "keep-alive"
-    nginx.ingress.kubernetes.io/connection-proxy-header: "keep-alive"
-    nginx.ingress.kubernetes.io/proxy-set-headers: "ingress-nginx/custom-headers"
-    ```
+  ```yaml
+  nginx.ingress.kubernetes.io/backend-protocol: 'HTTP'
+  nginx.ingress.kubernetes.io/proxy-read-timeout: '3600'
+  nginx.ingress.kubernetes.io/proxy-send-timeout: '3600'
+  nginx.ingress.kubernetes.io/proxy-http-version: '1.1'
+  nginx.ingress.kubernetes.io/proxy-connection: 'keep-alive'
+  nginx.ingress.kubernetes.io/connection-proxy-header: 'keep-alive'
+  nginx.ingress.kubernetes.io/proxy-set-headers: 'ingress-nginx/custom-headers'
+  ```
 
 - **Custom Headers ConfigMap:**
 
-    ```yaml
-    apiVersion: v1
-    kind: ConfigMap
-    metadata:
-        name: custom-headers
-    data:
-        Upgrade: "websocket"
-        Connection: "Upgrade"
-    ```
+  ```yaml
+  apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: custom-headers
+  data:
+    Upgrade: 'websocket'
+    Connection: 'Upgrade'
+  ```
 
 ## Additional Considerations
 
@@ -339,27 +340,28 @@ Generated by Repomix on: 2025-01-11T20:42:08.479Z
 File Summary
 ================================================================
 
-Purpose:
---------
+## Purpose:
+
 This file contains a packed representation of the entire repository's contents.
 It is designed to be easily consumable by AI systems for analysis, code review,
 or other automated processes.
 
-File Format:
-------------
+## File Format:
+
 The content is organized as follows:
+
 1. This summary section
 2. Repository information
 3. Directory structure
 4. Multiple file entries, each consisting of:
-  a. A separator line (================)
-  b. The file path (File: path/to/file)
-  c. Another separator line
-  d. The full contents of the file
-  e. A blank line
+   a. A separator line (================)
+   b. The file path (File: path/to/file)
+   c. Another separator line
+   d. The full contents of the file
+   e. A blank line
 
-Usage Guidelines:
------------------
+## Usage Guidelines:
+
 - This file should be treated as read-only. Any changes should be made to the
   original repository files, not this packed version.
 - When processing this file, use the file path to distinguish
@@ -367,16 +369,15 @@ Usage Guidelines:
 - Be aware that this file may contain sensitive information. Handle it with
   the same level of security as you would the original repository.
 
-Notes:
-------
+## Notes:
+
 - Some files may have been excluded based on .gitignore rules and Repomix's
   configuration.
 - Binary files are not included in this packed representation. Please refer to
   the Repository Structure section for a complete list of file paths, including
   binary files.
 
-Additional Info:
-----------------
+## Additional Info:
 
 For more information about Repomix, visit: https://github.com/yamadashy/repomix
 
@@ -384,13 +385,13 @@ For more information about Repomix, visit: https://github.com/yamadashy/repomix
 Directory Structure
 ================================================================
 backend/
-  v1/
-    post.proto
-    profile.proto
+v1/
+post.proto
+profile.proto
 frontend/
-  v1/
-    home_page.proto
-    profile_page.proto
+v1/
+home_page.proto
+profile_page.proto
 buf.yaml
 
 ================================================================
@@ -408,106 +409,106 @@ package backend.v1;
 
 // The service responsible for managing posts.
 service PostService {
-  // Create a post.
-  rpc CreatePost(CreatePostRequest) returns (CreatePostResponse);
+// Create a post.
+rpc CreatePost(CreatePostRequest) returns (CreatePostResponse);
 
-  // Get a post by ID.
-  rpc GetPost(GetPostRequest) returns (GetPostResponse);
+// Get a post by ID.
+rpc GetPost(GetPostRequest) returns (GetPostResponse);
 
-  // Get a batch of posts by IDs.
-  rpc BatchGetPosts(BatchGetPostsRequest) returns (BatchGetPostsResponse);
+// Get a batch of posts by IDs.
+rpc BatchGetPosts(BatchGetPostsRequest) returns (BatchGetPostsResponse);
 
-  // List the most recent posts.
-  rpc ListMostRecentPosts(ListMostRecentPostsRequest) returns (ListMostRecentPostsResponse);
+// List the most recent posts.
+rpc ListMostRecentPosts(ListMostRecentPostsRequest) returns (ListMostRecentPostsResponse);
 
-  // List the most recent posts by a user.
-  rpc ListMostRecentPostsByUser(ListMostRecentPostsByUserRequest) returns (ListMostRecentPostsByUserResponse);
+// List the most recent posts by a user.
+rpc ListMostRecentPostsByUser(ListMostRecentPostsByUserRequest) returns (ListMostRecentPostsByUserResponse);
 }
 
 // A unique key for a post.
 message PostKey {
-  string id = 1;
+string id = 1;
 }
 
 // A post is a message posted by a user.
 message Post {
-  // The ID of the post.
-  PostKey id = 1;
+// The ID of the post.
+PostKey id = 1;
 
-  // The author of the post.
-  MiniProfile author = 2;
+// The author of the post.
+MiniProfile author = 2;
 
-  // The content of the post.
-  string content = 3;
+// The content of the post.
+string content = 3;
 
-  // The time the post was created.
-  int64 created_at = 4; // Unix epoch timestamp
+// The time the post was created.
+int64 created_at = 4; // Unix epoch timestamp
 }
 
 // A request to create a post.
 message CreatePostRequest {
-  // The author of the post.
-  ProfileKey author = 1;
+// The author of the post.
+ProfileKey author = 1;
 
-  // The content of the post.
-  string content = 2;
+// The content of the post.
+string content = 2;
 }
 
 // Response for CreatePost RPC.
 message CreatePostResponse {
-  // The created post.
-  Post post = 1;
+// The created post.
+Post post = 1;
 }
 
 // A request to get a post.
 message GetPostRequest {
-  // The ID of the post to get.
-  PostKey id = 1;
+// The ID of the post to get.
+PostKey id = 1;
 }
 
 // Response for GetPost RPC.
 message GetPostResponse {
-  // The requested post.
-  Post post = 1;
+// The requested post.
+Post post = 1;
 }
 
 // A request to get a batch of posts by IDs.
 message BatchGetPostsRequest {
-  // The IDs of the posts to get.
-  repeated PostKey ids = 1;
+// The IDs of the posts to get.
+repeated PostKey ids = 1;
 }
 
 // A response containing a batch of posts.
 message BatchGetPostsResponse {
-  // A batch of posts.
-  repeated Post posts = 1;
+// A batch of posts.
+repeated Post posts = 1;
 }
 
 // A request to list the most recent posts.
 message ListMostRecentPostsRequest {
-  // The maximum number of posts to return.
-  int32 post_limit = 1;
+// The maximum number of posts to return.
+int32 post_limit = 1;
 }
 
 // A response containing the most recent posts.
 message ListMostRecentPostsResponse {
-  // The list of posts.
-  repeated Post posts = 1;
+// The list of posts.
+repeated Post posts = 1;
 }
 
 // A request to list the most recent posts by a user.
 message ListMostRecentPostsByUserRequest {
-  // The author whose posts to list.
-  ProfileKey author = 1;
+// The author whose posts to list.
+ProfileKey author = 1;
 
-  // The maximum number of posts to return.
-  int32 post_limit = 2;
+// The maximum number of posts to return.
+int32 post_limit = 2;
 }
 
 // A response containing the most recent posts by a user.
 message ListMostRecentPostsByUserResponse {
-  // The list of posts.
-  repeated Post posts = 1;
+// The list of posts.
+repeated Post posts = 1;
 }
 
 ================
@@ -519,31 +520,31 @@ package backend.v1;
 
 // A unique key for a profile.
 message ProfileKey {
-  string id = 1;
+string id = 1;
 }
 
 // Detailed user information. Used to render the Profile page.
 message Profile {
-  MiniProfile summary = 1;
-  optional string bio = 2;
+MiniProfile summary = 1;
+optional string bio = 2;
 }
 
 // Basic user information.
 message MiniProfile {
-  ProfileKey key = 1;
-  string username = 2;
-  string first_name = 3;
-  string last_name = 4;
-  optional ProfilePicture profile_picture = 5;
+ProfileKey key = 1;
+string username = 2;
+string first_name = 3;
+string last_name = 4;
+optional ProfilePicture profile_picture = 5;
 }
 
 // Profile picture information.
 message ProfilePicture {
-  // The content of the profile picture.
-  oneof picture_type {
-    // Picture type that colors the profile picture with a color
-    string hex_color = 1;
-  }
+// The content of the profile picture.
+oneof picture_type {
+// Picture type that colors the profile picture with a color
+string hex_color = 1;
+}
 }
 
 ================
@@ -557,18 +558,18 @@ package frontend.v1;
 
 // The homepage service is responsible for loading the homepage.
 service HomePageService {
-  // Load the homepage.
-  rpc GetHomePage(GetHomePageRequest) returns (GetHomePageResponse);
+// Load the homepage.
+rpc GetHomePage(GetHomePageRequest) returns (GetHomePageResponse);
 }
 
 message GetHomePageRequest {
-  // Empty
+// Empty
 }
 
 // The homepage message contains the posts and profiles to display on the homepage.
 message GetHomePageResponse {
-  // The posts to display on the homepage.
-  repeated backend.v1.Post posts = 1;
+// The posts to display on the homepage.
+repeated backend.v1.Post posts = 1;
 }
 
 ================
@@ -582,23 +583,23 @@ import "backend/v1/profile.proto";
 package frontend.v1;
 
 service ProfilePageService {
-  // Gets a user's profile page.
-  rpc GetProfilePage(GetProfilePageRequest) returns (GetProfilePageResponse);
+// Gets a user's profile page.
+rpc GetProfilePage(GetProfilePageRequest) returns (GetProfilePageResponse);
 }
 
 // The user's profile page.
 message GetProfilePageResponse {
-  // The user's profile information.
-  backend.v1.MiniProfile user_details = 1;
+// The user's profile information.
+backend.v1.MiniProfile user_details = 1;
 
-  // The user's posts.
-  repeated backend.v1.Post posts = 2;
+// The user's posts.
+repeated backend.v1.Post posts = 2;
 }
 
 // Request for getting a user's profile page.
 message GetProfilePageRequest {
-  // The key of the profile to fetch
-  backend.v1.ProfileKey profile = 1;
+// The key of the profile to fetch
+backend.v1.ProfileKey profile = 1;
 }
 
 ================
@@ -607,8 +608,6 @@ File: buf.yaml
 version: v1
 name: buf.build/wcygan/flock
 breaking:
-  use:
-    - FILE
+use: - FILE
 lint:
-  use:
-    - STANDARD
+use: - STANDARD

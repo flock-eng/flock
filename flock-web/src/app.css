@@ -3,60 +3,60 @@
 @import 'tailwindcss/utilities';
 
 @layer components {
-  /* Layout */
-  .app-layout {
-    @apply grid grid-cols-[250px_1fr_300px] gap-5 min-h-screen p-5 bg-gray-50;
-  }
+	/* Layout */
+	.app-layout {
+		@apply grid min-h-screen grid-cols-[250px_1fr_300px] gap-5 bg-gray-50 p-5;
+	}
 
-  .sidebar-container {
-    @apply bg-white rounded-xl p-5 flex flex-col shadow-sm;
-  }
+	.sidebar-container {
+		@apply flex flex-col rounded-xl bg-white p-5 shadow-sm;
+	}
 
-  .main-content {
-    @apply bg-white rounded-xl shadow-sm flex flex-col;
-  }
+	.main-content {
+		@apply flex flex-col rounded-xl bg-white shadow-sm;
+	}
 
-  /* Navigation */
-  .nav-link {
-    @apply flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors;
-  }
+	/* Navigation */
+	.nav-link {
+		@apply flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-gray-100;
+	}
 
-  .nav-icon {
-    @apply w-5 h-5;
-  }
+	.nav-icon {
+		@apply h-5 w-5;
+	}
 
-  /* Buttons */
-  .btn-primary {
-    @apply bg-black text-white rounded-lg py-3 px-4 font-medium hover:bg-gray-800 transition-colors flex items-center justify-center gap-2;
-  }
+	/* Buttons */
+	.btn-primary {
+		@apply flex items-center justify-center gap-2 rounded-lg bg-black px-4 py-3 font-medium text-white transition-colors hover:bg-gray-800;
+	}
 
-  .btn-danger {
-    @apply text-red-500 py-3 px-4 rounded-lg hover:bg-red-50 transition-colors flex items-center justify-center gap-2;
-  }
+	.btn-danger {
+		@apply flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-red-500 transition-colors hover:bg-red-50;
+	}
 
-  /* Search */
-  .search-container {
-    @apply relative;
-  }
+	/* Search */
+	.search-container {
+		@apply relative;
+	}
 
-  .search-icon {
-    @apply absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400;
-  }
+	.search-icon {
+		@apply absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400;
+	}
 
-  .search-input {
-    @apply w-full pl-10 pr-4 py-2.5 bg-gray-100 border border-gray-200 rounded-lg focus:outline-none focus:border-gray-300 transition-colors;
-  }
+	.search-input {
+		@apply w-full rounded-lg border border-gray-200 bg-gray-100 py-2.5 pl-10 pr-4 transition-colors focus:border-gray-300 focus:outline-none;
+	}
 
-  /* User Profile */
-  .user-avatar {
-    @apply w-10 h-10 rounded-full bg-gray-800 text-white flex items-center justify-center font-medium;
-  }
+	/* User Profile */
+	.user-avatar {
+		@apply flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 font-medium text-white;
+	}
 
-  .user-info {
-    @apply font-medium;
-  }
+	.user-info {
+		@apply font-medium;
+	}
 
-  .user-handle {
-    @apply text-sm text-gray-500;
-  }
+	.user-handle {
+		@apply text-sm text-gray-500;
+	}
 }
