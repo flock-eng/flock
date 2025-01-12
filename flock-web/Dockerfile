@@ -6,7 +6,7 @@ WORKDIR /app
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
 # Install dependencies
-COPY package.json pnpm-lock.yaml svelte.config.js vite.config.js tsconfig.json ./
+COPY package.json pnpm-lock.yaml svelte.config.js vite.config.ts tsconfig.json ./
 RUN pnpm install --frozen-lockfile
 
 # Copy source code and build
