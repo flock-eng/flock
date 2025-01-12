@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: flock-web
-          image: wcygan/flock-web:svelte-v2
+          image: wcygan/flock-web:svelte
           imagePullPolicy: Always
           ports:
             - name: http

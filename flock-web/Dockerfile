@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM --platform=linux/amd64 node:18-alpine AS builder
+FROM node:18-alpine AS builder
 WORKDIR /app
 
 # Enable pnpm and install dependencies
@@ -14,7 +14,7 @@ RUN pnpm run build
 RUN pnpm prune --prod
 
 # Stage 2: Run
-FROM --platform=linux/amd64 node:18-alpine AS runner
+FROM node:18-alpine AS runner
 WORKDIR /app
 
 # Enable pnpm in runner stage

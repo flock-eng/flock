@@ -26,13 +26,16 @@ pnpm run test
 ## Docker Build
 
 ```bash
-docker build . -t wcygan/flock-web:latest
+docker buildx version
+docker buildx create --use
+docker buildx inspect --bootstrap
+docker buildx build --platform linux/amd64,linux/arm64 -t wcygan/flock-web:svelte --push .
 ```
 
 ## Docker Run
 
 ```bash
-docker run -p 3000:3000 wcygan/flock-web:latest
+docker run -p 3000:3000 wcygan/flock-web:svelte
 ```
 
 ## Linting

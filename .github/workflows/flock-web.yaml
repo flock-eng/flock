@@ -111,8 +111,8 @@ jobs:
           file: ./flock-web/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          cache-from: type=registry,ref=wcygan/flock-web:latest
+          cache-from: type=registry,ref=wcygan/flock-web:svelte
           cache-to: type=inline
           tags: |
-            wcygan/flock-web:latest
+            wcygan/flock-web:svelte
             wcygan/flock-web:${{ env.VERSION }}
