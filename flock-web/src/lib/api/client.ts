@@ -9,7 +9,7 @@ const createTransport = (baseUrl: string) => {
     return createConnectTransport({
         baseUrl,
         // Add any additional transport configuration here
-        useBinaryFormat: true,
+        useBinaryFormat: false,
     });
 };
 
