@@ -37,7 +37,7 @@ importers:
         specifier: ^5.2.9
         version: 5.2.11(@sveltejs/kit@2.15.2(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.17.3)(vite@6.0.7(jiti@1.21.7)(yaml@2.7.0)))(svelte@5.17.3)(vite@6.0.7(jiti@1.21.7)(yaml@2.7.0)))
       '@sveltejs/kit':
-        specifier: ^2.0.0
+        specifier: 2.15.2
         version: 2.15.2(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.17.3)(vite@6.0.7(jiti@1.21.7)(yaml@2.7.0)))(svelte@5.17.3)(vite@6.0.7(jiti@1.21.7)(yaml@2.7.0))
       '@sveltejs/vite-plugin-svelte':
         specifier: ^5.0.3
