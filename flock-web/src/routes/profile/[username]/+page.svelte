@@ -3,6 +3,7 @@
     import { page } from '$app/stores';
     import { ApiClientMock as api } from '$lib/api/mock-client';
     import type { Post, MiniProfile } from '$lib/api';
+    import PostComponent from '$lib/components/PostComponent.svelte';
 
     let userDetails: MiniProfile | undefined;
     let posts: Post[] = [];
@@ -13,8 +14,6 @@
 
     onMount(async () => {
         try {
-            // In a real app, we'd have a way to get the profile ID from the username
-            // For now, we'll just use the username as the ID
             const mockProfileId = username;
             const response = await api.profilePage.getProfilePage({
                 profile: { $typeName: 'backend.v1.ProfileKey', id: mockProfileId }
@@ -40,10 +39,10 @@
         </div>
     {:else if userDetails}
         <!-- Profile Header -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
             <div class="flex items-center gap-4">
                 <!-- Profile Picture -->
-                <div class="w-24 h-24 rounded-full flex items-center justify-center text-white text-2xl"
+                <div class="user-avatar w-24 h-24 text-2xl"
                      style="background-color: {userDetails.profilePicture?.pictureType?.case === 'hexColor' 
                         ? userDetails.profilePicture.pictureType.value 
                         : '#4A90E2'}">
@@ -53,7 +52,7 @@
                 <!-- Profile Info -->
                 <div>
                     <h1 class="text-2xl font-bold">{userDetails.firstName} {userDetails.lastName}</h1>
-                    <p class="text-gray-600">@{userDetails.username}</p>
+                    <p class="user-handle">@{userDetails.username}</p>
                 </div>
             </div>
         </div>
@@ -65,25 +64,7 @@
                 <p class="text-gray-600">No posts yet.</p>
             {:else}
                 {#each posts as post}
-                    <div class="bg-white rounded-lg shadow-md p-4">
-                        <div class="flex items-center gap-2 mb-2">
-                            <!-- Author Avatar -->
-                            <div class="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm"
-                                 style="background-color: {post.author?.profilePicture?.pictureType?.case === 'hexColor' 
-                                    ? post.author.profilePicture.pictureType.value 
-                                    : '#4A90E2'}">
-                                {post.author?.firstName?.[0]}{post.author?.lastName?.[0]}
-                            </div>
-                            <div>
-                                <div class="font-semibold">{post.author?.firstName} {post.author?.lastName}</div>
-                                <div class="text-sm text-gray-600">@{post.author?.username}</div>
-                            </div>
-                        </div>
-                        <p class="text-gray-800">{post.content}</p>
-                        <div class="text-sm text-gray-500 mt-2">
-                            {new Date(Number(post.createdAt)).toLocaleString()}
-                        </div>
-                    </div>
+                    <PostComponent {post} />
                 {/each}
             {/if}
         </div>
