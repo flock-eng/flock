@@ -1,20 +1,10 @@
-import type {
-	Post,
-	PostKey,
-	CreatePostRequest,
-	GetPostRequest,
-	BatchGetPostsRequest,
-	ListMostRecentPostsRequest,
-	ListMostRecentPostsByUserRequest
-} from '@buf/wcygan_flock.bufbuild_es/backend/v1/post_pb';
+import type { Post, PostKey } from '@buf/wcygan_flock.bufbuild_es/backend/v1/post_pb';
 import type {
 	MiniProfile,
 	Profile,
 	ProfileKey,
 	ProfilePicture
 } from '@buf/wcygan_flock.bufbuild_es/backend/v1/profile_pb';
-import type { GetProfilePageRequest } from '@buf/wcygan_flock.bufbuild_es/frontend/v1/profile_page_pb';
-import type { GetHomePageResponse } from '@buf/wcygan_flock.bufbuild_es/frontend/v1/home_page_pb';
 import type { ApiClient } from './client';
 
 // Helper function to create a mock post

@@ -1,5 +1,4 @@
 <script lang="ts">
-	export let pageName: string;
 </script>
 
 <div class="flex min-h-[50vh] flex-col items-center justify-center p-8 text-center">
