@@ -23,18 +23,6 @@ spec:
             - name: http
               containerPort: 3000
               protocol: TCP
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
-            initialDelaySeconds: 10
-            periodSeconds: 5
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
-            initialDelaySeconds: 15
-            periodSeconds: 20
           env:
             - name: NODE_ENV
               value: "production"
