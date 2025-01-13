@@ -4,7 +4,7 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
-		"dev": "vite dev --port 3000",
+		"dev": "vite dev --port 3000 --host",
 		"build": "vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -13,7 +13,8 @@
 		"lint": "prettier --check . && eslint .",
 		"test:unit": "vitest",
 		"test": "pnpm run test:unit -- --run",
-		"verify": "pnpm format && pnpm lint && pnpm check"
+		"verify": "pnpm format && pnpm lint && pnpm check",
+		"intercept": "telepresence intercept flock-web --service flock-web --port 3000"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.3",
