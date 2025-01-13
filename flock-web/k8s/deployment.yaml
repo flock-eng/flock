@@ -17,44 +17,25 @@ spec:
     spec:
       containers:
         - name: flock-web
-          image: wcygan/flock-web:latest
+          image: wcygan/flock-web:svelte
           imagePullPolicy: Always
           ports:
-            - containerPort: 3000
+            - name: http
+              containerPort: 3000
+              protocol: TCP
           env:
             - name: NODE_ENV
-              value: "development"
-            - name: NEXT_PUBLIC_FLOCK_API_URL
+              value: "production"
+            - name: VITE_PUBLIC_API_BASE_URL
               valueFrom:
                 secretKeyRef:
                   name: tailnet-domain
                   key: api-origin
-            - name: KEYCLOAK_CLIENT_ID
-              valueFrom:
-                secretKeyRef:
-                  name: keycloak-credentials
-                  key: client_id
-            - name: KEYCLOAK_CLIENT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: keycloak-credentials
-                  key: client_secret
-            - name: KEYCLOAK_ISSUER
-              valueFrom:
-                secretKeyRef:
-                  name: keycloak-credentials
-                  key: issuer
-            # NextAuth configuration
-            - name: NEXTAUTH_URL
+            - name: VITE_PUBLIC_APP_URL
               valueFrom:
                 secretKeyRef:
                   name: nextauth-config
                   key: url
-            - name: AUTH_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: nextauth-config
-                  key: secret
           resources:
             requests:
               memory: "256Mi"
