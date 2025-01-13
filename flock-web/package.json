@@ -14,7 +14,10 @@
 		"test:unit": "vitest",
 		"test": "pnpm run test:unit -- --run",
 		"verify": "pnpm format && pnpm lint && pnpm check",
-		"intercept": "telepresence intercept flock-web --service flock-web --port 3000"
+		"connect": "telepresence connect",
+		"intercept": "telepresence intercept flock-web --service flock-web --port 3000",
+		"list": "telepresence list",
+		"leave": "telepresence leave flock-web"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.3",
