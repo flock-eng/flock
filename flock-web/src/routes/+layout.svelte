@@ -1,5 +1,14 @@
 <script lang="ts">
 	import '../app.css';
+	import Modal from '$lib/components/Modal.svelte';
+	import CreatePostForm from '$lib/components/CreatePostForm.svelte';
+
+	let isCreatePostModalOpen = false;
+
+	function handleCreatePostSuccess() {
+		isCreatePostModalOpen = false;
+		// TODO: Refresh the posts list
+	}
 </script>
 
 <div class="app-layout">
@@ -114,7 +123,7 @@
 		</nav>
 
 		<div class="flex flex-col gap-3">
-			<button class="btn-primary">
+			<button class="btn-primary" on:click={() => (isCreatePostModalOpen = true)}>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					class="nav-icon"
@@ -125,7 +134,7 @@
 				>
 					<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
 				</svg>
-				New Post
+				New Post!
 			</button>
 
 			<a href="/logout" class="btn-danger">
@@ -210,3 +219,14 @@
 		</div>
 	</aside>
 </div>
+
+<Modal
+	isOpen={isCreatePostModalOpen}
+	onClose={() => (isCreatePostModalOpen = false)}
+	title="Create a New Post"
+>
+	<CreatePostForm
+		onSuccess={handleCreatePostSuccess}
+		onCancel={() => (isCreatePostModalOpen = false)}
+	/>
+</Modal>
