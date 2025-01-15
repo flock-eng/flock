@@ -596,18 +596,19 @@ Create a `README.md` with setup instructions, explaining how to run the project 
     - [x] Create Kubernetes Manifests
     - [x] Configure WebSocket Support for HMR through Telepresence
 12. Frontend uses ConnectRPC to call the Backend API
-    - [ ] Create a Kubernetes Secret for the API Base URL
-    - [ ] Add an environment variable for the API Base URL in the Kubernetes Deployment
-    - [ ] Add an ingress rule for the frontend in the Kubernetes Ingress
+    - [x] Create a Kubernetes Secret for the API Base URL
+    - [x] Add an environment variable for the API Base URL in the Kubernetes Deployment
+    - [x] Add an ingress rule for the frontend in the Kubernetes Ingress
 13. Integrate Authentication with Keycloak
-    - [ ] Choose an Authentication Library
+    - [ ] Choose an Authentication Library. Maybe https://v2.lucia-auth.com/oauth/providers/keycloak/?
     - [ ] Configure Authentication
     - [ ] Configure Environment Variables
     - [ ] Protect Routes and Access Session
+    - [ ] (Flock Web) Add frontend middleware to pass the access token to the backend
+    - [ ] (Flock API) Add backend middleware to validate the access token before serving requests
 14. Set Up Development Tools
-    - [ ] Configure Vite for HMR Over Network
-    - [ ] Use Telepresence for Local Development
-    - [ ] Set Up Skaffold (Optional)
+    - [x] Use Telepresence for Local Development
+    - [x] Set Up Skaffold (Optional)
 15. Set Up CI/CD Pipeline
 16. Testing and Linting
     - [ ] Run ESLint and Prettier
