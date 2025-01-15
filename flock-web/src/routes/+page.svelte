@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { ApiClientMock as ApiClient } from '$lib/api/mock-client';
 	import PostComponent from '$lib/components/PostComponent.svelte';
 	import type { Post } from '@buf/wcygan_flock.bufbuild_es/backend/v1/post_pb';
+	import {api} from "$lib/api";
 
 	let posts: Post[] = [];
 	let loading = true;
@@ -10,9 +10,7 @@
 
 	onMount(async () => {
 		try {
-			const response = await ApiClient.homePage.getHomePage({
-				$typeName: 'frontend.v1.GetHomePageRequest'
-			});
+			const response = await api.homePage.getHomePage({});
 			posts = response.posts;
 		} catch (e) {
 			error = e instanceof Error ? e.message : 'Failed to load posts';
