@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { createApiClient } from '$lib/api/client';
 	import type { ProfileKey } from '@buf/wcygan_flock.bufbuild_es/backend/v1/profile_pb';
+	import {api} from "$lib/api";
 
 	export let onSuccess: () => void;
 	export let onCancel: () => void;
@@ -25,7 +25,6 @@
 		error = null;
 
 		try {
-			const api = createApiClient(import.meta.env.VITE_PUBLIC_API_BASE_URL);
 			await api.posts.createPost({
 				author: mockUser,
 				content: content.trim()
@@ -79,4 +78,4 @@
 			{/if}
 		</button>
 	</div>
-</form> 
+</form>
