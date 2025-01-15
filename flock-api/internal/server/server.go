@@ -1,24 +1,50 @@
 package server
 
 import (
-	"buf.build/gen/go/wcygan/flock/connectrpc/go/backend/v1/backendv1connect"
-	"buf.build/gen/go/wcygan/flock/connectrpc/go/frontend/v1/frontendv1connect"
+	"net/http"
+	"time"
+
 	"connectrpc.com/connect"
 	"connectrpc.com/grpcreflect"
 	"github.com/flock-eng/flock/flock-api/internal/home_page"
 	"github.com/flock-eng/flock/flock-api/internal/post"
 	"github.com/flock-eng/flock/flock-api/internal/profile_page"
-	"net/http"
-	"time"
+	"github.com/flock-eng/flock/flock-api/internal/service"
 )
 
-type Server struct {
-	mux *http.ServeMux
+// ServiceRegistry handles the registration of services and their reflection
+type ServiceRegistry struct {
+	mux             *http.ServeMux
+	reflectServices []string
+	interceptors    connect.HandlerOption
+}
 
-	// Services
-	homePageService *home_page.Service
-	postService     *post.Service
-	profileService  *profile_page.Service
+// NewServiceRegistry creates a new service registry with the given interceptors
+func NewServiceRegistry(mux *http.ServeMux, interceptors connect.HandlerOption) *ServiceRegistry {
+	return &ServiceRegistry{
+		mux:             mux,
+		reflectServices: make([]string, 0),
+		interceptors:    interceptors,
+	}
+}
+
+// RegisterService registers a service handler and adds it to reflection
+func (sr *ServiceRegistry) RegisterService(svc service.RegisterableService) {
+	path, handler := svc.HandlerFunc(sr.interceptors)
+	sr.mux.Handle(path, handler)
+	sr.reflectServices = append(sr.reflectServices, svc.ServiceName())
+}
+
+// InitializeReflection sets up the gRPC reflection handlers
+func (sr *ServiceRegistry) InitializeReflection() {
+	reflector := grpcreflect.NewStaticReflector(sr.reflectServices...)
+	sr.mux.Handle(grpcreflect.NewHandlerV1(reflector))
+	sr.mux.Handle(grpcreflect.NewHandlerV1Alpha(reflector))
+}
+
+type Server struct {
+	mux      *http.ServeMux
+	registry *ServiceRegistry
 }
 
 type Config struct {
@@ -42,47 +68,21 @@ func NewServer(cfg *Config) *Server {
 		mux: http.NewServeMux(),
 	}
 
-	s.initializeServices(cfg)
-	s.registerHandlers()
+	s.registry = NewServiceRegistry(s.mux, connect.WithInterceptors(LoggingInterceptor()))
+	s.initializeServices()
 	s.registerHealthCheck()
 
 	return s
 }
 
-func (s *Server) initializeServices(cfg *Config) {
-	s.homePageService = home_page.NewService()
-	s.postService = post.NewService()
-	s.profileService = profile_page.NewService()
+func (s *Server) initializeServices() {
+	// Register all services
+	s.registry.RegisterService(home_page.NewService())
+	s.registry.RegisterService(post.NewService())
+	s.registry.RegisterService(profile_page.NewService())
 
-	var reflectServiceNames []string
-	reflectServiceNames = append(reflectServiceNames,
-		frontendv1connect.HomePageServiceName,
-		backendv1connect.PostServiceName,
-		frontendv1connect.ProfilePageServiceName,
-	)
-
-	reflector := grpcreflect.NewStaticReflector(reflectServiceNames...)
-	s.mux.Handle(grpcreflect.NewHandlerV1(reflector))
-	s.mux.Handle(grpcreflect.NewHandlerV1Alpha(reflector))
-}
-
-func (s *Server) registerHandlers() {
-	interceptors := connect.WithInterceptors(LoggingInterceptor())
-
-	s.mux.Handle(frontendv1connect.NewHomePageServiceHandler(
-		home_page.NewHandler(s.homePageService),
-		interceptors,
-	))
-
-	s.mux.Handle(backendv1connect.NewPostServiceHandler(
-		post.NewHandler(s.postService),
-		interceptors,
-	))
-
-	s.mux.Handle(frontendv1connect.NewProfilePageServiceHandler(
-		profile_page.NewHandler(s.profileService),
-		interceptors,
-	))
+	// Initialize reflection after all services are registered
+	s.registry.InitializeReflection()
 }
 
 func (s *Server) registerHealthCheck() {
