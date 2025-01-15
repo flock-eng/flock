@@ -49,3 +49,19 @@ pnpm lint
 ```bash
 pnpm format
 ```
+
+## Telepresence
+
+```bash
+# Connect to the cluster
+pnpm run connect
+
+# Intercept traffic to flock-web in the cluster
+pnpm run intercept
+
+# List the intercepted services
+pnpm run list
+
+# Delete the intercept
+pnpm run leave
+```
