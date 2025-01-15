@@ -15,7 +15,7 @@ const createMockPost = (id: string, authorId: string, content: string): Post => 
 		$typeName: 'backend.v1.MiniProfile',
 		key: { $typeName: 'backend.v1.ProfileKey', id: authorId } as ProfileKey,
 		username: `user${authorId}`,
-		firstName: 'Mock',
+		firstName: 'Mocked',
 		lastName: 'User',
 		profilePicture: {
 			$typeName: 'backend.v1.ProfilePicture',

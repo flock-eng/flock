@@ -62,6 +62,6 @@ func init() {
 			log.Println("Loaded .env file")
 		}
 	} else {
-	    log.Println(".env file not found, skipping")
-    }
+		log.Println(".env file not found, skipping")
+	}
 }

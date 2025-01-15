@@ -15,10 +15,12 @@ const getApiBaseUrl = (): string => {
 export const createClient = (): ApiClient => {
 	// Use mock client if in development mode and mock flag is set
 	if (import.meta.env.DEV && import.meta.env.VITE_USE_MOCK_API === 'true') {
+		console.log('Using mock API client');
 		return createMockApiClient();
 	}
 
 	// Otherwise, use the real client
+	console.log('Using real API client');
 	return createApiClient(getApiBaseUrl());
 };
 

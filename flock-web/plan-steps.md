@@ -594,7 +594,7 @@ Create a `README.md` with setup instructions, explaining how to run the project 
 11. Kubernetes Integration
     - [x] Create a Dockerfile
     - [x] Create Kubernetes Manifests
-    - [ ] Configure WebSocket Support for HMR through Telepresence
+    - [x] Configure WebSocket Support for HMR through Telepresence
 12. Frontend uses ConnectRPC to call the Backend API
     - [ ] Create a Kubernetes Secret for the API Base URL
     - [ ] Add an environment variable for the API Base URL in the Kubernetes Deployment
