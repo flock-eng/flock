@@ -4,6 +4,7 @@ import (
 	"buf.build/gen/go/wcygan/flock/connectrpc/go/backend/v1/backendv1connect"
 	"buf.build/gen/go/wcygan/flock/connectrpc/go/frontend/v1/frontendv1connect"
 	"connectrpc.com/connect"
+	"connectrpc.com/grpcreflect"
 	"github.com/flock-eng/flock/flock-api/internal/home_page"
 	"github.com/flock-eng/flock/flock-api/internal/post"
 	"github.com/flock-eng/flock/flock-api/internal/profile_page"
@@ -52,6 +53,17 @@ func (s *Server) initializeServices(cfg *Config) {
 	s.homePageService = home_page.NewService()
 	s.postService = post.NewService()
 	s.profileService = profile_page.NewService()
+
+	var reflectServiceNames []string
+	reflectServiceNames = append(reflectServiceNames,
+		frontendv1connect.HomePageServiceName,
+		backendv1connect.PostServiceName,
+		frontendv1connect.ProfilePageServiceName,
+	)
+
+	reflector := grpcreflect.NewStaticReflector(reflectServiceNames...)
+	s.mux.Handle(grpcreflect.NewHandlerV1(reflector))
+	s.mux.Handle(grpcreflect.NewHandlerV1Alpha(reflector))
 }
 
 func (s *Server) registerHandlers() {
