@@ -600,7 +600,7 @@ Create a `README.md` with setup instructions, explaining how to run the project 
     - [x] Add an environment variable for the API Base URL in the Kubernetes Deployment
     - [x] Add an ingress rule for the frontend in the Kubernetes Ingress
 13. Integrate Authentication with Keycloak
-    - [ ] Choose an Authentication Library. Maybe https://v2.lucia-auth.com/oauth/providers/keycloak/ or https://next-auth.js.org/
+    - [ ] Choose an Authentication Library. https://authjs.dev/getting-started/installation?framework=SvelteKit + https://authjs.dev/getting-started/providers/keycloak
     - [ ] Configure Authentication
     - [ ] Configure Environment Variables
     - [ ] Protect Routes and Access Session

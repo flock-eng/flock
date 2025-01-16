@@ -4,6 +4,8 @@ KeyCloak is used as the identity and access management system.
 
 ## Steps after Cluster Deploymetnt
 
+Open the admin console:
+
 ```bash
 open "https://$(kubectl get ing keycloak -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')"
 ```

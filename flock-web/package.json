@@ -18,7 +18,8 @@
 		"intercept": "telepresence intercept flock-web --service flock-web --port 3000",
 		"list": "telepresence list",
 		"leave": "telepresence leave flock-web",
-		"tele": "pnpm run connect && pnpm run intercept"
+		"tele": "pnpm run connect && pnpm run intercept",
+		"tele-dev": "pnpm run tele && pnpm run dev"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.3",
