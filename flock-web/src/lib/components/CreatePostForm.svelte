@@ -40,19 +40,23 @@
 
 <form on:submit|preventDefault={handleSubmit} class="space-y-4">
 	<div>
+		<label for="post-content" class="sr-only">Post content</label>
 		<textarea
+			id="post-content"
 			bind:value={content}
 			placeholder="What's on your mind?"
 			class="h-32 w-full resize-none rounded-lg border border-gray-200 p-4 focus:border-blue-500 focus:outline-none"
 			maxlength="280"
-		/>
+			aria-invalid={error ? 'true' : 'false'}
+			aria-describedby={error ? 'post-error' : undefined}
+		></textarea>
 		<div class="mt-1 flex justify-between text-sm text-gray-500">
-			<span>{content.length}/280</span>
+			<span aria-live="polite">{content.length}/280 characters</span>
 		</div>
 	</div>
 
 	{#if error}
-		<div class="rounded-lg bg-red-50 p-3 text-sm text-red-600">
+		<div id="post-error" class="rounded-lg bg-red-50 p-3 text-sm text-red-600" role="alert">
 			{error}
 		</div>
 	{/if}
@@ -70,6 +74,7 @@
 			type="submit"
 			class="rounded-lg bg-blue-500 px-4 py-2 font-medium text-white hover:bg-blue-600 disabled:opacity-50"
 			disabled={isSubmitting}
+			aria-busy={isSubmitting}
 		>
 			{#if isSubmitting}
 				Posting...
