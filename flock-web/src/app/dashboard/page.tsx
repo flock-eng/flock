@@ -1,4 +1,4 @@
-import { auth, signOut } from "@/lib/auth"
+import { auth } from "@/lib/auth"
 import { Button } from "@/components/ui/button"
 
 export default async function DashboardPage() {
@@ -9,10 +9,7 @@ export default async function DashboardPage() {
       <div className="text-center">
         <h1 className="text-4xl font-bold mb-6">Welcome {session?.user?.name}</h1>
         <p className="text-xl mb-8">You are now signed in!</p>
-        <form action={async () => {
-          "use server"
-          await signOut()
-        }}>
+        <form action="/api/auth/signout" method="post">
           <Button type="submit" variant="outline" size="lg">
             Sign out
           </Button>
