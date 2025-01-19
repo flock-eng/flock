@@ -5,21 +5,52 @@ export async function handler(req: Request, ctx: MiddlewareHandlerContext) {
   const url = new URL(req.url);
   const { pathname } = url;
 
-  // Skip auth check for login, callback, and static routes
-  if (pathname.startsWith("/login") || 
-      pathname.startsWith("/callback") ||
-      pathname.startsWith("/static") || 
-      pathname.startsWith("/logo.svg")) {
+  // Skip auth check for public routes
+  const publicPaths = [
+    "/login",
+    "/callback",
+    "/static",
+    "/logo.svg",
+    "/favicon.ico",
+  ];
+
+  if (publicPaths.some(path => pathname.startsWith(path))) {
+    console.log(`[Auth] Allowing public path: ${pathname}`);
     return await ctx.next();
   }
 
   // Check for the presence of access token
   const cookies = getCookies(req.headers);
+  console.log(`[Auth] Checking auth for path: ${pathname}`);
+  console.log(`[Auth] Cookie present: ${!!cookies.kc_access_token}`);
+
   if (!cookies.kc_access_token) {
-    // No token => redirect to login
-    return Response.redirect(`${url.origin}/login`, 302);
+    console.log(`[Auth] No token found, redirecting to login`);
+    const loginUrl = new URL("/login", url.origin);
+    return new Response(null, {
+      status: 302,
+      headers: {
+        "Location": loginUrl.toString(),
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
+      },
+    });
   }
 
   // Let the request proceed
-  return await ctx.next();
+  console.log(`[Auth] Token found, proceeding with request`);
+  const response = await ctx.next();
+  
+  // Add cache control headers to the response
+  const headers = new Headers(response.headers);
+  headers.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  headers.set("Pragma", "no-cache");
+  headers.set("Expires", "0");
+  
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
 } 
