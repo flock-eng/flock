@@ -199,11 +199,11 @@ By following this framework-agnostic plan, you ensure:
 ## Implementation Roadmap
 
 ### Project Setup
-- [ ] Initialize framework project
-- [ ] Configure development environment
-- [ ] Create basic "Hello World" page
-- [ ] Set up basic Kubernetes manifests
-- [ ] Configure Telepresence for local development
+- [x] Initialize framework project
+- [x] Configure development environment
+- [x] Create basic "Hello World" page
+- [x] Set up basic Kubernetes manifests
+- [x] Configure Telepresence for local development
 
 ### Authentication
 - [ ] Set up Keycloak client
