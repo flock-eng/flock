@@ -1,5 +1,5 @@
-import { signIn } from "@/lib/auth"
 import { Button } from "@/components/ui/button"
+import { signIn } from "@/lib/auth"
 
 export default function LandingPage() {
   return (

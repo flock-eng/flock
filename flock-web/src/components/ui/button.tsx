@@ -1,30 +1,28 @@
 import { ButtonHTMLAttributes } from "react"
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "default" | "outline"
-  size?: "default" | "lg"
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'default' | 'outline'
+  size?: 'default' | 'lg'
 }
 
 export function Button({ 
   children, 
-  variant = "default", 
-  size = "default",
-  className = "",
+  variant = 'default', 
+  size = 'default',
+  className = '',
   ...props 
 }: ButtonProps) {
-  const baseStyles = "rounded-md font-medium transition-colors"
-  const variantStyles = {
-    default: "bg-blue-600 text-white hover:bg-blue-700",
-    outline: "border border-gray-300 hover:bg-gray-100"
-  }
-  const sizeStyles = {
-    default: "px-4 py-2",
-    lg: "px-6 py-3 text-lg"
-  }
+  const variantClasses = variant === 'outline' 
+    ? 'border border-gray-300 hover:bg-gray-100' 
+    : 'bg-blue-500 text-white hover:bg-blue-600'
+  
+  const sizeClasses = size === 'lg'
+    ? 'px-6 py-3 text-lg'
+    : 'px-4 py-2'
 
   return (
     <button
-      className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
+      className={`rounded-md transition-colors ${variantClasses} ${sizeClasses} ${className}`}
       {...props}
     >
       {children}
