@@ -4,7 +4,7 @@ import Link from 'next/link';
 import type { Post } from '@/lib/api';
 import { Heart, MessageCircle, Share2 } from 'lucide-react';
 import { Avatar } from './ui/Avatar';
-import { Button } from './ui/Button';
+import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardFooter } from './ui/Card';
 import { cn } from '@/lib/utils';
 
@@ -15,9 +15,9 @@ interface Props {
 
 export default function PostComponent({ post, className }: Props) {
   return (
-    <Card className={cn('border-x-0 rounded-none shadow-none', className)}>
-      <CardContent className="p-4">
-        <div className="flex gap-3">
+    <Card className={cn('border-x-0 rounded-none shadow-none hover:bg-surface-hover hover-transition', className)}>
+      <CardContent className="p-6">
+        <div className="flex gap-4">
           <Link href={`/profile/${post.author?.username}`}>
             <Avatar
               hexColor={
@@ -30,42 +30,42 @@ export default function PostComponent({ post, className }: Props) {
           </Link>
 
           <div className="flex-grow">
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-2">
               <Link
                 href={`/profile/${post.author?.username}`}
-                className="font-semibold hover:underline"
+                className="font-semibold text-text-primary hover:text-primary hover-transition"
               >
                 {post.author?.firstName} {post.author?.lastName}
               </Link>
-              <span className="text-gray-500">·</span>
+              <span className="text-text-muted">·</span>
               <Link
                 href={`/profile/${post.author?.username}`}
-                className="text-gray-500 hover:underline"
+                className="text-text-tertiary hover:text-primary hover-transition"
               >
                 @{post.author?.username}
               </Link>
-              <span className="text-gray-500">·</span>
-              <time className="text-gray-500">
+              <span className="text-text-muted">·</span>
+              <time className="text-text-tertiary">
                 {new Date(Number(post.createdAt)).toLocaleDateString()}
               </time>
             </div>
 
-            <p className="mt-2 whitespace-pre-wrap">{post.content}</p>
+            <p className="mt-3 text-text-secondary whitespace-pre-wrap leading-relaxed">{post.content}</p>
           </div>
         </div>
       </CardContent>
 
-      <CardFooter className="px-4 py-2 border-t">
-        <div className="flex gap-6 w-full">
-          <Button variant="ghost" size="sm" className="gap-2">
+      <CardFooter className="px-6 py-3 border-t border-surface-secondary">
+        <div className="flex gap-8 w-full">
+          <Button variant="ghost" size="sm" className="gap-2 text-text-tertiary hover:text-primary hover:bg-surface-secondary">
             <Heart className="w-5 h-5" />
             <span>0</span>
           </Button>
-          <Button variant="ghost" size="sm" className="gap-2">
+          <Button variant="ghost" size="sm" className="gap-2 text-text-tertiary hover:text-primary hover:bg-surface-secondary">
             <MessageCircle className="w-5 h-5" />
             <span>0</span>
           </Button>
-          <Button variant="ghost" size="sm" className="gap-2">
+          <Button variant="ghost" size="sm" className="gap-2 text-text-tertiary hover:text-primary hover:bg-surface-secondary">
             <Share2 className="w-5 h-5" />
             <span>0</span>
           </Button>
