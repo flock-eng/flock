@@ -1,5 +1,7 @@
+'use client'
+
 import { Button } from "@/components/ui/button"
-import Link from "next/link"
+import { signIn } from "next-auth/react"
 
 export default function LandingPage() {
   return (
@@ -7,11 +9,12 @@ export default function LandingPage() {
       <div className="text-center">
         <h1 className="text-4xl font-bold mb-6">Welcome to Flock</h1>
         <p className="text-xl mb-8">Sign in to get started</p>
-        <Link href="/login">
-          <Button size="lg">
-            Sign in
-          </Button>
-        </Link>
+        <Button 
+          onClick={() => signIn('keycloak')} 
+          size="lg"
+        >
+          Sign in with Keycloak
+        </Button>
       </div>
     </main>
   )
