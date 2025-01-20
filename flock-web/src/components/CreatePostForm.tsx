@@ -2,6 +2,10 @@
 
 import { useState } from 'react';
 import { api } from '@/lib/api';
+import { Avatar } from './ui/Avatar';
+import { Button } from './ui/Button';
+import { Card, CardContent, CardFooter } from './ui/Card';
+import { Textarea } from './ui/Textarea';
 
 interface Props {
   onSuccess?: () => void;
@@ -38,51 +42,55 @@ export default function CreatePostForm({ onSuccess, onCancel }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 border-b">
-      <div className="flex gap-3">
-        <div className="flex-shrink-0">
-          <div className="w-12 h-12 rounded-full bg-gray-200" />
-        </div>
+    <Card className="border-x-0 rounded-none shadow-none">
+      <form onSubmit={handleSubmit}>
+        <CardContent className="p-4">
+          <div className="flex gap-3">
+            <Avatar hexColor="#4A90E2" />
 
-        <div className="flex-grow">
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="What's happening?"
-            className="w-full min-h-[100px] resize-none border-0 focus:ring-0 text-lg"
-          />
+            <div className="flex-grow">
+              <Textarea
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                placeholder="What's happening?"
+                className="min-h-[100px] resize-none border-0 focus:ring-0 text-lg p-0"
+              />
 
-          {error && (
-            <div className="text-red-500 text-sm mb-2">{error}</div>
-          )}
+              {error && (
+                <div className="text-red-500 text-sm mt-2">{error}</div>
+              )}
+            </div>
+          </div>
+        </CardContent>
 
-          <div className="flex justify-between items-center mt-2">
+        <CardFooter className="px-4 py-3 border-t">
+          <div className="flex justify-between items-center w-full">
             <div className="text-sm text-gray-500">
               {content.length}/280
             </div>
 
             <div className="flex gap-2">
               {onCancel && (
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
                   onClick={onCancel}
                   disabled={loading}
-                  className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-full transition-colors"
                 >
                   Cancel
-                </button>
+                </Button>
               )}
-              <button
+              <Button
                 type="submit"
+                isLoading={loading}
                 disabled={loading || !content.trim()}
-                className="px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Posting...' : 'Post'}
-              </button>
+                Post
+              </Button>
             </div>
           </div>
-        </div>
-      </div>
-    </form>
+        </CardFooter>
+      </form>
+    </Card>
   );
-} 
+}

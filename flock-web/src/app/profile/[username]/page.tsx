@@ -7,6 +7,9 @@ import type { Post, MiniProfile } from '@/lib/api';
 import PostComponent from '@/components/PostComponent';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { Avatar } from '@/components/ui/Avatar';
+import { Card } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
 
 export default function ProfilePage() {
   const { username } = useParams() as { username: string };
@@ -34,24 +37,38 @@ export default function ProfilePage() {
   }, [username]);
 
   if (loading) {
-    return <div className="p-4 text-center">Loading profile...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="p-4 text-center text-red-500">{error}</div>;
+    return (
+      <Card className="m-4 p-4 text-center text-red-500 bg-red-50 border-red-100">
+        {error}
+      </Card>
+    );
   }
 
   if (!userDetails) {
-    return <div className="p-4 text-center">Profile not found.</div>;
+    return (
+      <Card className="m-4 p-4 text-center text-gray-500 bg-gray-50">
+        Profile not found.
+      </Card>
+    );
   }
 
   return (
     <div>
       <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-sm">
         <div className="flex items-center gap-4 p-4 border-b">
-          <Link href="/" className="hover:bg-gray-100 p-2 rounded-full">
-            <ArrowLeft className="w-5 h-5" />
-          </Link>
+          <Button variant="ghost" size="icon" asChild>
+            <Link href="/">
+              <ArrowLeft className="w-5 h-5" />
+            </Link>
+          </Button>
           <div>
             <h1 className="font-semibold text-xl">
               {userDetails.firstName} {userDetails.lastName}
@@ -63,19 +80,30 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      <div className="p-4 border-b">
-        <div
-          className="w-24 h-24 rounded-full mb-4"
-          style={{
-            backgroundColor: userDetails.profilePicture?.pictureType.case === 'hexColor'
-              ? userDetails.profilePicture.pictureType.value
-              : '#ccc'
-          }}
-        />
-        <h2 className="text-xl font-semibold">
-          {userDetails.firstName} {userDetails.lastName}
-        </h2>
-        <p className="text-gray-500">@{userDetails.username}</p>
+      <div className="relative">
+        <div className="h-32 bg-gray-200" />
+        <div className="px-4 pb-4 pt-16 border-b relative">
+          <div className="absolute -top-12 left-4">
+            <Avatar
+              size="lg"
+              hexColor={
+                userDetails.profilePicture?.pictureType.case === 'hexColor'
+                  ? userDetails.profilePicture.pictureType.value
+                  : undefined
+              }
+              alt={`${userDetails.firstName} ${userDetails.lastName}`}
+            />
+          </div>
+
+          <div className="flex justify-end mb-4">
+            <Button variant="secondary">Edit Profile</Button>
+          </div>
+
+          <h2 className="text-xl font-semibold">
+            {userDetails.firstName} {userDetails.lastName}
+          </h2>
+          <p className="text-gray-500">@{userDetails.username}</p>
+        </div>
       </div>
 
       <div className="border-b px-4 py-3">
@@ -83,12 +111,16 @@ export default function ProfilePage() {
       </div>
 
       {posts.length === 0 ? (
-        <div className="p-4 text-center text-gray-500">No posts yet.</div>
+        <Card className="m-4 p-4 text-center text-gray-500 bg-gray-50">
+          No posts yet.
+        </Card>
       ) : (
-        posts.map((post) => (
-          <PostComponent key={post.id?.id} post={post} />
-        ))
+        <div className="divide-y">
+          {posts.map((post) => (
+            <PostComponent key={post.id?.id} post={post} />
+          ))}
+        </div>
       )}
     </div>
   );
-} 
+}

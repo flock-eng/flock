@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/Button"
 import { signIn } from "next-auth/react"
 import { useState } from "react"
 import { Loader2 } from "lucide-react"
@@ -24,7 +24,7 @@ export default function LoginPage() {
       <div className="text-center">
         <h1 className="text-4xl font-bold mb-6">Welcome to Flock</h1>
         <p className="text-xl mb-8">Sign in to get started</p>
-        <Button 
+        <Button
           onClick={handleSignIn}
           size="lg"
           disabled={isLoading}
@@ -35,4 +35,4 @@ export default function LoginPage() {
       </div>
     </main>
   )
-} 
+}
