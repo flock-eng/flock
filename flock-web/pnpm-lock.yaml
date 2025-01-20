@@ -11,24 +11,33 @@ importers:
       '@buf/wcygan_flock.bufbuild_es':
         specifier: 2.2.3-20241231000219-b035f3c109ea.1
         version: 2.2.3-20241231000219-b035f3c109ea.1(@bufbuild/protobuf@2.2.3)
+      '@buf/wcygan_flock.connectrpc_query-es':
+        specifier: 2.0.1-20241231000219-b035f3c109ea.1
+        version: 2.0.1-20241231000219-b035f3c109ea.1(@bufbuild/protobuf@2.2.3)(@connectrpc/connect-query@2.0.1(@bufbuild/protobuf@2.2.3)(@connectrpc/connect@2.0.1(@bufbuild/protobuf@2.2.3))(@tanstack/query-core@5.64.2)(@tanstack/react-query@5.64.2(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0))
       '@connectrpc/connect':
         specifier: ^2.0.1
         version: 2.0.1(@bufbuild/protobuf@2.2.3)
+      '@connectrpc/connect-query':
+        specifier: ^2.0.1
+        version: 2.0.1(@bufbuild/protobuf@2.2.3)(@connectrpc/connect@2.0.1(@bufbuild/protobuf@2.2.3))(@tanstack/query-core@5.64.2)(@tanstack/react-query@5.64.2(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@connectrpc/connect-web':
         specifier: ^2.0.1
         version: 2.0.1(@bufbuild/protobuf@2.2.3)(@connectrpc/connect@2.0.1(@bufbuild/protobuf@2.2.3))
+      '@heroicons/react':
+        specifier: ^2.0.16
+        version: 2.2.0(react@19.0.0)
       '@radix-ui/react-slot':
         specifier: ^1.1.1
         version: 1.1.1(@types/react@19.0.7)(react@19.0.0)
+      '@tanstack/react-query':
+        specifier: ^5.64.2
+        version: 5.64.2(react@19.0.0)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
-      lucide-react:
-        specifier: ^0.473.0
-        version: 0.473.0(react@19.0.0)
       next:
         specifier: 15.1.5
         version: 15.1.5(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -78,6 +87,9 @@ importers:
       tailwindcss:
         specifier: ^3.4.1
         version: 3.4.17
+      turbo:
+        specifier: ^2.3.3
+        version: 2.3.3
       typescript:
         specifier: ^5
         version: 5.7.3
@@ -107,8 +119,30 @@ packages:
     peerDependencies:
       '@bufbuild/protobuf': ^2.2.3
 
+  '@buf/wcygan_flock.connectrpc_query-es@2.0.1-20241231000219-b035f3c109ea.1':
+    resolution: {tarball: https://buf.build/gen/npm/v1/@buf/wcygan_flock.connectrpc_query-es/-/wcygan_flock.connectrpc_query-es-2.0.1-20241231000219-b035f3c109ea.1.tgz}
+    peerDependencies:
+      '@bufbuild/protobuf': ^2.2.3
+      '@connectrpc/connect-query': ^2.0.1
+
   '@bufbuild/protobuf@2.2.3':
     resolution: {integrity: sha512-tFQoXHJdkEOSwj5tRIZSPNUuXK3RaR7T1nUrPgbYX1pUbvqqaaZAsfo+NXBPsz5rZMSKVFrgK1WL8Q/MSLvprg==}
+
+  '@connectrpc/connect-query-core@2.0.1':
+    resolution: {integrity: sha512-jCub8nPBGhZK+RumQ8vcH4q6xqQ8O52+G75DAmhhESK2FsJgwerJjcw6XrqFpeJFz5O4cy0uuJm+ZK3TsrbxTw==}
+    peerDependencies:
+      '@bufbuild/protobuf': 2.x
+      '@connectrpc/connect': ^2.0.0
+      '@tanstack/query-core': 5.x
+
+  '@connectrpc/connect-query@2.0.1':
+    resolution: {integrity: sha512-yVGRI17c96G0xb3ST9xGJ8k6KwKHp2qHRZo/JxLvh4+5lcJHsEa5xzf7sHm0363blTWhEa06b+gcQMckpiUdGw==}
+    peerDependencies:
+      '@bufbuild/protobuf': 2.x
+      '@connectrpc/connect': ^2.0.0
+      '@tanstack/react-query': 5.x
+      react: ^18 || ^19
+      react-dom: ^18 || ^19
 
   '@connectrpc/connect-web@2.0.1':
     resolution: {integrity: sha512-FmUR9TyuHu/3efr9cYZcqqAccgsswLSm3PQBXGuya5h57AjQWROW6ejL6Fg0d+A9EwsxRmJktefmFszXUMlU9Q==}
@@ -157,6 +191,11 @@ packages:
   '@eslint/plugin-kit@0.2.5':
     resolution: {integrity: sha512-lB05FkqEdUg2AA0xEbUz0SnkXT1LcCTa438W4IWTUh4hdOnVbQyOJ81OrDXsJk/LSiJHubgGEFoR5EHq1NsH1A==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@heroicons/react@2.2.0':
+    resolution: {integrity: sha512-LMcepvRaS9LYHJGsF0zzmgKCUim/X3N/DQKc4jepAXJ7l8QxJ1PmxJzqplF2Z3FE4PqBAIGyJAQ/w4B5dsqbtQ==}
+    peerDependencies:
+      react: '>= 16 || ^19.0.0-rc'
 
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
@@ -411,6 +450,14 @@ packages:
 
   '@swc/helpers@0.5.15':
     resolution: {integrity: sha512-JQ5TuMi45Owi4/BIMAJBoSQoOJu12oOk/gADqlcUL9JEdHB8vyjUSsxqeNXnmXHjYKMi2WcYtezGEEhqUI/E2g==}
+
+  '@tanstack/query-core@5.64.2':
+    resolution: {integrity: sha512-hdO8SZpWXoADNTWXV9We8CwTkXU88OVWRBcsiFrk7xJQnhm6WRlweDzMD+uH+GnuieTBVSML6xFa17C2cNV8+g==}
+
+  '@tanstack/react-query@5.64.2':
+    resolution: {integrity: sha512-3pakNscZNm8KJkxmovvtZ4RaXLyiYYobwleTMvpIGUoKRa8j8VlrQKNl5W8VUEfVfZKkikvXVddLuWMbcSCA1Q==}
+    peerDependencies:
+      react: ^18 || ^19
 
   '@types/cookie@0.6.0':
     resolution: {integrity: sha512-4Kh9a6B2bQciAhf7FSuMRRkUWecJgJu9nPnx3yzpsfXX/c50REIqpHY4C82bXP90qrLtXtkDxTZosYO3UpOwlA==}
@@ -1259,11 +1306,6 @@ packages:
   lru-cache@10.4.3:
     resolution: {integrity: sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==}
 
-  lucide-react@0.473.0:
-    resolution: {integrity: sha512-KW6u5AKeIjkvrxXZ6WuCu9zHE/gEYSXCay+Gre2ZoInD0Je/e3RBtP4OHpJVJ40nDklSvjVKjgH7VU8/e2dzRw==}
-    peerDependencies:
-      react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
-
   math-intrinsics@1.1.0:
     resolution: {integrity: sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g==}
     engines: {node: '>= 0.4'}
@@ -1766,6 +1808,40 @@ packages:
   tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
 
+  turbo-darwin-64@2.3.3:
+    resolution: {integrity: sha512-bxX82xe6du/3rPmm4aCC5RdEilIN99VUld4HkFQuw+mvFg6darNBuQxyWSHZTtc25XgYjQrjsV05888w1grpaA==}
+    cpu: [x64]
+    os: [darwin]
+
+  turbo-darwin-arm64@2.3.3:
+    resolution: {integrity: sha512-DYbQwa3NsAuWkCUYVzfOUBbSUBVQzH5HWUFy2Kgi3fGjIWVZOFk86ss+xsWu//rlEAfYwEmopigsPYSmW4X15A==}
+    cpu: [arm64]
+    os: [darwin]
+
+  turbo-linux-64@2.3.3:
+    resolution: {integrity: sha512-eHj9OIB0dFaP6BxB88jSuaCLsOQSYWBgmhy2ErCu6D2GG6xW3b6e2UWHl/1Ho9FsTg4uVgo4DB9wGsKa5erjUA==}
+    cpu: [x64]
+    os: [linux]
+
+  turbo-linux-arm64@2.3.3:
+    resolution: {integrity: sha512-NmDE/NjZoDj1UWBhMtOPmqFLEBKhzGS61KObfrDEbXvU3lekwHeoPvAMfcovzswzch+kN2DrtbNIlz+/rp8OCg==}
+    cpu: [arm64]
+    os: [linux]
+
+  turbo-windows-64@2.3.3:
+    resolution: {integrity: sha512-O2+BS4QqjK3dOERscXqv7N2GXNcqHr9hXumkMxDj/oGx9oCatIwnnwx34UmzodloSnJpgSqjl8iRWiY65SmYoQ==}
+    cpu: [x64]
+    os: [win32]
+
+  turbo-windows-arm64@2.3.3:
+    resolution: {integrity: sha512-dW4ZK1r6XLPNYLIKjC4o87HxYidtRRcBeo/hZ9Wng2XM/MqqYkAyzJXJGgRMsc0MMEN9z4+ZIfnSNBrA0b08ag==}
+    cpu: [arm64]
+    os: [win32]
+
+  turbo@2.3.3:
+    resolution: {integrity: sha512-DUHWQAcC8BTiUZDRzAYGvpSpGLiaOQPfYXlCieQbwUvmml/LRGIe3raKdrOPOoiX0DYlzxs2nH6BoWJoZrj8hA==}
+    hasBin: true
+
   type-check@0.4.0:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
     engines: {node: '>= 0.8.0'}
@@ -1870,7 +1946,30 @@ snapshots:
     dependencies:
       '@bufbuild/protobuf': 2.2.3
 
+  '@buf/wcygan_flock.connectrpc_query-es@2.0.1-20241231000219-b035f3c109ea.1(@bufbuild/protobuf@2.2.3)(@connectrpc/connect-query@2.0.1(@bufbuild/protobuf@2.2.3)(@connectrpc/connect@2.0.1(@bufbuild/protobuf@2.2.3))(@tanstack/query-core@5.64.2)(@tanstack/react-query@5.64.2(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0))':
+    dependencies:
+      '@buf/wcygan_flock.bufbuild_es': 2.2.3-20241231000219-b035f3c109ea.1(@bufbuild/protobuf@2.2.3)
+      '@bufbuild/protobuf': 2.2.3
+      '@connectrpc/connect-query': 2.0.1(@bufbuild/protobuf@2.2.3)(@connectrpc/connect@2.0.1(@bufbuild/protobuf@2.2.3))(@tanstack/query-core@5.64.2)(@tanstack/react-query@5.64.2(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+
   '@bufbuild/protobuf@2.2.3': {}
+
+  '@connectrpc/connect-query-core@2.0.1(@bufbuild/protobuf@2.2.3)(@connectrpc/connect@2.0.1(@bufbuild/protobuf@2.2.3))(@tanstack/query-core@5.64.2)':
+    dependencies:
+      '@bufbuild/protobuf': 2.2.3
+      '@connectrpc/connect': 2.0.1(@bufbuild/protobuf@2.2.3)
+      '@tanstack/query-core': 5.64.2
+
+  '@connectrpc/connect-query@2.0.1(@bufbuild/protobuf@2.2.3)(@connectrpc/connect@2.0.1(@bufbuild/protobuf@2.2.3))(@tanstack/query-core@5.64.2)(@tanstack/react-query@5.64.2(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
+    dependencies:
+      '@bufbuild/protobuf': 2.2.3
+      '@connectrpc/connect': 2.0.1(@bufbuild/protobuf@2.2.3)
+      '@connectrpc/connect-query-core': 2.0.1(@bufbuild/protobuf@2.2.3)(@connectrpc/connect@2.0.1(@bufbuild/protobuf@2.2.3))(@tanstack/query-core@5.64.2)
+      '@tanstack/react-query': 5.64.2(react@19.0.0)
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
+    transitivePeerDependencies:
+      - '@tanstack/query-core'
 
   '@connectrpc/connect-web@2.0.1(@bufbuild/protobuf@2.2.3)(@connectrpc/connect@2.0.1(@bufbuild/protobuf@2.2.3))':
     dependencies:
@@ -1927,6 +2026,10 @@ snapshots:
     dependencies:
       '@eslint/core': 0.10.0
       levn: 0.4.1
+
+  '@heroicons/react@2.2.0(react@19.0.0)':
+    dependencies:
+      react: 19.0.0
 
   '@humanfs/core@0.19.1': {}
 
@@ -2113,6 +2216,13 @@ snapshots:
   '@swc/helpers@0.5.15':
     dependencies:
       tslib: 2.8.1
+
+  '@tanstack/query-core@5.64.2': {}
+
+  '@tanstack/react-query@5.64.2(react@19.0.0)':
+    dependencies:
+      '@tanstack/query-core': 5.64.2
+      react: 19.0.0
 
   '@types/cookie@0.6.0': {}
 
@@ -3174,10 +3284,6 @@ snapshots:
 
   lru-cache@10.4.3: {}
 
-  lucide-react@0.473.0(react@19.0.0):
-    dependencies:
-      react: 19.0.0
-
   math-intrinsics@1.1.0: {}
 
   merge2@1.4.1: {}
@@ -3743,6 +3849,33 @@ snapshots:
       strip-bom: 3.0.0
 
   tslib@2.8.1: {}
+
+  turbo-darwin-64@2.3.3:
+    optional: true
+
+  turbo-darwin-arm64@2.3.3:
+    optional: true
+
+  turbo-linux-64@2.3.3:
+    optional: true
+
+  turbo-linux-arm64@2.3.3:
+    optional: true
+
+  turbo-windows-64@2.3.3:
+    optional: true
+
+  turbo-windows-arm64@2.3.3:
+    optional: true
+
+  turbo@2.3.3:
+    optionalDependencies:
+      turbo-darwin-64: 2.3.3
+      turbo-darwin-arm64: 2.3.3
+      turbo-linux-64: 2.3.3
+      turbo-linux-arm64: 2.3.3
+      turbo-windows-64: 2.3.3
+      turbo-windows-arm64: 2.3.3
 
   type-check@0.4.0:
     dependencies:

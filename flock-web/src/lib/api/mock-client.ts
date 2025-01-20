@@ -68,7 +68,7 @@ export const createMockApiClient = (): ApiClient => ({
     }),
     listMostRecentPosts: async (request) => ({
       $typeName: 'backend.v1.ListMostRecentPostsResponse',
-      posts: Array.from({ length: request.postLimit ?? 10 }, (_, i) =>
+      posts: Array.from({ length: request.postLimit ?? 3 }, (_, i) =>
         createMockPost(String(i + 1), '1', `Mock post ${i + 1}`)
       )
     }),

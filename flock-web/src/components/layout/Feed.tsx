@@ -1,125 +1,85 @@
-import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card"
+"use client";
+
+import * as React from "react"
+import { useEffect, useState } from "react"
+import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Heart, MessageCircle, Share2, Image as ImageIcon } from "lucide-react"
+import { HeartIcon, ChatBubbleBottomCenterTextIcon, ShareIcon } from "@heroicons/react/24/outline"
+import { Post } from "@buf/wcygan_flock.bufbuild_es/backend/v1/post_pb"
+import { createMockApiClient } from "@/lib/api/mock-client"
+
+function formatPostTime(timestamp: bigint): string {
+  const dateObj = new Date(Number(timestamp))
+  return dateObj.toLocaleString()
+}
 
 export function Feed() {
+  const [posts, setPosts] = useState<Post[]>([])
+
+  useEffect(() => {
+    console.log("Fetching posts...")
+    createMockApiClient()
+      .posts.listMostRecentPosts({ postLimit: 3 })
+      .then((res) => {
+        console.log("Posts fetched:", res.posts)
+        setPosts(res.posts)
+      })
+      .catch((error) => {
+        console.error("Error fetching posts:", error)
+      })
+  }, [])
+
   return (
     <div className="space-y-4">
       {/* Create Post Card */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center space-x-2">
-            <div className="h-10 w-10 rounded-full bg-muted" />
-            <textarea
-              className="w-full resize-none border-0 bg-transparent p-0 placeholder:text-muted-foreground focus:ring-0"
-              placeholder="Share an update..."
-              rows={2}
-            />
-          </div>
-
-          <div className="mt-4 flex justify-between">
-            <Button variant="ghost" size="sm" className="flex items-center space-x-1">
-              <ImageIcon className="h-4 w-4" />
-              <span>Photo</span>
-            </Button>
-            <Button>Post</Button>
-          </div>
-        </CardContent>
+      <Card className="p-4">
+        <div className="flex items-center space-x-2">
+          <div className="h-10 w-10 rounded-full bg-muted" />
+          <textarea
+            className="w-full resize-none border-0 bg-transparent p-0 placeholder:text-muted-foreground focus:ring-0"
+            placeholder="Share an update..."
+            rows={2}
+          />
+        </div>
+        <div className="mt-4 flex justify-end">
+          <Button>Post</Button>
+        </div>
       </Card>
 
-      {/* Example Post #1 */}
-      <Card>
-        <CardHeader className="flex items-center p-4">
-          <div className="h-10 w-10 rounded-full bg-muted mr-3" />
-          <div>
-            <p className="text-sm font-medium">John Doe</p>
-            <p className="text-xs text-muted-foreground">Software Engineer at Tech Corp • 2h ago</p>
+      {/* Render actual posts from mock data */}
+      {posts.map((post) => (
+        <Card key={post.id?.id} className="flex p-4 items-start space-x-2">
+          {/* User avatar */}
+          <div className="h-10 w-10 rounded-full bg-muted" />
+          {/* Main post content */}
+          <div className="flex-1 space-y-2">
+            {/* Username + Post time */}
+            <div className="flex items-center justify-between">
+              <span className="font-medium">{post.author?.username ?? "Unknown"}</span>
+              <span className="text-xs text-muted-foreground">
+                {formatPostTime(post.createdAt)}
+              </span>
+            </div>
+            {/* The post's text content */}
+            <p>{post.content}</p>
+            {/* Post action buttons */}
+            <div className="flex justify-around border-t pt-2 mt-2">
+              <Button variant="ghost" size="sm" className="flex items-center space-x-1">
+                <ChatBubbleBottomCenterTextIcon className="h-5 w-5" />
+                <span>Reply</span>
+              </Button>
+              <Button variant="ghost" size="sm" className="flex items-center space-x-1">
+                <HeartIcon className="h-5 w-5" />
+                <span>Like</span>
+              </Button>
+              <Button variant="ghost" size="sm" className="flex items-center space-x-1">
+                <ShareIcon className="h-5 w-5" />
+                <span>Share</span>
+              </Button>
+            </div>
           </div>
-        </CardHeader>
-        <CardContent className="p-0">
-          {/* Large image preview */}
-          <div className="p-4">
-            Just wrapped up an exciting project using the latest web technologies! 
-            Looking forward to sharing more insights about the development process.
-            #WebDev #Innovation
-          </div>
-        </CardContent>
-        <CardFooter className="p-4 flex justify-between">
-          <Button variant="ghost" size="sm">
-            <Heart className="mr-2 h-4 w-4" />
-            Like
-          </Button>
-          <Button variant="ghost" size="sm">
-            <MessageCircle className="mr-2 h-4 w-4" />
-            Comment
-          </Button>
-          <Button variant="ghost" size="sm">
-            <Share2 className="mr-2 h-4 w-4" />
-            Share
-          </Button>
-        </CardFooter>
-      </Card>
-
-      {/* Example Post #2 */}
-      <Card>
-        <CardHeader className="flex items-center p-4">
-          <div className="h-10 w-10 rounded-full bg-muted mr-3" />
-          <div>
-            <p className="text-sm font-medium">John Doe</p>
-            <p className="text-xs text-muted-foreground">2h ago</p>
-          </div>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="p-4">
-            Here is a look at my workspace setup. 
-            The combination of modern frameworks and best practices made this new project a breeze.
-          </div>
-        </CardContent>
-        <CardFooter className="p-4 flex justify-between">
-          <Button variant="ghost" size="sm">
-            <Heart className="mr-2 h-4 w-4" />
-            Like
-          </Button>
-          <Button variant="ghost" size="sm">
-            <MessageCircle className="mr-2 h-4 w-4" />
-            Comment
-          </Button>
-          <Button variant="ghost" size="sm">
-            <Share2 className="mr-2 h-4 w-4" />
-            Share
-          </Button>
-        </CardFooter>
-      </Card>
-
-      {/* Example Post #3 */}
-      <Card>
-        <CardHeader className="flex items-center p-4">
-          <div className="h-10 w-10 rounded-full bg-muted mr-3" />
-          <div>
-            <p className="text-sm font-medium">John Doe</p>
-            <p className="text-xs text-muted-foreground">2h ago</p>
-          </div>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="p-4">
-            Nature break! Sharing a moment of calm and reflection after an intense dev sprint.
-          </div>
-        </CardContent>
-        <CardFooter className="p-4 flex justify-between">
-          <Button variant="ghost" size="sm">
-            <Heart className="mr-2 h-4 w-4" />
-            Like
-          </Button>
-          <Button variant="ghost" size="sm">
-            <MessageCircle className="mr-2 h-4 w-4" />
-            Comment
-          </Button>
-          <Button variant="ghost" size="sm">
-            <Share2 className="mr-2 h-4 w-4" />
-            Share
-          </Button>
-        </CardFooter>
-      </Card>
+        </Card>
+      ))}
     </div>
   )
 }
