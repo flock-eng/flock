@@ -41,19 +41,14 @@ export function MainNav() {
           </div>
         </div>
 
-        {/* Right: Session or Login */}
-        <nav className="flex items-center space-x-2">
-          {session?.user ? (
-            <Button variant="ghost" onClick={() => signOut()}>
-              Sign out
-            </Button>
-          ) : (
-            <Link href="/login">
-              <Button>Sign in</Button>
-            </Link>
-          )}
-          {/* Example avatar */}
-          <div className="w-8 h-8 bg-gray-300 rounded-full" />
+        {/* Right: Session controls */}
+        <nav className="flex items-center space-x-3">
+          <Button variant="ghost" onClick={() => signOut()} className="text-gray-700 hover:text-gray-900">
+            Sign out
+          </Button>
+          <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-indigo-400 rounded-full flex items-center justify-center text-white text-sm font-medium">
+            {session?.user?.name?.[0] || 'U'}
+          </div>
         </nav>
       </div>
     </header>
