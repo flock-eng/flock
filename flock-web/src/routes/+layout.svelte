@@ -57,6 +57,34 @@
 
 	<!-- Right Sidebar -->
 	<aside class="sidebar-container space-y-5" aria-label="Supplementary content">
+
+		<!-- Premium Offer -->
+		<section class="border-t pt-5 space-y-3">
+			<h2 class="text-lg font-semibold">Special Offer!</h2>
+			<p class="text-gray-600">Buy Premium for only $9.99!</p>
+			<button
+				type="button"
+				class="font-medium text-blue-500 transition-colors hover:text-blue-600"
+				aria-label="Get Premium subscription"
+			>
+				Get Premium
+			</button>
+		</section>
+
+		<!-- Sell Ad Space -->
+		<section class="space-y-3 border-t pt-5">
+			<h2 class="text-lg font-semibold">Advertise with Us</h2>
+			<p class="text-gray-600">Your Ad here!</p>
+			<button
+				type="button"
+				class="font-medium text-blue-500 transition-colors hover:text-blue-600"
+				aria-label="Learn more about advertising opportunities"
+			>
+				Place Ad
+			</button>
+		</section>
+
+
 		<!-- Advertisement -->
 		<section class="space-y-3">
 			<h2 class="text-lg font-semibold">Advertisement</h2>
