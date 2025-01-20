@@ -1,11 +1,9 @@
 "use client"
-
 import { signOut, useSession } from "next-auth/react"
-import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input" // Example: if you create an Input component
-import { cn } from "@/lib/utils"
 import { Camera, Video, Calendar, Newspaper, MoreHorizontal } from "lucide-react"
+import Link from "next/link";
 
 export function MainNav() {
   const { data: session } = useSession()

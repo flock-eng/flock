@@ -1,6 +1,6 @@
-import Link from "next/link"
+import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { Home, Bell, MessageSquare, User, Bookmark } from "lucide-react"
+import {Home, Bell, MessageSquare, User, Bookmark} from "lucide-react"
 
 function ProfileCard() {
   return (

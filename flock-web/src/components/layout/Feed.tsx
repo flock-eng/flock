@@ -38,11 +38,6 @@ export function Feed() {
         </CardHeader>
         <CardContent className="p-0">
           {/* Large image preview */}
-          <img
-            src="https://via.placeholder.com/600x300?text=Sample+Bridge"
-            alt="Post Preview"
-            className="w-full object-cover h-64"
-          />
           <div className="p-4">
             Just wrapped up an exciting project using the latest web technologies! 
             Looking forward to sharing more insights about the development process.
@@ -75,13 +70,8 @@ export function Feed() {
           </div>
         </CardHeader>
         <CardContent className="p-0">
-          <img
-            src="https://via.placeholder.com/600x300?text=Sample+Desk+Setup"
-            alt="Post Preview"
-            className="w-full object-cover h-64"
-          />
           <div className="p-4">
-            Here's a look at my workspace setup. 
+            Here is a look at my workspace setup. 
             The combination of modern frameworks and best practices made this new project a breeze.
           </div>
         </CardContent>
@@ -111,11 +101,6 @@ export function Feed() {
           </div>
         </CardHeader>
         <CardContent className="p-0">
-          <img
-            src="https://via.placeholder.com/600x300?text=Sample+Waterfall"
-            alt="Post Preview"
-            className="w-full object-cover h-64"
-          />
           <div className="p-4">
             Nature break! Sharing a moment of calm and reflection after an intense dev sprint.
           </div>
