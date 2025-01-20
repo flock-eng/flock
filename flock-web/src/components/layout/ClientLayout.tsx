@@ -1,5 +1,5 @@
 'use client'
-
+import '@/app/globals.css'
 import { SessionProvider } from "next-auth/react"
 import { MainNav } from "./MainNav"
 import { Sidebar } from "./Sidebar"

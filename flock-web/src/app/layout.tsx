@@ -1,3 +1,4 @@
+import '@/app/globals.css'
 import { ClientLayout } from "@/components/layout/ClientLayout"
 
 export default function RootLayout({
