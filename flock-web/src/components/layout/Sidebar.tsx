@@ -1,36 +1,4 @@
 import { default as Link } from "next/link"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import {Home, Bell, MessageSquare, User, Bookmark} from "lucide-react"
-
-function ProfileCard() {
-  return (
-    <Card>
-      <CardHeader className="flex items-center space-x-4">
-        {/* Profile avatar */}
-        <div className="h-12 w-12 rounded-full bg-gray-300" />
-        <div>
-          <CardTitle className="text-base">John Doe</CardTitle>
-          <p className="text-xs text-muted-foreground">Software Engineer</p>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-2 text-sm">
-        {/* Example stats */}
-        <div className="flex justify-between">
-          <span>Connections</span>
-          <span className="font-medium">1.2k</span>
-        </div>
-        <div className="flex justify-between">
-          <span>Posts</span>
-          <span className="font-medium">123</span>
-        </div>
-        <div className="flex justify-between">
-          <span>Groups</span>
-          <span className="font-medium">4</span>
-        </div>
-      </CardContent>
-    </Card>
-  )
-}
 
 export function Sidebar() {
   return (

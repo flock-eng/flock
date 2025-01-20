@@ -8,12 +8,9 @@ export default async function HomePage() {
     <div className="py-10">
       <div className="max-w-3xl mx-auto space-y-4">
         <h1 className="text-2xl font-bold">Welcome, {session?.user.name || 'Guest'}!</h1>
-        {/* Add your feed components here */}
-        return (
           <div className="max-w-2xl mx-auto">
             <Feed />
           </div>
-        )
       </div>
     </div>
   )

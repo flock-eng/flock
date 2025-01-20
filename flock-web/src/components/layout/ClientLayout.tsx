@@ -3,6 +3,7 @@ import { SessionProvider } from "next-auth/react"
 import { MainNav } from "./MainNav"
 import { Sidebar } from "./Sidebar"
 import { RightSidebar } from "./RightSidebar"
+import { usePathname } from "next/navigation"
 
 /**
  * Layout that matches Deno Fresh:
@@ -12,6 +13,13 @@ import { RightSidebar } from "./RightSidebar"
  * - Main feed area in the middle
  */
 export function ClientLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname()
+  
+  // If we're on the login page, render children without the layout
+  if (pathname === "/login") {
+    return <SessionProvider>{children}</SessionProvider>
+  }
+
   return (
     <SessionProvider>
       <div className="min-h-screen bg-gray-50">

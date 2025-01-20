@@ -1,6 +1,3 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-
 export function RightSidebar() {
   return (
     <aside className="w-64 fixed right-0 top-16 bottom-0 bg-white shadow-sm p-4 overflow-y-auto">
