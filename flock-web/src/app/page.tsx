@@ -1,20 +1,19 @@
-'use client'
-
+import { auth } from "@/lib/auth"
 import { Button } from "@/components/ui/button"
-import { signIn } from "next-auth/react"
 
-export default function LandingPage() {
+export default async function HomePage() {
+  const session = await auth()
+  
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24">
       <div className="text-center">
-        <h1 className="text-4xl font-bold mb-6">Welcome to Flock</h1>
-        <p className="text-xl mb-8">Sign in to get started</p>
-        <Button 
-          onClick={() => signIn('keycloak')} 
-          size="lg"
-        >
-          Sign in with Keycloak
-        </Button>
+        <h1 className="text-4xl font-bold mb-6">Welcome {session?.user?.name}</h1>
+        <p className="text-xl mb-8">You are now signed in!</p>
+        <form action="/api/auth/signout" method="post">
+          <Button type="submit" variant="outline" size="lg">
+            Sign out
+          </Button>
+        </form>
       </div>
     </main>
   )
