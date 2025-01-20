@@ -1,34 +1,48 @@
 "use client"
 import { signOut, useSession } from "next-auth/react"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input" // Example: if you create an Input component
-import { Camera, Video, Calendar, Newspaper, MoreHorizontal } from "lucide-react"
-import Link from "next/link";
+import { Input } from "@/components/ui/input"
 
 export function MainNav() {
   const { data: session } = useSession()
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background shadow-sm">
-      <div className="container mx-auto flex h-14 items-center justify-between px-4">
-        {/* Left side: Logo */}
-        <div className="flex items-center space-x-4">
-          <Link href="/" className="flex items-center space-x-2">
-            <span className="text-xl font-bold">Flock</span>
-          </Link>
-        </div>
+    <header className="fixed top-0 left-0 right-0 h-16 bg-white shadow-sm flex items-center px-4 z-50 animate-fade-in">
+      <div className="flex items-center justify-between w-full max-w-7xl mx-auto">
+        {/* Left: Logo */}
+        <Link href="/">
+          <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent hover:from-blue-500 hover:to-blue-300 transition-colors">
+            Flock
+          </div>
+        </Link>
 
         {/* Center: Search */}
-        <div className="hidden md:flex flex-1 mx-6 max-w-md">
-          <Input
-            type="search"
-            placeholder="Search..."
-            className="border rounded-md w-full"
-          />
+        <div className="hidden md:flex flex-1 px-6 max-w-xl">
+          <div className="relative w-full">
+            <Input
+              type="search"
+              placeholder="Search..."
+              className="w-full px-4 py-2.5 rounded-full bg-gray-50 border border-gray-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all"
+            />
+            <button className="absolute right-3 top-2.5 text-gray-400 hover:text-blue-400 transition-colors p-1">
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
 
-        {/* Right side: user session */}
-        <div className="flex items-center space-x-2">
+        {/* Right: Session or Login */}
+        <nav className="flex items-center space-x-2">
           {session?.user ? (
             <Button variant="ghost" onClick={() => signOut()}>
               Sign out
@@ -38,38 +52,9 @@ export function MainNav() {
               <Button>Sign in</Button>
             </Link>
           )}
-          {/* Placeholder for user avatar */}
-          <div className="h-8 w-8 rounded-full bg-gray-300" />
-        </div>
-      </div>
-
-      {/* Secondary row: “What’s on your mind?” and post-type menu */}
-      <div className="border-b bg-background">
-        <div className="container mx-auto flex items-center justify-between px-4 h-12">
-          <div className="text-sm font-medium text-muted-foreground">What’s on your mind?</div>
-          <div className="flex items-center space-x-2">
-            <Button variant="ghost" size="sm">
-              <Camera className="mr-1 h-4 w-4" />
-              Photo
-            </Button>
-            <Button variant="ghost" size="sm">
-              <Video className="mr-1 h-4 w-4" />
-              Video
-            </Button>
-            <Button variant="ghost" size="sm">
-              <Calendar className="mr-1 h-4 w-4" />
-              Event
-            </Button>
-            <Button variant="ghost" size="sm">
-              <Newspaper className="mr-1 h-4 w-4" />
-              Article
-            </Button>
-            <Button variant="ghost" size="sm">
-              <MoreHorizontal className="mr-1 h-4 w-4" />
-              More
-            </Button>
-          </div>
-        </div>
+          {/* Example avatar */}
+          <div className="w-8 h-8 bg-gray-300 rounded-full" />
+        </nav>
       </div>
     </header>
   )

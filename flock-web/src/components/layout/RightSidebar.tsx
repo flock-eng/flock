@@ -3,54 +3,73 @@ import { Button } from "@/components/ui/button"
 
 export function RightSidebar() {
   return (
-    <div className="space-y-4 py-4">
-      {/* Trending Topics */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Trending Topics</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {/* Example trending topics */}
-          <div className="text-sm space-y-1">
-            <p className="font-medium">#Technology</p>
-            <p className="text-muted-foreground">1.2k posts today</p>
+    <aside className="w-64 fixed right-0 top-16 bottom-0 bg-white shadow-sm p-4 overflow-y-auto">
+      <div className="mb-6">
+        <h3 className="font-semibold text-gray-900 mb-4">Trending Topics</h3>
+        <div className="space-y-3">
+          <div className="p-3 bg-gradient-to-r from-blue-50 to-indigo-50
+                          rounded-lg hover:from-blue-100 hover:to-indigo-100
+                          transition-colors cursor-pointer">
+            <div className="text-sm font-medium text-gray-800">#Technology</div>
+            <div className="text-xs text-gray-500 mt-1">1.2k posts today</div>
           </div>
-          <div className="text-sm space-y-1">
-            <p className="font-medium">#Programming</p>
-            <p className="text-muted-foreground">856 posts today</p>
+          <div className="p-3 bg-gradient-to-r from-pink-50 to-rose-50
+                          rounded-lg hover:from-pink-100 hover:to-rose-100
+                          transition-colors cursor-pointer">
+            <div className="text-sm font-medium text-gray-800">#Innovation</div>
+            <div className="text-xs text-gray-500 mt-1">856 posts today</div>
           </div>
-          <div className="text-sm space-y-1">
-            <p className="font-medium">#Innovation</p>
-            <p className="text-muted-foreground">642 posts today</p>
+          <div className="p-3 bg-gradient-to-r from-green-50 to-emerald-50
+                          rounded-lg hover:from-green-100 hover:to-emerald-100
+                          transition-colors cursor-pointer">
+            <div className="text-sm font-medium text-gray-800">#Sustainability</div>
+            <div className="text-xs text-gray-500 mt-1">642 posts today</div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      {/* Suggested Connections */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Suggested Connections</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3 text-sm">
-            {/* Example “people” suggestions */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <div className="h-8 w-8 rounded-full bg-gray-300" />
-                <p>Jane Smith</p>
-              </div>
-              <Button variant="outline" size="sm">Connect</Button>
+      <div>
+        <h3 className="font-semibold text-gray-900 mb-4">Suggested Connections</h3>
+        <div className="space-y-4">
+          <div className="flex items-center p-3 bg-white rounded-lg
+                          hover:bg-gray-50 transition-colors cursor-pointer">
+            <div className="w-10 h-10 bg-gradient-to-br from-pink-400 to-purple-400
+                            rounded-full flex-shrink-0" />
+            <div className="ml-3 flex-1">
+              <div className="text-sm font-medium text-gray-800">Jane Smith</div>
+              <div className="text-xs text-gray-500">Product Designer</div>
             </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <div className="h-8 w-8 rounded-full bg-gray-300" />
-                <p>Mike Johnson</p>
-              </div>
-              <Button variant="outline" size="sm">Connect</Button>
-            </div>
+            <button className="ml-2 p-1.5 text-blue-500 hover:bg-blue-50
+                               rounded-full transition-colors">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+            </button>
           </div>
-        </CardContent>
-      </Card>
-    </div>
+
+          <div className="flex items-center p-3 bg-white rounded-lg
+                          hover:bg-gray-50 transition-colors cursor-pointer">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-cyan-400
+                            rounded-full flex-shrink-0" />
+            <div className="ml-3 flex-1">
+              <div className="text-sm font-medium text-gray-800">Alex Johnson</div>
+              <div className="text-xs text-gray-500">Software Engineer</div>
+            </div>
+            <button className="ml-2 p-1.5 text-blue-500 hover:bg-blue-50
+                               rounded-full transition-colors">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </aside>
   )
 }

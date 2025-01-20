@@ -4,28 +4,36 @@ import { MainNav } from "./MainNav"
 import { Sidebar } from "./Sidebar"
 import { RightSidebar } from "./RightSidebar"
 
+/**
+ * Layout that matches Deno Fresh:
+ * - A fixed top navbar
+ * - A left sidebar pinned below the navbar
+ * - A right sidebar pinned as well
+ * - Main feed area in the middle
+ */
 export function ClientLayout({ children }: { children: React.ReactNode }) {
   return (
     <SessionProvider>
-      <div className="relative min-h-screen flex flex-col bg-page">
-        {/* Top navbar: includes search and post-type menu */}
+      <div className="min-h-screen bg-gray-50">
+        {/* Top Nav (fixed) */}
         <MainNav />
 
-        {/* Main content area */}
-        <div className="container mx-auto flex-1 px-4 py-4">
-          <div className="grid grid-cols-1 lg:grid-cols-[250px_minmax(0,1fr)_300px] gap-6">
-            {/* Left sidebar (Profile + Nav) */}
-            <aside className="hidden lg:block">
-              <Sidebar />
-            </aside>
+        {/* Use padding-top to offset main content below the 64px navbar */}
+        <div className="pt-16 flex">
+          {/* Left Sidebar pinned to left */}
+          <div className="hidden lg:block">
+            <Sidebar />
+          </div>
 
-            {/* Middle feed */}
-            <main>{children}</main>
+          {/* Main content area. 
+              We'll push it away from the left & right by the width of sidebars. */}
+          <main className="flex-1 ml-64 mr-64 p-4 animate-fade-in">
+            {children}
+          </main>
 
-            {/* Right sidebar (Trending + Suggestions) */}
-            <aside className="hidden lg:block">
-              <RightSidebar />
-            </aside>
+          {/* Right Sidebar pinned to right */}
+          <div className="hidden lg:block">
+            <RightSidebar />
           </div>
         </div>
       </div>
