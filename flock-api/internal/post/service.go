@@ -1,17 +1,35 @@
 package post
 
 import (
-	backendv1 "buf.build/gen/go/wcygan/flock/protocolbuffers/go/backend/v1"
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
 	"time"
+
+	"buf.build/gen/go/wcygan/flock/connectrpc/go/backend/v1/backendv1connect"
+	backendv1 "buf.build/gen/go/wcygan/flock/protocolbuffers/go/backend/v1"
+	"connectrpc.com/connect"
+	"github.com/flock-eng/flock/flock-api/internal/service"
 )
 
 type Service struct{}
 
-func NewService() *Service {
-	return &Service{}
+func NewService() service.RegisterableService {
+	return &registeredService{svc: &Service{}}
+}
+
+// registeredService wraps the Service to implement RegisterableService
+type registeredService struct {
+	svc *Service
+}
+
+func (w *registeredService) ServiceName() string {
+	return backendv1connect.PostServiceName
+}
+
+func (w *registeredService) HandlerFunc(opts connect.HandlerOption) (string, http.Handler) {
+	return backendv1connect.NewPostServiceHandler(NewHandler(w.svc), opts)
 }
 
 func (s *Service) CreatePost(ctx context.Context, request *backendv1.CreatePostRequest) (*backendv1.CreatePostResponse, error) {

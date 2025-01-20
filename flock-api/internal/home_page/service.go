@@ -1,15 +1,33 @@
 package home_page
 
 import (
+	"context"
+	"net/http"
+
+	"buf.build/gen/go/wcygan/flock/connectrpc/go/frontend/v1/frontendv1connect"
 	backendv1 "buf.build/gen/go/wcygan/flock/protocolbuffers/go/backend/v1"
 	frontendv1 "buf.build/gen/go/wcygan/flock/protocolbuffers/go/frontend/v1"
-	"context"
+	"connectrpc.com/connect"
+	"github.com/flock-eng/flock/flock-api/internal/service"
 )
 
 type Service struct{}
 
-func NewService() *Service {
-	return &Service{}
+func NewService() service.RegisterableService {
+	return &registeredService{svc: &Service{}}
+}
+
+// registeredService wraps the Service to implement RegisterableService
+type registeredService struct {
+	svc *Service
+}
+
+func (w *registeredService) ServiceName() string {
+	return frontendv1connect.HomePageServiceName
+}
+
+func (w *registeredService) HandlerFunc(opts connect.HandlerOption) (string, http.Handler) {
+	return frontendv1connect.NewHomePageServiceHandler(NewHandler(w.svc), opts)
 }
 
 func (s *Service) GetHomePage(ctx context.Context, request *frontendv1.GetHomePageRequest) (*frontendv1.GetHomePageResponse, error) {

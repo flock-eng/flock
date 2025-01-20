@@ -1,46 +1,35 @@
-# syntax=docker/dockerfile:1
-
-#####################################################
-# Stage 1: Build the Next.js application
-#####################################################
+# Stage 1: Build
 FROM node:18-alpine AS builder
-
 WORKDIR /app
 
-# Copy package manifest for caching
-COPY package*.json ./
+# Enable pnpm and install dependencies
+RUN corepack enable && corepack prepare pnpm@latest --activate
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
 
-# Install dependencies (npm ci is stricter & faster than npm install)
-RUN npm ci
-
-# Copy the rest of the application
+# Copy remaining source and build
 COPY . .
+RUN pnpm run build
+# Remove dev dependencies
+RUN pnpm prune --prod
 
-# Build the application
-RUN npm run build
-
-#####################################################
-# Stage 2: Create a lightweight runtime image
-#####################################################
-FROM node:18-alpine
-
-# (Optional) Add a non-root user for security
-RUN addgroup -S flock && adduser -S flock -G flock
-
+# Stage 2: Run
+FROM node:18-alpine AS runner
 WORKDIR /app
 
-# Copy the final build artifacts
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/package*.json ./
+# Enable pnpm in runner stage
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
-# Install only production deps
-RUN npm ci --production
+# Copy build output and pruned node_modules from builder
+COPY --from=builder /app/build ./build
+COPY --from=builder /app/node_modules ./node_modules
+COPY package.json pnpm-lock.yaml ./
 
-# Switch to non-root user
-USER flock
-
-# Expose port 3000
+ENV NODE_ENV=production
 EXPOSE 3000
 
-# Start the application
-CMD ["npm", "start"]
+# Use non-root user for security (optional)
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
+
+CMD ["node", "build"]

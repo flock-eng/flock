@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Flock Web
 
-## Getting Started
+References:
 
-First, run the development server:
+- [SvelteKit](https://kit.svelte.dev/)
+- [SvelteKit Adapters](https://kit.svelte.dev/docs/adapters)
+- [Vitest](https://vitest.dev/)
+- [pnpm](https://pnpm.io/)
+- [sv](https://github.com/sveltejs/cli)
+- [Connect](https://connectrpc.com/)
+- [Buf](https://buf.build/)
+
+## Quick Start
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:8080](http://localhost:8080) with your browser to see the result.
+## Unit Tests
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm run test
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Docker Build
 
-## Learn More
+```bash
+docker buildx version
+docker buildx create --use
+docker buildx inspect --bootstrap
+docker buildx build --platform linux/amd64,linux/arm64 -t wcygan/flock-web:svelte --push .
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Docker Run
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+docker run -p 3000:3000 wcygan/flock-web:svelte
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Linting
 
-## Deploy on Vercel
+```bash
+pnpm lint
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Formatting
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+pnpm format
+```
+
+## Telepresence
+
+```bash
+# Connect to the cluster
+pnpm run connect
+
+# Intercept traffic to flock-web in the cluster
+pnpm run intercept
+
+# List the intercepted services
+pnpm run list
+
+# Delete the intercept
+pnpm run leave
+```
