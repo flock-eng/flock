@@ -15,14 +15,11 @@ export async function handler(req: Request, ctx: MiddlewareHandlerContext) {
   ];
 
   if (publicPaths.some(path => pathname.startsWith(path))) {
-    console.log(`[Auth] Allowing public path: ${pathname}`);
     return await ctx.next();
   }
 
   // Check for the presence of access token
   const cookies = getCookies(req.headers);
-  console.log(`[Auth] Checking auth for path: ${pathname}`);
-  console.log(`[Auth] Cookie present: ${!!cookies.kc_access_token}`);
 
   if (!cookies.kc_access_token) {
     console.log(`[Auth] No token found, redirecting to login`);
@@ -39,7 +36,6 @@ export async function handler(req: Request, ctx: MiddlewareHandlerContext) {
   }
 
   // Let the request proceed
-  console.log(`[Auth] Token found, proceeding with request`);
   const response = await ctx.next();
   
   // Add cache control headers to the response
