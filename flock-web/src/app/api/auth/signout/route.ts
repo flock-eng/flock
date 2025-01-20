@@ -2,6 +2,7 @@ import { signOut } from "@/lib/auth"
 
 // Add proper return type and handle the response
 export async function POST(request: Request) {
+  console.log("Signing out + " + request)
   try {
     return await signOut({ redirectTo: "/login" })
   } catch (error) {

@@ -34,3 +34,18 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Local Development with Telepresence
+
+```bash
+telepresence connect
+telepresence intercept flock-web --service flock-web --port 3000
+pnpm run dev
+```
+
+Sometimes you will get connection refused error. In this case, you can test if there are any issues with the service by running the following commands:
+
+```bash
+pnpm build && pnpm start
+```
+

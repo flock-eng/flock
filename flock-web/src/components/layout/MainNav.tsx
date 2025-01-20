@@ -28,4 +28,4 @@ export function MainNav() {
       </div>
     </header>
   )
-} 
+}

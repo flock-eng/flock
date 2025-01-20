@@ -1,6 +1,5 @@
 import { auth } from "@/lib/auth"
 import { NextResponse } from "next/server"
-import type { NextRequest } from "next/server"
 
 export default auth((req) => {
   const isLoggedIn = !!req.auth
@@ -19,7 +18,18 @@ export default auth((req) => {
   return NextResponse.next()
 })
 
-// Optionally configure middleware matcher
+// Update matcher to be more permissive with static assets
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - _next (internal Next.js files)
+     * - favicon.ico (favicon file)
+     * - static chunks
+     */
+    "/((?!api|_next|favicon.ico|.*\\.js$).*)"
+  ]
 } 
