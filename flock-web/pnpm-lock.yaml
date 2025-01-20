@@ -8,6 +8,15 @@ importers:
 
   .:
     dependencies:
+      '@buf/wcygan_flock.bufbuild_es':
+        specifier: 2.2.3-20241231000219-b035f3c109ea.1
+        version: 2.2.3-20241231000219-b035f3c109ea.1(@bufbuild/protobuf@2.2.3)
+      '@connectrpc/connect':
+        specifier: ^2.0.1
+        version: 2.0.1(@bufbuild/protobuf@2.2.3)
+      '@connectrpc/connect-web':
+        specifier: ^2.0.1
+        version: 2.0.1(@bufbuild/protobuf@2.2.3)(@connectrpc/connect@2.0.1(@bufbuild/protobuf@2.2.3))
       lucide-react:
         specifier: ^0.473.0
         version: 0.473.0(react@19.0.0)
@@ -71,6 +80,25 @@ packages:
         optional: true
       nodemailer:
         optional: true
+
+  '@buf/wcygan_flock.bufbuild_es@2.2.3-20241231000219-b035f3c109ea.1':
+    resolution: {tarball: https://buf.build/gen/npm/v1/@buf/wcygan_flock.bufbuild_es/-/wcygan_flock.bufbuild_es-2.2.3-20241231000219-b035f3c109ea.1.tgz}
+    peerDependencies:
+      '@bufbuild/protobuf': ^2.2.3
+
+  '@bufbuild/protobuf@2.2.3':
+    resolution: {integrity: sha512-tFQoXHJdkEOSwj5tRIZSPNUuXK3RaR7T1nUrPgbYX1pUbvqqaaZAsfo+NXBPsz5rZMSKVFrgK1WL8Q/MSLvprg==}
+
+  '@connectrpc/connect-web@2.0.1':
+    resolution: {integrity: sha512-FmUR9TyuHu/3efr9cYZcqqAccgsswLSm3PQBXGuya5h57AjQWROW6ejL6Fg0d+A9EwsxRmJktefmFszXUMlU9Q==}
+    peerDependencies:
+      '@bufbuild/protobuf': ^2.2.0
+      '@connectrpc/connect': 2.0.1
+
+  '@connectrpc/connect@2.0.1':
+    resolution: {integrity: sha512-o+MauvcOnfN4vjpS8ngoX+ubhcCDvnexlLwtk/VnkCLjoRMUz2PKqi87Si58ViWq0vzmGYPRf2LNwhJk5kcCXA==}
+    peerDependencies:
+      '@bufbuild/protobuf': ^2.2.0
 
   '@emnapi/runtime@1.3.1':
     resolution: {integrity: sha512-kEBmG8KyqtxJZv+ygbEim+KCGtIq1fC22Ms3S4ziXmYKm8uyoLX0MHONVKwp+9opg390VaKRNt4a7A9NwmpNhw==}
@@ -1748,6 +1776,21 @@ snapshots:
       oauth4webapi: 3.1.4
       preact: 10.11.3
       preact-render-to-string: 5.2.3(preact@10.11.3)
+
+  '@buf/wcygan_flock.bufbuild_es@2.2.3-20241231000219-b035f3c109ea.1(@bufbuild/protobuf@2.2.3)':
+    dependencies:
+      '@bufbuild/protobuf': 2.2.3
+
+  '@bufbuild/protobuf@2.2.3': {}
+
+  '@connectrpc/connect-web@2.0.1(@bufbuild/protobuf@2.2.3)(@connectrpc/connect@2.0.1(@bufbuild/protobuf@2.2.3))':
+    dependencies:
+      '@bufbuild/protobuf': 2.2.3
+      '@connectrpc/connect': 2.0.1(@bufbuild/protobuf@2.2.3)
+
+  '@connectrpc/connect@2.0.1(@bufbuild/protobuf@2.2.3)':
+    dependencies:
+      '@bufbuild/protobuf': 2.2.3
 
   '@emnapi/runtime@1.3.1':
     dependencies:

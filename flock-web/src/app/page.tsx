@@ -1,20 +1,50 @@
-import { auth } from "@/lib/auth"
-import { Button } from "@/components/ui/button"
+'use client';
 
-export default async function HomePage() {
-  const session = await auth()
-  
+import { useEffect, useState } from 'react';
+import { api } from '@/lib/api';
+import type { Post } from '@/lib/api';
+import PostComponent from '@/components/PostComponent';
+import CreatePostForm from '@/components/CreatePostForm';
+
+export default function HomePage() {
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  async function fetchPosts() {
+    try {
+      const response = await api.homePage.getHomePage({});
+      setPosts(response.posts ?? []);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load posts');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-6">Welcome {session?.user?.name}</h1>
-        <p className="text-xl mb-8">You are now signed in!</p>
-        <form action="/api/auth/signout" method="post">
-          <Button type="submit" variant="outline" size="lg">
-            Sign out
-          </Button>
-        </form>
+    <div>
+      <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-sm border-b">
+        <h1 className="p-4 text-xl font-semibold">Home</h1>
       </div>
-    </main>
-  )
+
+      <CreatePostForm onSuccess={fetchPosts} />
+
+      {loading ? (
+        <div className="p-4 text-center">Loading posts...</div>
+      ) : error ? (
+        <div className="p-4 text-center text-red-500">{error}</div>
+      ) : posts.length === 0 ? (
+        <div className="p-4 text-center text-gray-500">No posts yet.</div>
+      ) : (
+        posts.map((post) => (
+          <PostComponent key={post.id?.id} post={post} />
+        ))
+      )}
+    </div>
+  );
 }
