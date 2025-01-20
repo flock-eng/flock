@@ -94,4 +94,8 @@ export const {
       }
     },
   },
+  pages: {
+    signIn: '/login',
+    signOut: '/login',
+  },
 }) 

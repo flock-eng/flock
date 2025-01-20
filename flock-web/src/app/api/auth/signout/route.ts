@@ -1,6 +1,16 @@
 import { signOut } from "@/lib/auth"
-import { NextResponse } from "next/server"
 
-export async function POST() {
-  return signOut({ redirectTo: "/" })
-} 
+// Add proper return type and handle the response
+export async function POST(request: Request) {
+  try {
+    return await signOut({ redirectTo: "/login" })
+  } catch (error) {
+    console.error("Sign out error:", error)
+    return new Response(JSON.stringify({ error: "Failed to sign out" }), {
+      status: 500,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+  }
+}

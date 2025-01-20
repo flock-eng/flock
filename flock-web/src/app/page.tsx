@@ -1,50 +1,38 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { api } from '@/lib/api';
-import type { Post } from '@/lib/api';
-import PostComponent from '@/components/PostComponent';
-import CreatePostForm from '@/components/CreatePostForm';
+import { signOut } from "next-auth/react";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 
 export default function HomePage() {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  async function fetchPosts() {
+  const handleSignOut = async () => {
     try {
-      const response = await api.homePage.getHomePage({});
-      setPosts(response.posts ?? []);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load posts');
-    } finally {
-      setLoading(false);
+      setIsLoading(true);
+      // Update the signOut call to use the correct configuration
+      await signOut({
+        callbackUrl: '/login',
+        redirect: true
+      });
+    } catch (error) {
+      console.error('Sign out error:', error);
+      setIsLoading(false); // Reset loading state on error
     }
-  }
-
-  useEffect(() => {
-    fetchPosts();
-  }, []);
+  };
 
   return (
-    <div>
-      <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-sm border-b">
-        <h1 className="p-4 text-xl font-semibold">Home</h1>
-      </div>
-
-      <CreatePostForm onSuccess={fetchPosts} />
-
-      {loading ? (
-        <div className="p-4 text-center">Loading posts...</div>
-      ) : error ? (
-        <div className="p-4 text-center text-red-500">{error}</div>
-      ) : posts.length === 0 ? (
-        <div className="p-4 text-center text-gray-500">No posts yet.</div>
-      ) : (
-        posts.map((post) => (
-          <PostComponent key={post.id?.id} post={post} />
-        ))
-      )}
+    <div className="flex min-h-screen flex-col items-center justify-center p-24 gap-8">
+      <h1 className="text-4xl font-bold">Hello World</h1>
+      <Button
+        onClick={handleSignOut}
+        size="lg"
+        disabled={isLoading}
+      >
+        Sign Out
+        {isLoading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+      </Button>
     </div>
   );
 }
