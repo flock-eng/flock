@@ -12,7 +12,8 @@
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
 		"test:unit": "vitest",
-		"test": "npm run test:unit -- --run"
+		"test": "npm run test:unit -- --run",
+		"intercept": "telepresence intercept flock-web --service flock-web --port 3000"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",
