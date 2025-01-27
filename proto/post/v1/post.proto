@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+import "common/v1/common.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+package post.v1;
+
+service PostService {
+  rpc CreatePost(CreatePostRequest) returns (CreatePostResponse);
+  rpc GetPost(GetPostRequest) returns (GetPostResponse);
+  rpc BatchGetPost(BatchGetPostRequest) returns (BatchGetPostResponse);
+  rpc UpdatePost(UpdatePostRequest) returns (UpdatePostResponse);
+}
+
+message Post {
+  // The unique identifier for the post
+  common.v1.PostId id = 1;
+  // The author of the post
+  common.v1.UserId author_id = 2;
+  // The content of the post
+  string content = 3;
+  // The time this post was created
+  google.protobuf.Timestamp created_at = 4;
+  // The last time this post was updated
+  google.protobuf.Timestamp last_updated_at = 5;
+  // How many updates have been made to this post
+  int32 version = 6;
+}
+
+
+message CreatePostRequest {
+  string content = 1;
+}
+
+message CreatePostResponse {
+  Post post = 1;
+}
+
+message GetPostRequest {
+  common.v1.PostId post_id = 1;
+}
+
+message GetPostResponse {
+  Post post = 1;
+}
+
+message BatchGetPostRequest {
+  repeated common.v1.PostId post_id = 1;
+}
+
+message BatchGetPostResponse {
+  repeated Post post = 1;
+}
+
+message UpdatePostRequest {
+  // The Post resource being updated
+  Post post = 1;
+
+  // FieldMask specifies which fields are being updated
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+message UpdatePostResponse {
+  // The updated Post, returned for convenience
+  Post post = 1;
+}
+

@@ -1,0 +1,50 @@
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+import "post/v1/post.proto";
+import "ads/v1/ads.proto";
+import "common/v1/common.proto";
+
+package feed.v1;
+
+service FeedService {
+  rpc GetProfileFeed(GetProfileFeedRequest) returns (GetProfileFeedResponse);
+  rpc GetHomepageFeed(GetHomepageFeedRequest) returns (GetHomepageFeedResponse);
+}
+
+message GetProfileFeedRequest {
+  oneof identifier {
+    common.v1.UserId user_id = 1;
+    string username = 2;
+  }
+  common.v1.Pagination pagination = 3;
+}
+
+message GetProfileFeedResponse {
+  FeedResponse feed = 1;
+}
+
+message GetHomepageFeedRequest {
+  common.v1.Pagination pagination = 1;
+}
+
+message GetHomepageFeedResponse {
+  FeedResponse feed = 1;
+}
+
+message FeedResponse {
+  repeated FeedItem items = 1;
+  common.v1.Pagination pagination = 2;
+  FeedMetadata metadata = 3;
+}
+
+message FeedItem {
+  oneof content {
+    post.v1.Post post = 1;
+    ads.v1.Advertisement ad = 2;
+  }
+}
+
+message FeedMetadata {
+  string feed_id = 1; // For session consistency
+  google.protobuf.Timestamp generated_at = 2;
+}

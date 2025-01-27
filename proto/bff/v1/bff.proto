@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package bff.v1;
+
+import "profile/v1/profile.proto";
+import "feed/v1/feed.proto";
+import "common/v1/common.proto";
+
+// "Backend for Frontend"
+// This service is responsible for aggregating data from multiple services
+// and returning it to the client in a format that is easy to consume.
+service UserAggregationService {
+  rpc FetchHomepage(FetchHomepageRequest) returns (FetchHomepageResponse);
+  rpc FetchUserProfilePage(FetchUserProfilePageRequest) returns (FetchUserProfilePageResponse);
+}
+
+message FetchHomepageRequest {
+  common.v1.Pagination pagination = 1;
+}
+
+message FetchHomepageResponse {
+  // The feed of the homepage
+  feed.v1.FeedResponse homepage_feed = 1;
+}
+
+message FetchUserProfilePageRequest {
+  // The user whose profile page we want to fetch
+  common.v1.UserId target_user = 1;
+  // The pagination for the target user's feed
+  common.v1.Pagination pagination = 2;
+}
+
+message FetchUserProfilePageResponse {
+  // The profile of the target user
+  profile.v1.Profile target_user_profile = 1;
+  // The feed of the target user
+  feed.v1.FeedResponse target_user_feed = 2;
+}

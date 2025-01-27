@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+import "common/v1/common.proto";
+import "google/protobuf/timestamp.proto";
+
+package events.post.v1;
+
+// Common envelope for all post events in the system.
+message PostEvent {
+  // Identifies the event type so consumers can quickly branch logic.
+  EventType event_type = 1;
+
+  // Common metadata that might be useful for debugging or tracing.
+  // For example, correlation_id for distributed tracing, or
+  // a server_timestamp representing when the event was produced.
+  EventMetadata metadata = 2;
+
+  // Differentiate payload types.
+  oneof payload {
+    PostCreated post_created = 10;
+    PostUpdated post_updated = 11;
+    PostDeleted post_deleted = 12;
+  }
+}
+
+// Distinguishes which event is carried in the payload.
+enum EventType {
+  EVENT_TYPE_UNSPECIFIED = 0;
+  EVENT_TYPE_POST_CREATED = 1;
+  EVENT_TYPE_POST_UPDATED = 2;
+  EVENT_TYPE_POST_DELETED = 3;
+}
+
+message EventMetadata {
+  string correlation_id = 1;
+  string producer_id = 2; // e.g., the service name or instance
+  google.protobuf.Timestamp server_timestamp = 3;
+}
+
+// Payload message for "Post Created"
+message PostCreated {
+  common.v1.PostId post_id = 1;
+  common.v1.UserId author_id = 2;
+  string content = 3;
+  google.protobuf.Timestamp created_at = 4;
+  int32 version = 5;
+}
+
+// Payload message for "Post Updated"
+message PostUpdated {
+  common.v1.PostId post_id = 1;
+  string new_content = 2;
+  google.protobuf.Timestamp updated_at = 3;
+  int32 version = 4;
+}
+
+// Payload message for "Post Deleted"
+message PostDeleted {
+  common.v1.PostId post_id = 1;
+  google.protobuf.Timestamp deleted_at = 2;
+  int32 version = 3;
+}

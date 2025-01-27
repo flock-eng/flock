@@ -1,0 +1,22 @@
+syntax = "proto3";
+import "common/v1/common.proto";
+
+package ads.v1;
+
+message Advertisement {
+  common.v1.AdvertisementId id = 1;
+  oneof content {
+    TextAdvertisement text_ad = 2;
+  }
+}
+
+message TextAdvertisement {
+  // Text for the ad call-to-action
+  optional string call_to_action = 1;
+  // The advertisement text content
+  string text = 2;
+  // URL for the ad destination
+  string target_url = 3;
+  // Name of the advertiser
+  string sponsor_name = 4;
+}
