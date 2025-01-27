@@ -35,8 +35,5 @@ profiles:
               - flock-auth-configuration
             path: flock-auth/skaffold.yaml
           - configs:
-              - keycloak-installation
-            path: flock-kc/skaffold.yaml
-          - configs:
               - ingress-installation
             path: ingress/skaffold.yaml

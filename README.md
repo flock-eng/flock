@@ -64,20 +64,6 @@ curl -X POST -H "Content-Type: application/json" https://$(kubectl get ing flock
 curl -X POST -H "Content-Type: application/json" https://$(kubectl get ing flock-api-ingress -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')/backend.v1.PostService/ListMostRecentPostsByUser -d '{"author": {"id": "1", "username": "testuser"}, "post_limit": 5}'
 ```
 
-### KeyCloak
-
-Access the KeyCloak admin console:
-
-```bash
-open "https://$(kubectl get ing keycloak -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')"
-```
-
-Access the KeyCloak account console:
-
-```bash
-open "https://$(kubectl get ing keycloak -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')/realms/flock/account/"
-```
-
 ### Telepresence
 
 For UI:
