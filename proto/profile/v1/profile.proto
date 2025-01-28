@@ -1,29 +1,35 @@
 syntax = "proto3";
 import "common/v1/common.proto";
 import "google/protobuf/timestamp.proto";
-import "google/protobuf/wrappers.proto";
 
 package profile.v1;
 
+// Core user information
 message User {
+  // The user's unique identifier
   common.v1.UserId id = 1;
+  // The user's username
   string username = 2;
+  // The user's profile picture
+  ProfilePicture picture = 3;
 }
 
-// The shortened user profile, useful for page headers
-message MiniProfile {
-  User user = 1;
-  ProfilePicture picture = 2;
-}
-
-// The full user profile, useful for the user profile page
+// Full user profile
 message Profile {
-  MiniProfile mini_profile = 1;
-  optional google.protobuf.StringValue bio = 2;
-  optional google.protobuf.StringValue location = 3;
-  optional google.protobuf.StringValue website = 4;
+  // User Information
+  User user = 1;
+  // The user's bio
+  optional string bio = 2;
+  // The user's location
+  optional string location = 3;
+  // The user's website
+  optional string website = 4;
+  // The time this profile was created
   google.protobuf.Timestamp created_at = 5;
+  // The last time this profile was updated
   google.protobuf.Timestamp last_updated_at = 6;
+  // How many updates have been made to this profile
+  int32 version = 7;
 }
 
 message ProfilePicture {
