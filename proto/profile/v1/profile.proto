@@ -1,8 +1,22 @@
 syntax = "proto3";
-import "common/v1/common.proto";
-import "google/protobuf/timestamp.proto";
 
 package profile.v1;
+
+import "common/v1/common.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+service ProfileService {
+  // Creates a new profile record for a user.
+  // Typically called by the Auth service after registering a user.
+  rpc CreateProfile(CreateProfileRequest) returns (CreateProfileResponse);
+
+  // Retrieves a profile by user ID or username.
+  rpc GetProfile(GetProfileRequest) returns (GetProfileResponse);
+
+  // Updates a profile
+  rpc UpdateProfile(UpdateProfileRequest) returns (UpdateProfileResponse);
+}
 
 // Core user information
 message User {
@@ -37,4 +51,49 @@ message ProfilePicture {
     string url = 1;
     string hex_color = 2;
   }
+}
+
+// ------------------------
+// RPC Request/Response
+// ------------------------
+message CreateProfileRequest {
+  // The user ID for whom the profile is created
+  common.v1.UserId user_id = 1;
+  // The username for the user
+  string username = 2;
+  // Optional bio
+  string bio = 3;
+  // Optional location
+  string location = 4;
+  // Optional website
+  string website = 5;
+}
+
+message CreateProfileResponse {
+  Profile profile = 1;
+}
+
+message GetProfileRequest {
+  // You can identify a profile by user_id or by username
+  oneof identifier {
+    common.v1.UserId user_id = 1;
+    string username = 2;
+  }
+}
+
+message GetProfileResponse {
+  Profile profile = 1;
+}
+
+message UpdateProfileRequest {
+  // The profile resource to update.
+  Profile profile = 1;
+
+  // FieldMask indicates which fields you intend to update.
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+message UpdateProfileResponse {
+  // The updated profile resource.
+  Profile profile = 1;
 }
