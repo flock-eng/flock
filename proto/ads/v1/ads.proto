@@ -1,5 +1,6 @@
 syntax = "proto3";
 import "common/v1/common.proto";
+import "google/protobuf/wrappers.proto";
 
 package ads.v1;
 
@@ -11,8 +12,12 @@ message Advertisement {
 }
 
 message TextAdvertisement {
-  string call_to_action = 1; // Text for the ad call-to-action
-  string text = 2; // The advertisement text content
-  string target_url = 3; // URL for the ad destination
-  string sponsor_name = 4; // Name of the advertiser
+  // Text for the ad call-to-action
+  optional google.protobuf.StringValue call_to_action = 1;
+  // The advertisement text content
+  string text = 2;
+  // URL for the ad destination
+  string target_url = 3;
+  // Name of the advertiser
+  string sponsor_name = 4;
 }

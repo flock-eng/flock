@@ -1,5 +1,7 @@
 syntax = "proto3";
 import "common/v1/common.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
 
 package profile.v1;
 
@@ -8,9 +10,20 @@ message User {
   string username = 2;
 }
 
+// The shortened user profile, useful for page headers
 message MiniProfile {
   User user = 1;
   ProfilePicture picture = 2;
+}
+
+// The full user profile, useful for the user profile page
+message Profile {
+  MiniProfile mini_profile = 1;
+  optional google.protobuf.StringValue bio = 2;
+  optional google.protobuf.StringValue location = 3;
+  optional google.protobuf.StringValue website = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp last_updated_at = 6;
 }
 
 message ProfilePicture {
@@ -18,11 +31,4 @@ message ProfilePicture {
     string url = 1;
     string hex_color = 2;
   }
-}
-
-message Profile {
-  MiniProfile mini_profile = 1;
-  string bio = 2;
-  string location = 3;
-  string website = 4;
 }

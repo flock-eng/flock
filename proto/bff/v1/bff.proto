@@ -5,18 +5,11 @@ package bff.v1;
 import "profile/v1/profile.proto";
 import "feed/v1/feed.proto";
 import "common/v1/common.proto";
-import "auth/v1/auth.proto";
 
 // "Backend for Frontend"
 // This service is responsible for aggregating data from multiple services
 // and returning it to the client in a format that is easy to consume.
 service BffService {
-  // Auth endpoints (directly proxied)
-  rpc Register(auth.v1.RegisterRequest) returns (auth.v1.RegisterResponse);
-  rpc Login(auth.v1.LoginRequest) returns (auth.v1.LoginResponse);
-  rpc Logout(auth.v1.LogoutRequest) returns (auth.v1.LogoutResponse);
-
-  // Aggregated endpoints
   rpc GetUserHomepage(GetUserHomepageRequest) returns (GetUserHomepageResponse);
   rpc GetProfilePage(GetProfilePageRequest) returns (GetProfilePageResponse);
 }
@@ -27,8 +20,7 @@ message GetUserHomepageRequest {
 }
 
 message GetUserHomepageResponse {
-  // The shortened user profile, for use in the header
-  profile.v1.MiniProfile miniProfile = 1;
+  profile.v1.MiniProfile mini_profile = 1;
   feed.v1.FeedResponse feed = 2;
 }
 
@@ -37,7 +29,6 @@ message GetProfilePageRequest {
 }
 
 message GetProfilePageResponse {
-  // The full user profile
   profile.v1.Profile profile = 1;
   feed.v1.FeedResponse feed = 2;
 }

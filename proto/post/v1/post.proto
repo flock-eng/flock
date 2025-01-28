@@ -2,6 +2,7 @@ syntax = "proto3";
 
 import "common/v1/common.proto";
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
 
 package post.v1;
 
@@ -9,7 +10,18 @@ service PostService {
   rpc CreatePost(CreatePostRequest) returns (CreatePostResponse);
   rpc GetPost(GetPostRequest) returns (GetPostResponse);
   rpc BatchGetPost(BatchGetPostRequest) returns (BatchGetPostResponse);
+  rpc UpdatePost(UpdatePostRequest) returns (UpdatePostResponse);
 }
+
+message Post {
+  common.v1.PostId id = 1;
+  common.v1.UserId author_id = 2;
+  string content = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp last_updated_at = 5;
+  int32 update_count = 6;
+}
+
 
 message CreatePostRequest {
   string content = 1;
@@ -33,10 +45,16 @@ message BatchGetPostResponse {
   repeated Post post = 1;
 }
 
-message Post {
-  common.v1.PostId id = 1;
-  common.v1.UserId author_id = 2;
-  string content = 3;
-  google.protobuf.Timestamp timestamp = 4;
+message UpdatePostRequest {
+  // The Post resource being updated
+  Post post = 1;
+
+  // FieldMask specifies which fields are being updated
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+message UpdatePostResponse {
+  // The updated Post, returned for convenience
+  Post post = 1;
 }
 
