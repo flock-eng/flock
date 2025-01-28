@@ -1,0 +1,28 @@
+syntax = "proto3";
+import "common/v1/common.proto";
+
+package profile.v1;
+
+message User {
+  common.v1.UserId id = 1;
+  string username = 2;
+}
+
+message MiniProfile {
+  User user = 1;
+  ProfilePicture picture = 2;
+}
+
+message ProfilePicture {
+  oneof picture {
+    string url = 1;
+    string hex_color = 2;
+  }
+}
+
+message Profile {
+  MiniProfile mini_profile = 1;
+  string bio = 2;
+  string location = 3;
+  string website = 4;
+}

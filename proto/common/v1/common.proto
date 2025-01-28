@@ -1,0 +1,24 @@
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+
+package common.v1;
+
+message Pagination {
+  int32 page_size = 1; // Typically 20-50 items
+  oneof token {
+    string page_token = 2; // Opaque cursor
+    google.protobuf.Timestamp after_time = 3;
+  }
+}
+
+message UserId {
+  string value = 1;
+}
+
+message PostId {
+  string value = 1;
+}
+
+message AdvertisementId {
+  string value = 1;
+}
