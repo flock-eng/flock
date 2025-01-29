@@ -1,68 +1,179 @@
 syntax = "proto3";
 
+package post.v1;
+
 import "common/v1/common.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/field_mask.proto";
 
-package post.v1;
-
-service PostService {
+/**
+ * FlockPostService handles CRUD operations on posts.
+ *
+ * Error Codes:
+ * - INVALID_ARGUMENT: If fields are invalid or missing
+ * - NOT_FOUND: If the requested post does not exist
+ * - UNAUTHENTICATED: If user is not authenticated when creating/updating
+ * - PERMISSION_DENIED: If user is not allowed to modify a post
+ * - INTERNAL: If an unexpected server-side error occurs
+ */
+service FlockPostService {
+  /**
+   * Creates a new post resource.
+   * Returns the created post or an error if creation fails.
+   */
   rpc CreatePost(CreatePostRequest) returns (CreatePostResponse);
+
+  /**
+   * Retrieves an existing post by ID.
+   */
   rpc GetPost(GetPostRequest) returns (GetPostResponse);
+
+  /**
+   * Retrieves multiple posts in a single request, by their IDs.
+   */
   rpc BatchGetPost(BatchGetPostRequest) returns (BatchGetPostResponse);
+
+  /**
+   * Updates specific fields of a post, using a field mask to indicate which fields to change.
+   */
   rpc UpdatePost(UpdatePostRequest) returns (UpdatePostResponse);
 }
 
+/**
+ * Core data model for a post.
+ */
 message Post {
-  // The unique identifier for the post
+  /**
+   * The unique identifier for the post (string-based for flexibility).
+   */
   common.v1.PostId id = 1;
-  // The author of the post
+
+  /**
+   * The ID of the user who authored this post.
+   */
   common.v1.UserId author_id = 2;
-  // The content of the post
+
+  /**
+   * The text content of the post.
+   */
   string content = 3;
-  // The time this post was created
+
+  /**
+   * The time the post was created.
+   */
   google.protobuf.Timestamp created_at = 4;
-  // The last time this post was updated
+
+  /**
+   * The last time this post was updated.
+   */
   google.protobuf.Timestamp last_updated_at = 5;
-  // How many updates have been made to this post
+
+  /**
+   * The version number indicating how many times this post has been updated.
+   * Useful for concurrency checks or optimistic locking.
+   */
   int32 version = 6;
 }
 
-
+/**
+ * Request to create a new post.
+ */
 message CreatePostRequest {
-  string content = 1;
+  /**
+   * Client-supplied request ID for idempotent creation. If repeated,
+   * the server can return the original result to avoid duplicates.
+   */
+  optional string request_id = 1;
+
+  /**
+   * The content of the new post.
+   */
+  string content = 2;
 }
 
+/**
+ * Response after successfully creating a post.
+ */
 message CreatePostResponse {
+  /**
+   * The newly created post resource with populated fields.
+   */
   Post post = 1;
 }
 
+/**
+ * Request to retrieve a single post by its ID.
+ */
 message GetPostRequest {
+  /**
+   * The ID of the post to fetch.
+   */
   common.v1.PostId post_id = 1;
+
+  /**
+   * Optional read mask specifying which fields of Post to return.
+   * If empty, all fields are returned.
+   */
+  google.protobuf.FieldMask read_mask = 2;
 }
 
+/**
+ * Response containing the requested post.
+ */
 message GetPostResponse {
+  /**
+   * The retrieved post resource. Certain fields may be omitted if read_mask was used.
+   */
   Post post = 1;
 }
 
+/**
+ * Request to batch-retrieve multiple posts by their IDs.
+ */
 message BatchGetPostRequest {
+  /**
+   * The IDs of the posts to fetch.
+   */
   repeated common.v1.PostId post_id = 1;
+
+  /**
+   * An optional read mask specifying which fields of each Post to return.
+   */
+  google.protobuf.FieldMask read_mask = 2;
 }
 
+/**
+ * Response containing the posts that were successfully retrieved.
+ */
 message BatchGetPostResponse {
+  /**
+   * The retrieved post resources. Some may be missing if not found.
+   */
   repeated Post post = 1;
 }
 
+/**
+ * Request to update an existing post. Includes the post resource
+ * to update and a FieldMask to specify which fields are changing.
+ */
 message UpdatePostRequest {
-  // The Post resource being updated
+  /**
+   * The Post resource with updated values.
+   */
   Post post = 1;
 
-  // FieldMask specifies which fields are being updated
+  /**
+   * FieldMask specifies which fields in `post` to actually update.
+   */
   google.protobuf.FieldMask update_mask = 2;
 }
 
+/**
+ * Response containing the updated post after changes are applied.
+ */
 message UpdatePostResponse {
-  // The updated Post, returned for convenience
+  /**
+   * The updated Post resource.
+   */
   Post post = 1;
 }
-

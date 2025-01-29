@@ -6,33 +6,78 @@ import "profile/v1/profile.proto";
 import "feed/v1/feed.proto";
 import "common/v1/common.proto";
 
-// "Backend for Frontend"
-// This service is responsible for aggregating data from multiple services
-// and returning it to the client in a format that is easy to consume.
-service UserAggregationService {
+/**
+ * FlockUserAggregationService is a "Backend for Frontend" (BFF).
+ * It aggregates data from multiple microservices and returns
+ * simplified responses tailored to UI needs.
+ *
+ * Error Codes:
+ * - INVALID_ARGUMENT: If pagination fields are invalid
+ * - NOT_FOUND: If requested user or feed data is missing
+ * - INTERNAL: If an internal error occurs while aggregating
+ */
+service FlockUserAggregationService {
+  /**
+   * Fetches a personalized homepage feed, aggregating post data, ads, or other info
+   * from multiple sources for the current user session.
+   */
   rpc FetchHomepage(FetchHomepageRequest) returns (FetchHomepageResponse);
+
+  /**
+   * Fetches a user profile page, including a feed of that user’s content
+   * and high-level profile metadata.
+   */
   rpc FetchUserProfilePage(FetchUserProfilePageRequest) returns (FetchUserProfilePageResponse);
 }
 
+/**
+ * Request for the homepage feed.
+ */
 message FetchHomepageRequest {
+  /**
+   * Pagination parameters for retrieving a subset of feed items.
+   * Example: page_size=20, page_token="..."
+   */
   common.v1.Pagination pagination = 1;
 }
 
+/**
+ * Response containing the homepage feed items.
+ */
 message FetchHomepageResponse {
-  // The feed of the homepage
+  /**
+   * The feed displayed on the homepage.
+   * Typically includes posts, ads, or recommended content.
+   */
   feed.v1.FeedResponse homepage_feed = 1;
 }
 
+/**
+ * Request to retrieve a specific user’s profile page.
+ */
 message FetchUserProfilePageRequest {
-  // The user whose profile page we want to fetch
+  /**
+   * The ID of the user whose profile we want to fetch.
+   */
   common.v1.UserId target_user = 1;
-  // The pagination for the target user's feed
+
+  /**
+   * Pagination parameters for retrieving a subset of the user’s feed items.
+   */
   common.v1.Pagination pagination = 2;
 }
 
+/**
+ * The result for a user profile page fetch.
+ */
 message FetchUserProfilePageResponse {
-  // The profile of the target user
+  /**
+   * The core profile data of the target user.
+   */
   profile.v1.Profile target_user_profile = 1;
-  // The feed of the target user
+
+  /**
+   * The feed belonging to the target user.
+   */
   feed.v1.FeedResponse target_user_feed = 2;
 }

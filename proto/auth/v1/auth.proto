@@ -1,33 +1,110 @@
 syntax = "proto3";
-import "profile/v1/profile.proto";
 
 package auth.v1;
 
-service AuthService {
+import "profile/v1/profile.proto";
+
+/**
+ * FlockAuthService is responsible for user authentication flows:
+ * registering, logging in, and logging out.
+ *
+ * Error Codes (common examples, actual usage may vary by implementation):
+ * - INVALID_ARGUMENT: If required fields are missing or malformed
+ * - ALREADY_EXISTS: If registering with a username that is taken
+ * - UNAUTHENTICATED: If credentials are invalid (login) or token is missing/invalid
+ */
+service FlockAuthService {
+  /**
+   * Registers a new user in the system.
+   */
   rpc Register(RegisterRequest) returns (RegisterResponse);
+
+  /**
+   * Logs in an existing user, returning a valid JWT token if successful.
+   */
   rpc Login(LoginRequest) returns (LoginResponse);
+
+  /**
+   * Logs out the currently authenticated user.
+   */
   rpc Logout(LogoutRequest) returns (LogoutResponse);
 }
 
+/**
+ * Request to register a new user.
+ */
 message RegisterRequest {
-  string username = 1;
-  string password = 2;
+  /**
+   * Client-supplied request ID for idempotent registration, allowing the server
+   * to return the same result if this request is retried.
+   */
+  optional string request_id = 1;
+
+  /**
+   * Desired username for the new account.
+   * Must be unique and non-empty.
+   */
+  string username = 2;
+
+  /**
+   * Raw password for the new account, subject to the system’s password policy.
+   */
+  string password = 3;
 }
 
+/**
+ * Response returned after registering a user.
+ */
 message RegisterResponse {
+  /**
+   * The newly created user resource containing basic profile info.
+   */
   profile.v1.User user = 1;
+
+  /**
+   * A JWT token to use in subsequent authenticated calls.
+   * Treat this as an opaque string on the client side.
+   */
   string jwt_token = 2;
 }
 
+/**
+ * Request to log in with existing credentials.
+ */
 message LoginRequest {
+  /**
+   * The user’s username, must match a registered account.
+   */
   string username = 1;
+
+  /**
+   * The user’s password for authentication.
+   */
   string password = 2;
 }
 
+/**
+ * Response returned after a successful login.
+ */
 message LoginResponse {
+  /**
+   * The user resource, useful for displaying user info client-side.
+   */
   profile.v1.User user = 1;
+
+  /**
+   * A valid JWT token that the user must send in subsequent requests.
+   */
   string jwt_token = 2;
 }
 
+/**
+ * Request to log out the current user.
+ * Typically requires an authentication token (JWT) in headers.
+ */
 message LogoutRequest {}
+
+/**
+ * Response confirming a successful logout.
+ */
 message LogoutResponse {}
