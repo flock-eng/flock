@@ -1,22 +1,52 @@
 syntax = "proto3";
-import "common/v1/common.proto";
 
 package ads.v1;
 
+import "common/v1/common.proto";
+
+/**
+ * Flock advertisement-related messages.
+ * An Advertisement can be text-based, video-based, etc.
+ */
 message Advertisement {
+  /**
+   * System-wide unique ID for this advertisement.
+   * Using string-based IDs provides flexibility and avoids collisions.
+   */
   common.v1.AdvertisementId id = 1;
+
+  /**
+   * Oneof containing the different possible ad content formats.
+   * Currently, only a text ad is supported, but new formats
+   * could be added (video, image, etc.).
+   */
   oneof content {
     TextAdvertisement text_ad = 2;
   }
 }
 
+/**
+ * Text-based advertisement content.
+ */
 message TextAdvertisement {
-  // Text for the ad call-to-action
+  /**
+   * Text shown for the ad call-to-action. This field might be empty.
+   */
   optional string call_to_action = 1;
-  // The advertisement text content
+
+  /**
+   * Main text content of the advertisement, displayed to the user.
+   */
   string text = 2;
-  // URL for the ad destination
+
+  /**
+   * The URL destination for the user if they click/tap the ad.
+   * Must be a valid URL.
+   */
   string target_url = 3;
-  // Name of the advertiser
+
+  /**
+   * The sponsor or advertiser name. For example, "Acme Corp."
+   */
   string sponsor_name = 4;
 }

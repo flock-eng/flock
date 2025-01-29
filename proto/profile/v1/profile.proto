@@ -6,94 +6,200 @@ import "common/v1/common.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/field_mask.proto";
 
-service ProfileService {
-  // Creates a new profile record for a user.
-  // Typically called by the Auth service after registering a user.
+/**
+ * FlockProfileService manages user profile creation, retrieval, and updates.
+ *
+ * Error Codes:
+ * - INVALID_ARGUMENT: If required fields are missing or malformed
+ * - ALREADY_EXISTS: If attempting to create a profile for an existing user
+ * - NOT_FOUND: If a profile is requested that does not exist
+ * - PERMISSION_DENIED: If updating a profile you do not own
+ * - INTERNAL: If an unexpected server-side error occurs
+ */
+service FlockProfileService {
+  /**
+   * Creates a new profile record for a user. Typically invoked
+   * right after successful registration.
+   */
   rpc CreateProfile(CreateProfileRequest) returns (CreateProfileResponse);
 
-  // Retrieves a profile by user ID or username.
+  /**
+   * Retrieves a profile by user ID or username.
+   */
   rpc GetProfile(GetProfileRequest) returns (GetProfileResponse);
 
-  // Updates a profile
+  /**
+   * Updates a profile using a field mask to specify which fields to change.
+   */
   rpc UpdateProfile(UpdateProfileRequest) returns (UpdateProfileResponse);
 }
 
-// Core user information
+/**
+ * Core user information, primarily used in responses or references.
+ */
 message User {
-  // The user's unique identifier
+  /**
+   * The user’s unique identifier.
+   */
   common.v1.UserId id = 1;
-  // The user's username
+
+  /**
+   * The user’s chosen username, immutable after creation (example policy).
+   */
   string username = 2;
-  // The user's profile picture
+
+  /**
+   * The user’s profile picture, which can be a URL or a color placeholder.
+   */
   ProfilePicture picture = 3;
 }
 
-// Full user profile
+/**
+ * Full user profile, including optional fields that the user can customize.
+ */
 message Profile {
-  // User Information
+  /**
+   * The basic user information (ID, username, picture).
+   */
   User user = 1;
-  // The user's bio
+
+  /**
+   * The user’s self-described biography.
+   */
   optional string bio = 2;
-  // The user's location
+
+  /**
+   * The user’s location (city, country, etc.).
+   */
   optional string location = 3;
-  // The user's website
+
+  /**
+   * The user’s personal or professional website URL.
+   */
   optional string website = 4;
-  // The time this profile was created
+
+  /**
+   * The creation timestamp for this profile.
+   */
   google.protobuf.Timestamp created_at = 5;
-  // The last time this profile was updated
+
+  /**
+   * The last update timestamp for this profile.
+   */
   google.protobuf.Timestamp last_updated_at = 6;
-  // How many updates have been made to this profile
+
+  /**
+   * Incremented version number each time the profile is updated.
+   */
   int32 version = 7;
 }
 
+/**
+ * A user’s profile picture info. This is a oneof that can be a URL or a
+ * hex color placeholder if no actual picture is set.
+ */
 message ProfilePicture {
   oneof picture {
+    /**
+     * The URL of the hosted profile image.
+     */
     string url = 1;
+
+    /**
+     * A hex color code (e.g., "#FF5733") for placeholder usage.
+     */
     string hex_color = 2;
   }
 }
 
-// ------------------------
-// RPC Request/Response
-// ------------------------
+/**
+ * Request to create a new profile for a user.
+ */
 message CreateProfileRequest {
-  // The user ID for whom the profile is created
-  common.v1.UserId user_id = 1;
-  // The username for the user
-  string username = 2;
-  // Optional bio
-  string bio = 3;
-  // Optional location
-  string location = 4;
-  // Optional website
-  string website = 5;
+  /**
+   * Client-supplied request ID for idempotent creation. If repeated,
+   * the server should return the same result and not create duplicates.
+   */
+  optional string request_id = 1;
+
+  /**
+   * ID of the user for whom we’re creating a profile.
+   */
+  common.v1.UserId user_id = 2;
+
+  /**
+   * The user’s chosen username.
+   */
+  string username = 3;
+
+  /**
+   * Optional biography.
+   */
+  string bio = 4;
+
+  /**
+   * Optional location.
+   */
+  string location = 5;
+
+  /**
+   * Optional website URL.
+   */
+  string website = 6;
 }
 
+/**
+ * Response after creating a user profile.
+ */
 message CreateProfileResponse {
+  /**
+   * The newly created profile resource.
+   */
   Profile profile = 1;
 }
 
+/**
+ * Request to retrieve a profile by either user_id or username.
+ */
 message GetProfileRequest {
-  // You can identify a profile by user_id or by username
   oneof identifier {
     common.v1.UserId user_id = 1;
     string username = 2;
   }
 }
 
+/**
+ * Response containing the requested profile.
+ */
 message GetProfileResponse {
+  /**
+   * The found profile resource. Empty if none found.
+   */
   Profile profile = 1;
 }
 
+/**
+ * Request to update an existing profile, specifying which fields
+ * to modify via a field mask.
+ */
 message UpdateProfileRequest {
-  // The profile resource to update.
+  /**
+   * The profile resource with updated values.
+   */
   Profile profile = 1;
 
-  // FieldMask indicates which fields you intend to update.
+  /**
+   * FieldMask indicating which fields should be updated.
+   */
   google.protobuf.FieldMask update_mask = 2;
 }
 
+/**
+ * Response containing the updated profile.
+ */
 message UpdateProfileResponse {
-  // The updated profile resource.
+  /**
+   * The updated profile resource.
+   */
   Profile profile = 1;
 }

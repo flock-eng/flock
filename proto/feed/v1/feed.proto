@@ -1,42 +1,104 @@
 syntax = "proto3";
+
+package feed.v1;
+
 import "google/protobuf/timestamp.proto";
 import "post/v1/post.proto";
 import "ads/v1/ads.proto";
 import "common/v1/common.proto";
 
-package feed.v1;
-
-service FeedService {
+/**
+ * FlockFeedService handles retrieving feeds for profiles and homepages.
+ *
+ * Error Codes:
+ * - INVALID_ARGUMENT: If request parameters like pagination are invalid
+ * - NOT_FOUND: If a user or feed is missing
+ * - INTERNAL: If there is an unexpected server-side error
+ */
+service FlockFeedService {
+  /**
+   * Retrieves a feed belonging to a specific user profile.
+   */
   rpc GetProfileFeed(GetProfileFeedRequest) returns (GetProfileFeedResponse);
+
+  /**
+   * Retrieves a feed for the homepage of the current user.
+   */
   rpc GetHomepageFeed(GetHomepageFeedRequest) returns (GetHomepageFeedResponse);
 }
 
+/**
+ * Request for retrieving a user’s profile feed.
+ */
 message GetProfileFeedRequest {
+  /**
+   * Oneof identifier for the target user. They can specify by user_id or by username.
+   */
   oneof identifier {
     common.v1.UserId user_id = 1;
     string username = 2;
   }
+
+  /**
+   * Pagination parameters for partial retrieval of the feed.
+   */
   common.v1.Pagination pagination = 3;
 }
 
+/**
+ * Response containing the requested profile feed.
+ */
 message GetProfileFeedResponse {
+  /**
+   * The feed data for the requested user.
+   */
   FeedResponse feed = 1;
 }
 
+/**
+ * Request for retrieving the homepage feed for the current user session.
+ */
 message GetHomepageFeedRequest {
+  /**
+   * Pagination parameters for partial retrieval of the homepage feed.
+   */
   common.v1.Pagination pagination = 1;
 }
 
+/**
+ * Response containing the requested homepage feed.
+ */
 message GetHomepageFeedResponse {
+  /**
+   * The feed data for the homepage.
+   */
   FeedResponse feed = 1;
 }
 
+/**
+ * A generic feed response that may contain posts, ads, or other items.
+ */
 message FeedResponse {
+  /**
+   * The individual feed items (posts, ads, etc.) displayed in the feed.
+   */
   repeated FeedItem items = 1;
+
+  /**
+   * The server-supplied pagination object, including the next page token (if any).
+   */
   common.v1.Pagination pagination = 2;
+
+  /**
+   * Additional metadata about the feed, such as a unique feed_id or
+   * generation timestamp for caching or consistency.
+   */
   FeedMetadata metadata = 3;
 }
 
+/**
+ * A single item in the feed, which might be a post or an advertisement.
+ */
 message FeedItem {
   oneof content {
     post.v1.Post post = 1;
@@ -44,7 +106,17 @@ message FeedItem {
   }
 }
 
+/**
+ * Metadata associated with a feed.
+ */
 message FeedMetadata {
-  string feed_id = 1; // For session consistency
+  /**
+   * A unique feed identifier for session consistency or analytics.
+   */
+  string feed_id = 1;
+
+  /**
+   * Timestamp indicating when this feed was generated.
+   */
   google.protobuf.Timestamp generated_at = 2;
 }

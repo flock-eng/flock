@@ -1,21 +1,49 @@
 syntax = "proto3";
-import "google/protobuf/timestamp.proto";
 
 package common.v1;
 
+/**
+ * Standard pagination parameters for listing or querying APIs.
+ */
 message Pagination {
+  /**
+   * The maximum number of results to return in this page.
+   */
   int32 page_size = 1;
+
+  /**
+   * An opaque token returned by a previous call that tells the server
+   * where to continue the results. Clients should not parse or alter this.
+   */
   string page_token = 2;
 }
 
+/**
+ * String-based user identifier, allowing flexible, non-numeric IDs.
+ */
 message UserId {
+  /**
+   * Opaque string ID for the user, e.g., "user-12345"
+   */
   string value = 1;
 }
 
+/**
+ * String-based post identifier, allowing flexible, non-numeric IDs.
+ */
 message PostId {
+  /**
+   * Opaque string ID for the post, e.g., "post-abcde"
+   */
   string value = 1;
 }
 
+/**
+ * String-based advertisement identifier.
+ */
 message AdvertisementId {
+  /**
+   * Opaque string ID for the advertisement, e.g., "ad-XYZ"
+   */
   string value = 1;
 }

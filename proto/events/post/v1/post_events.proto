@@ -1,21 +1,28 @@
 syntax = "proto3";
 
+package events.post.v1;
+
 import "common/v1/common.proto";
 import "google/protobuf/timestamp.proto";
 
-package events.post.v1;
-
-// Common envelope for all post events in the system.
+/**
+ * PostEvent is a common envelope for all post-related events in the system.
+ */
 message PostEvent {
-  // Identifies the event type so consumers can quickly branch logic.
+  /**
+   * Identifies the specific event type, so consumers can dispatch logic accordingly.
+   */
   EventType event_type = 1;
 
-  // Common metadata that might be useful for debugging or tracing.
-  // For example, correlation_id for distributed tracing, or
-  // a server_timestamp representing when the event was produced.
+  /**
+   * Common metadata that might be useful for debugging or tracing.
+   * For example, correlation_id or server_timestamp.
+   */
   EventMetadata metadata = 2;
 
-  // Differentiate payload types.
+  /**
+   * Differentiates the payload type (post created, updated, or deleted).
+   */
   oneof payload {
     PostCreated post_created = 10;
     PostUpdated post_updated = 11;
@@ -23,40 +30,119 @@ message PostEvent {
   }
 }
 
-// Distinguishes which event is carried in the payload.
+/**
+ * EventType distinguishes which type of post event occurred.
+ */
 enum EventType {
+  /*
+   * Unspecified event type.
+   */
   EVENT_TYPE_UNSPECIFIED = 0;
+  /*
+   * A new post was created.
+   */
   EVENT_TYPE_POST_CREATED = 1;
+  /*
+   * An existing post was updated.
+   */
   EVENT_TYPE_POST_UPDATED = 2;
+  /*
+   * An existing post was deleted.
+   */
   EVENT_TYPE_POST_DELETED = 3;
 }
 
+/**
+ * Metadata for an event, useful for debugging and system tracing.
+ */
 message EventMetadata {
+  /**
+   * A correlation ID that can be used to group or trace a request across services.
+   */
   string correlation_id = 1;
-  string producer_id = 2; // e.g., the service name or instance
+
+  /**
+   * The ID or name of the producer (service instance) that published the event.
+   */
+  string producer_id = 2;
+
+  /**
+   * The timestamp on the server side when the event was produced.
+   */
   google.protobuf.Timestamp server_timestamp = 3;
 }
 
-// Payload message for "Post Created"
+/**
+ * Payload for a "Post Created" event.
+ */
 message PostCreated {
+  /**
+   * ID of the newly created post.
+   */
   common.v1.PostId post_id = 1;
+
+  /**
+   * Author (user) who created the post.
+   */
   common.v1.UserId author_id = 2;
+
+  /**
+   * Text content of the post at creation time.
+   */
   string content = 3;
+
+  /**
+   * Timestamp when the post was created.
+   */
   google.protobuf.Timestamp created_at = 4;
+
+  /**
+   * How many times this post has been versioned/updated. Typically 1 on creation.
+   */
   int32 version = 5;
 }
 
-// Payload message for "Post Updated"
+/**
+ * Payload for a "Post Updated" event.
+ */
 message PostUpdated {
+  /**
+   * ID of the post that was updated.
+   */
   common.v1.PostId post_id = 1;
+
+  /**
+   * New text content of the post after the update.
+   */
   string new_content = 2;
+
+  /**
+   * Timestamp when the post was updated.
+   */
   google.protobuf.Timestamp updated_at = 3;
+
+  /**
+   * Incremented version after the update.
+   */
   int32 version = 4;
 }
 
-// Payload message for "Post Deleted"
+/**
+ * Payload for a "Post Deleted" event.
+ */
 message PostDeleted {
+  /**
+   * ID of the post that was deleted.
+   */
   common.v1.PostId post_id = 1;
+
+  /**
+   * Timestamp when the post was deleted.
+   */
   google.protobuf.Timestamp deleted_at = 2;
+
+  /**
+   * Version at the time of deletion, if tracked.
+   */
   int32 version = 3;
 }
