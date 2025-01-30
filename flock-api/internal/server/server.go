@@ -1,12 +1,9 @@
 package server
 
 import (
-	"buf.build/gen/go/wcygan/flock/connectrpc/go/backend/v1/backendv1connect"
-	"buf.build/gen/go/wcygan/flock/connectrpc/go/frontend/v1/frontendv1connect"
+	"buf.build/gen/go/wcygan/flock/connectrpc/go/auth/v1/authv1connect"
 	"connectrpc.com/connect"
-	"github.com/flock-eng/flock/flock-api/internal/home_page"
-	"github.com/flock-eng/flock/flock-api/internal/post"
-	"github.com/flock-eng/flock/flock-api/internal/profile_page"
+	"github.com/flock-eng/flock/flock-api/internal/auth"
 	"net/http"
 	"time"
 )
@@ -15,9 +12,7 @@ type Server struct {
 	mux *http.ServeMux
 
 	// Services
-	homePageService *home_page.Service
-	postService     *post.Service
-	profileService  *profile_page.Service
+	authService *auth.Service
 }
 
 type Config struct {
@@ -49,26 +44,14 @@ func NewServer(cfg *Config) *Server {
 }
 
 func (s *Server) initializeServices(cfg *Config) {
-	s.homePageService = home_page.NewService()
-	s.postService = post.NewService()
-	s.profileService = profile_page.NewService()
+	s.authService = auth.NewService()
 }
 
 func (s *Server) registerHandlers() {
 	interceptors := connect.WithInterceptors(LoggingInterceptor())
 
-	s.mux.Handle(frontendv1connect.NewHomePageServiceHandler(
-		home_page.NewHandler(s.homePageService),
-		interceptors,
-	))
-
-	s.mux.Handle(backendv1connect.NewPostServiceHandler(
-		post.NewHandler(s.postService),
-		interceptors,
-	))
-
-	s.mux.Handle(frontendv1connect.NewProfilePageServiceHandler(
-		profile_page.NewHandler(s.profileService),
+	s.mux.Handle(authv1connect.NewFlockAuthServiceHandler(
+		auth.NewHandler(s.authService),
 		interceptors,
 	))
 }
