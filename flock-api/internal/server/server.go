@@ -3,6 +3,7 @@ package server
 import (
 	"buf.build/gen/go/wcygan/flock/connectrpc/go/auth/v1/authv1connect"
 	"connectrpc.com/connect"
+	"connectrpc.com/grpcreflect"
 	"github.com/flock-eng/flock/flock-api/internal/auth"
 	"net/http"
 	"time"
@@ -36,30 +37,26 @@ func NewServer(cfg *Config) *Server {
 		mux: http.NewServeMux(),
 	}
 
-	s.initializeServices(cfg)
-	s.registerHandlers()
-	s.registerHealthCheck()
-
-	return s
-}
-
-func (s *Server) initializeServices(cfg *Config) {
 	s.authService = auth.NewService()
-}
 
-func (s *Server) registerHandlers() {
 	interceptors := connect.WithInterceptors(LoggingInterceptor())
 
 	s.mux.Handle(authv1connect.NewFlockAuthServiceHandler(
 		auth.NewHandler(s.authService),
 		interceptors,
 	))
-}
 
-func (s *Server) registerHealthCheck() {
+	// Register the reflection service
+	reflector := grpcreflect.NewStaticReflector(
+		authv1connect.FlockAuthServiceName,
+	)
+	s.mux.Handle(grpcreflect.NewHandlerV1(reflector))
+
 	s.mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})
+
+	return s
 }
 
 func (s *Server) Handler() http.Handler {
