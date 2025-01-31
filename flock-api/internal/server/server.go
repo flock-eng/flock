@@ -12,15 +12,14 @@ import (
 	"github.com/flock-eng/flock/flock-api/internal/auth"
 	"github.com/flock-eng/flock/flock-api/internal/bff"
 	"github.com/flock-eng/flock/flock-api/internal/post"
+	"github.com/flock-eng/flock/flock-api/internal/service"
 )
 
 type Server struct {
 	mux *http.ServeMux
 
 	// Services
-	authService *auth.Service
-	bffService  *bff.Service
-	postService *post.Service
+	services []service.Registerable
 }
 
 type Config struct {
@@ -41,47 +40,74 @@ func NewServer(cfg *Config) *Server {
 	}
 
 	s := &Server{
-		mux: http.NewServeMux(),
+		mux:      http.NewServeMux(),
+		services: make([]service.Registerable, 0),
 	}
 
-	s.authService = auth.NewService()
-	s.bffService = bff.NewService()
-	s.postService = post.NewService()
-
-	interceptors := connect.WithInterceptors(LoggingInterceptor())
-
-	// Register auth service
-	s.mux.Handle(authv1connect.NewFlockAuthServiceHandler(
-		auth.NewHandler(s.authService),
-		interceptors,
-	))
-
-	// Register BFF service
-	s.mux.Handle(bffv1connect.NewFlockUserAggregationServiceHandler(
-		bff.NewHandler(s.bffService),
-		interceptors,
-	))
-
-	// Register Post service
-	s.mux.Handle(postv1connect.NewFlockPostServiceHandler(
-		post.NewHandler(s.postService),
-		interceptors,
-	))
-
-	// Register the reflection service
-	reflector := grpcreflect.NewStaticReflector(
+	// Register all services
+	s.registerService(service.NewRegisterableService(
 		authv1connect.FlockAuthServiceName,
+		func(options ...connect.HandlerOption) (string, http.Handler) {
+			return authv1connect.NewFlockAuthServiceHandler(
+				auth.NewHandler(auth.NewService()),
+				options...,
+			)
+		},
+	))
+
+	s.registerService(service.NewRegisterableService(
 		bffv1connect.FlockUserAggregationServiceName,
+		func(options ...connect.HandlerOption) (string, http.Handler) {
+			return bffv1connect.NewFlockUserAggregationServiceHandler(
+				bff.NewHandler(bff.NewService()),
+				options...,
+			)
+		},
+	))
+
+	s.registerService(service.NewRegisterableService(
 		postv1connect.FlockPostServiceName,
-	)
+		func(options ...connect.HandlerOption) (string, http.Handler) {
+			return postv1connect.NewFlockPostServiceHandler(
+				post.NewHandler(post.NewService()),
+				options...,
+			)
+		},
+	))
 
-	s.mux.Handle(grpcreflect.NewHandlerV1(reflector))
+	// Register all handlers with common interceptors
+	options := []connect.HandlerOption{
+		connect.WithInterceptors(LoggingInterceptor()),
+	}
+	s.registerHandlers(options...)
 
+	// Register health check
 	s.mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})
 
 	return s
+}
+
+func (s *Server) registerService(svc service.Registerable) {
+	s.services = append(s.services, svc)
+}
+
+func (s *Server) registerHandlers(options ...connect.HandlerOption) {
+	// Register service handlers
+	for _, svc := range s.services {
+		path, handler := svc.Handler(options...)
+		s.mux.Handle(path, handler)
+	}
+
+	// Register reflection service
+	serviceNames := make([]string, len(s.services))
+	for i, svc := range s.services {
+		serviceNames[i] = svc.ServiceName()
+	}
+	reflector := grpcreflect.NewStaticReflector(serviceNames...)
+	path, handler := grpcreflect.NewHandlerV1(reflector)
+	s.mux.Handle(path, handler)
 }
 
 func (s *Server) Handler() http.Handler {
