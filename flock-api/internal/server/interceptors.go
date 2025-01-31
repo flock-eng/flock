@@ -11,7 +11,6 @@ import (
 	"connectrpc.com/connect"
 	"github.com/flock-eng/flock/flock-api/internal/logger"
 	"go.uber.org/zap"
-	"golang.org/x/time/rate"
 )
 
 // RequestInfo holds information about the request for logging
@@ -164,36 +163,24 @@ func AuthInterceptor() connect.UnaryInterceptorFunc {
 			if isPublicEndpoint(req.Spec().Procedure) {
 				return next(ctx, req)
 			}
-			
+
 			token := extractBearerToken(req.Header())
 			if token == "" {
 				return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("missing authentication token"))
 			}
-			
+
 			// Validate token and add claims to context
 			claims, err := validateToken(token)
 			if err != nil {
 				return nil, connect.NewError(connect.CodeUnauthenticated, err)
 			}
-			
+
 			// Add claims to context
 			newCtx := context.WithValue(ctx, "user_claims", claims)
-			
+
 			return next(newCtx, req)
 		}
 	}
-}
-
-// RateLimiterConfig holds configuration for rate limiting
-type RateLimiterConfig struct {
-	RequestsPerSecond float64
-	TokenLimit        int
-	ReplenishmentSec int
-}
-
-// NewRateLimiter creates a new rate limiter with the given configuration
-func NewRateLimiter(cfg RateLimiterConfig) *rate.Limiter {
-	return rate.NewLimiter(rate.Limit(cfg.RequestsPerSecond), cfg.TokenLimit)
 }
 
 type RateLimitInterceptor struct {
@@ -222,10 +209,10 @@ func (i *RateLimitInterceptor) InterceptConnect() connect.UnaryInterceptorFunc {
 	return func(next connect.UnaryFunc) connect.UnaryFunc {
 		return func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
 			ip := getClientIP(req.Header())
-			
+
 			i.mu.Lock()
 			defer i.mu.Unlock()
-			
+
 			bucket, exists := i.ipBuckets[ip]
 			if !exists {
 				bucket = &tokenBucket{
@@ -234,32 +221,26 @@ func (i *RateLimitInterceptor) InterceptConnect() connect.UnaryInterceptorFunc {
 				}
 				i.ipBuckets[ip] = bucket
 			}
-			
+
 			// Auto-replenish tokens
 			now := time.Now()
 			elapsed := now.Sub(bucket.lastReplenished)
 			periods := int(elapsed / i.replenishmentPeriod)
-			
+
 			if periods > 0 {
 				newTokens := periods * i.tokensPerPeriod
-				bucket.tokens = min(bucket.tokens + newTokens, i.tokenLimit)
+				bucket.tokens = min(bucket.tokens+newTokens, i.tokenLimit)
 				bucket.lastReplenished = bucket.lastReplenished.Add(time.Duration(periods) * i.replenishmentPeriod)
 			}
-			
+
 			if bucket.tokens > 0 {
 				bucket.tokens--
 				return next(ctx, req)
 			}
-			
+
 			return nil, connect.NewError(connect.CodeResourceExhausted, errors.New("rate limit exceeded"))
 		}
 	}
-}
-
-// Helper functions
-func min(a, b int) int {
-	if a < b { return a }
-	return b
 }
 
 func TimeoutInterceptor(timeout time.Duration) connect.UnaryInterceptorFunc {
@@ -267,7 +248,7 @@ func TimeoutInterceptor(timeout time.Duration) connect.UnaryInterceptorFunc {
 		return func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
 			ctx, cancel := context.WithTimeout(ctx, timeout)
 			defer cancel()
-			
+
 			return next(ctx, req)
 		}
 	}

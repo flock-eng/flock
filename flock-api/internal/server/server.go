@@ -27,14 +27,14 @@ type Server struct {
 	handler http.Handler
 }
 
-// ServerBuilder handles the registration of services during server construction
-type ServerBuilder struct {
+// Builder handles the registration of services during server construction
+type Builder struct {
 	cfg      *Config
 	mux      *http.ServeMux
 	services []service.Registerable
 }
 
-func NewServerBuilder(cfg *Config) *ServerBuilder {
+func NewServerBuilder(cfg *Config) *Builder {
 	if cfg == nil {
 		cfg = &Config{
 			Port:           "8080",
@@ -44,7 +44,7 @@ func NewServerBuilder(cfg *Config) *ServerBuilder {
 		}
 	}
 
-	return &ServerBuilder{
+	return &Builder{
 		cfg:      cfg,
 		mux:      http.NewServeMux(),
 		services: make([]service.Registerable, 0),
@@ -52,17 +52,17 @@ func NewServerBuilder(cfg *Config) *ServerBuilder {
 }
 
 // RegisterService adds a service to the builder
-func (b *ServerBuilder) RegisterService(svc service.Registerable) *ServerBuilder {
+func (b *Builder) RegisterService(svc service.Registerable) *Builder {
 	b.services = append(b.services, svc)
 	return b
 }
 
 // Build finalizes the server configuration and returns an immutable Server
-func (b *ServerBuilder) Build() *Server {
+func (b *Builder) Build() *Server {
 	// Configure rate limiter
 	rateLimiter := NewRateLimitInterceptor(
-		100,    // token limit
-		10,     // tokens per period
+		100,         // token limit
+		10,          // tokens per period
 		time.Second, // replenishment period
 	)
 
@@ -72,7 +72,7 @@ func (b *ServerBuilder) Build() *Server {
 			LoggingInterceptor(),
 			AuthInterceptor(),
 			rateLimiter.InterceptConnect(),
-			TimeoutInterceptor(30 * time.Second),
+			TimeoutInterceptor(10*time.Second),
 			ValidationInterceptor(),
 		),
 	}
