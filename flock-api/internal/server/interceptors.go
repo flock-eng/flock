@@ -1,14 +1,15 @@
 package server
 
 import (
-	"connectrpc.com/connect"
 	"context"
 	"errors"
-	"fmt"
-	"log"
 	"net/http"
 	"strings"
 	"time"
+
+	"connectrpc.com/connect"
+	"github.com/flock-eng/flock/flock-api/internal/logger"
+	"go.uber.org/zap"
 )
 
 // RequestInfo holds information about the request for logging
@@ -24,6 +25,7 @@ func LoggingInterceptor() connect.UnaryInterceptorFunc {
 	return func(next connect.UnaryFunc) connect.UnaryFunc {
 		return func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
 			start := time.Now()
+			log := logger.Get()
 
 			// Extract request information
 			info := RequestInfo{
@@ -36,16 +38,16 @@ func LoggingInterceptor() connect.UnaryInterceptorFunc {
 
 			// If no request ID, generate one
 			if info.ID == "" {
-				info.ID = fmt.Sprintf("%d", time.Now().UnixNano())
+				info.ID = time.Now().Format(time.RFC3339Nano)
 			}
 
 			// Log the incoming request
-			log.Printf("[%s] → Started %s %s from %s (User-Agent: %s)",
-				info.ID,
-				info.Method,
-				info.Procedure,
-				info.ClientIP,
-				info.UserAgent,
+			log.Info("Request started",
+				zap.String("request_id", info.ID),
+				zap.String("method", info.Method),
+				zap.String("procedure", info.Procedure),
+				zap.String("client_ip", info.ClientIP),
+				zap.String("user_agent", info.UserAgent),
 			)
 
 			// Call the handler
@@ -55,30 +57,30 @@ func LoggingInterceptor() connect.UnaryInterceptorFunc {
 			duration := time.Since(start)
 
 			// Determine status code and error details
-			var status string
 			if err != nil {
 				var connectErr *connect.Error
+				status := "unknown"
 				if errors.As(err, &connectErr) {
 					status = connectErr.Code().String()
 				}
 
-				log.Printf("[%s] ✗ Failed %s %s from %s (duration: %v, status: %s): %v",
-					info.ID,
-					info.Method,
-					info.Procedure,
-					info.ClientIP,
-					duration,
-					status,
-					err,
+				log.Error("Request failed",
+					zap.String("request_id", info.ID),
+					zap.String("method", info.Method),
+					zap.String("procedure", info.Procedure),
+					zap.String("client_ip", info.ClientIP),
+					zap.Duration("duration", duration),
+					zap.String("status", status),
+					zap.Error(err),
 				)
 			} else {
-				log.Printf("[%s] ✓ Completed %s %s from %s (duration: %v, status: %s)",
-					info.ID,
-					info.Method,
-					info.Procedure,
-					info.ClientIP,
-					duration,
-					status,
+				log.Info("Request completed",
+					zap.String("request_id", info.ID),
+					zap.String("method", info.Method),
+					zap.String("procedure", info.Procedure),
+					zap.String("client_ip", info.ClientIP),
+					zap.Duration("duration", duration),
+					zap.String("status", "success"),
 				)
 			}
 
