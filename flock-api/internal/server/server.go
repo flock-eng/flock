@@ -15,13 +15,6 @@ import (
 	"github.com/flock-eng/flock/flock-api/internal/service"
 )
 
-type Server struct {
-	mux *http.ServeMux
-
-	// Services
-	services []service.Registerable
-}
-
 type Config struct {
 	Port           string
 	ReadTimeout    time.Duration
@@ -29,7 +22,19 @@ type Config struct {
 	MaxHeaderBytes int
 }
 
-func NewServer(cfg *Config) *Server {
+// Server is an immutable server instance after construction
+type Server struct {
+	handler http.Handler
+}
+
+// ServerBuilder handles the registration of services during server construction
+type ServerBuilder struct {
+	cfg      *Config
+	mux      *http.ServeMux
+	services []service.Registerable
+}
+
+func NewServerBuilder(cfg *Config) *ServerBuilder {
 	if cfg == nil {
 		cfg = &Config{
 			Port:           "8080",
@@ -39,13 +44,62 @@ func NewServer(cfg *Config) *Server {
 		}
 	}
 
-	s := &Server{
+	return &ServerBuilder{
+		cfg:      cfg,
 		mux:      http.NewServeMux(),
 		services: make([]service.Registerable, 0),
 	}
+}
+
+// RegisterService adds a service to the builder
+func (b *ServerBuilder) RegisterService(svc service.Registerable) *ServerBuilder {
+	b.services = append(b.services, svc)
+	return b
+}
+
+// Build finalizes the server configuration and returns an immutable Server
+func (b *ServerBuilder) Build() *Server {
+	// Register all handlers with common interceptors
+	options := []connect.HandlerOption{
+		connect.WithInterceptors(LoggingInterceptor()),
+	}
+
+	// Register service handlers
+	for _, svc := range b.services {
+		path, handler := svc.Handler(options...)
+		b.mux.Handle(path, handler)
+	}
+
+	// Register reflection service
+	serviceNames := make([]string, len(b.services))
+	for i, svc := range b.services {
+		serviceNames[i] = svc.ServiceName()
+	}
+	reflector := grpcreflect.NewStaticReflector(serviceNames...)
+	path, handler := grpcreflect.NewHandlerV1(reflector)
+	b.mux.Handle(path, handler)
+
+	// Register health check
+	b.mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
+
+	return &Server{
+		handler: b.mux,
+	}
+}
+
+// Handler returns the HTTP handler for the server
+func (s *Server) Handler() http.Handler {
+	return s.handler
+}
+
+// NewServer creates a new server with the default services
+func NewServer(cfg *Config) *Server {
+	builder := NewServerBuilder(cfg)
 
 	// Register all services
-	s.registerService(service.NewRegisterableService(
+	builder.RegisterService(service.NewRegisterableService(
 		authv1connect.FlockAuthServiceName,
 		func(options ...connect.HandlerOption) (string, http.Handler) {
 			return authv1connect.NewFlockAuthServiceHandler(
@@ -55,7 +109,7 @@ func NewServer(cfg *Config) *Server {
 		},
 	))
 
-	s.registerService(service.NewRegisterableService(
+	builder.RegisterService(service.NewRegisterableService(
 		bffv1connect.FlockUserAggregationServiceName,
 		func(options ...connect.HandlerOption) (string, http.Handler) {
 			return bffv1connect.NewFlockUserAggregationServiceHandler(
@@ -65,7 +119,7 @@ func NewServer(cfg *Config) *Server {
 		},
 	))
 
-	s.registerService(service.NewRegisterableService(
+	builder.RegisterService(service.NewRegisterableService(
 		postv1connect.FlockPostServiceName,
 		func(options ...connect.HandlerOption) (string, http.Handler) {
 			return postv1connect.NewFlockPostServiceHandler(
@@ -75,41 +129,5 @@ func NewServer(cfg *Config) *Server {
 		},
 	))
 
-	// Register all handlers with common interceptors
-	options := []connect.HandlerOption{
-		connect.WithInterceptors(LoggingInterceptor()),
-	}
-	s.registerHandlers(options...)
-
-	// Register health check
-	s.mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-	})
-
-	return s
-}
-
-func (s *Server) registerService(svc service.Registerable) {
-	s.services = append(s.services, svc)
-}
-
-func (s *Server) registerHandlers(options ...connect.HandlerOption) {
-	// Register service handlers
-	for _, svc := range s.services {
-		path, handler := svc.Handler(options...)
-		s.mux.Handle(path, handler)
-	}
-
-	// Register reflection service
-	serviceNames := make([]string, len(s.services))
-	for i, svc := range s.services {
-		serviceNames[i] = svc.ServiceName()
-	}
-	reflector := grpcreflect.NewStaticReflector(serviceNames...)
-	path, handler := grpcreflect.NewHandlerV1(reflector)
-	s.mux.Handle(path, handler)
-}
-
-func (s *Server) Handler() http.Handler {
-	return s.mux
+	return builder.Build()
 }
