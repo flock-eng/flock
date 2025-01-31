@@ -59,9 +59,22 @@ func (b *ServerBuilder) RegisterService(svc service.Registerable) *ServerBuilder
 
 // Build finalizes the server configuration and returns an immutable Server
 func (b *ServerBuilder) Build() *Server {
+	// Configure rate limiter
+	rateLimiter := NewRateLimitInterceptor(
+		100,    // token limit
+		10,     // tokens per period
+		time.Second, // replenishment period
+	)
+
 	// Register all handlers with common interceptors
 	options := []connect.HandlerOption{
-		connect.WithInterceptors(LoggingInterceptor()),
+		connect.WithInterceptors(
+			LoggingInterceptor(),
+			AuthInterceptor(),
+			rateLimiter.InterceptConnect(),
+			TimeoutInterceptor(30 * time.Second),
+			ValidationInterceptor(),
+		),
 	}
 
 	// Register service handlers
