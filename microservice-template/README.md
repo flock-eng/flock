@@ -21,3 +21,5 @@ After creating your microservice, adjust the module name and any specific config
 ## Docker
 
 Don't forget to add `.github/workflows/{{service-name}}.yml` to push to docker hub
+
+Generally it will be good to create a PR solely for the initial creation of the microservice and then merge it to trigger the docker build and push to docker hub
