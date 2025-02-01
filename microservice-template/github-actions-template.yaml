@@ -3,8 +3,11 @@ name: {{SERVICE_NAME}}
 on:
   push:
     branches: [ main ]
+    # Only trigger the image generation action code for artifacts change
     paths:
-      - "{{SERVICE_NAME}}/**"
+      - "{{SERVICE_NAME}}/**/*.go"
+      - "{{SERVICE_NAME}}/**/*.mod"
+      - "{{SERVICE_NAME}}/**/*.sum"
   pull_request:
     branches: [ main ]
     paths:

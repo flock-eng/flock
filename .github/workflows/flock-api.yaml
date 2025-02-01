@@ -3,8 +3,11 @@ name: flock-api
 on:
   push:
     branches: [ main ]
+    # Only trigger the image generation action code for artifacts change
     paths:
-      - "flock-api/**"
+      - "flock-api/**/*.go"
+      - "flock-api/**/*.mod"
+      - "flock-api/**/*.sum"
   pull_request:
     branches: [ main ]
     paths:

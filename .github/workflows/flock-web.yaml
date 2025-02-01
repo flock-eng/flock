@@ -3,6 +3,7 @@ name: flock-web
 on:
   push:
     branches: [ main ]
+    # TODO: Only trigger the image generation action code for artifacts change (.ts, .js, .css, .html, .svelte, etc.)
     paths:
       - "flock-web/**"
   pull_request:

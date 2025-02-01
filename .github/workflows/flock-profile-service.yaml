@@ -3,8 +3,11 @@ name: flock-profile-service
 on:
   push:
     branches: [ main ]
+    # Only trigger the image generation action code for artifacts change
     paths:
-      - "flock-profile-service/**"
+      - "flock-profile-service/**/*.go"
+      - "flock-profile-service/**/*.mod"
+      - "flock-profile-service/**/*.sum"
   pull_request:
     branches: [ main ]
     paths:
