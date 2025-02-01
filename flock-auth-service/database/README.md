@@ -23,8 +23,8 @@ flowchart LR
     B -->|SQL Queries| C@{ shape: cyl, label: "Database" }
     B -->|Cache Get/Set| D{{Dragonfly Cache}}
 
-    %% Updated styling for improved readability
-    style B fill:#AED6F1,stroke:#2E86C1,stroke-width:1px
-    style C fill:#FADBD8,stroke:#C0392B,stroke-width:1px
-    style D fill:#D4EFDF,stroke:#27AE60,stroke-width:1px
+    style A fill:#ffccff,stroke:#333,stroke-width:2px,color:#000
+    style B fill:#ccccff,stroke:#333,stroke-width:2px,color:#000
+    style C fill:#ffcccc,stroke:#333,stroke-width:2px,color:#000
+    style D fill:#ccff99,stroke:#333,stroke-width:2px,color:#000
 ```
