@@ -1,0 +1,9 @@
+apiVersion: skaffold/v4beta1
+kind: Config
+metadata:
+  name: {{SERVICE_NAME}}-configuration
+manifests:
+  rawYaml:
+    - deployment.yaml.yaml
+deploy:
+  kubectl: {}
