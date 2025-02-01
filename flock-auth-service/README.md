@@ -39,3 +39,13 @@ To start developing, install the following dependencies:
 - https://buf.build/wcygan/flock/sdks/main:connectrpc/go
 - https://buf.build/wcygan/flock/sdks/main:protocolbuffers/go
 - https://github.com/connectrpc/connect-go
+
+## Kubernetes
+
+### Deploying new versions
+
+After your Docker image is built and pushed to the registry, you can deploy a new version with the following command:
+
+```bash
+kubectl rollout restart deployment/flock-auth-service
+```

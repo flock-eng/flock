@@ -60,15 +60,15 @@ To start developing, install the following dependencies:
 
 ## Docker
 
-Don't forget to add `.github/workflows/{{SERVICE_NAME}}.yaml` to push to docker hub. There is a file called `github-actions-template.yaml` that you can copy and modify. Don't forget to rename it.
+Don't forget to add `.github/workflows/flock-profile-service.yaml` to push to docker hub. There is a file called `github-actions-template.yaml` that you can copy and modify. Don't forget to rename it.
 
 Generally it will be good to create a PR solely for the initial creation of the microservice and then merge it to trigger the docker build and push to docker hub.
 
 You can test out docker build and push by doing the following:
 
 ```bash
-docker build -t wcygan/{{SERVICE_NAME}}:latest .
-docker push wcygan/{{SERVICE_NAME}}:latest
+docker build -t wcygan/flock-profile-service:latest .
+docker push wcygan/flock-profile-service:latest
 ```
 
 The action is setup to build for `linux/amd64` and `linux/arm64`.
@@ -80,5 +80,5 @@ The action is setup to build for `linux/amd64` and `linux/arm64`.
 After your Docker image is built and pushed to the registry, you can deploy a new version with the following command:
 
 ```bash
-kubectl rollout restart deployment/{{SERVICE_NAME}}
+kubectl rollout restart deployment/flock-profile-service
 ```
