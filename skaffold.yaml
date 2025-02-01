@@ -9,9 +9,6 @@ requires:
       - flock-api-configuration
     path: flock-api/skaffold.yaml
   - configs:
-      - ingress-configuration
-    path: ingress/skaffold.yaml
-  - configs:
       - flock-auth-service-configuration
     path: flock-auth-service/skaffold.yaml
   - configs:
@@ -39,4 +36,7 @@ profiles:
             path: flock-auth/skaffold.yaml
           - configs:
               - ingress-installation
+            path: ingress/skaffold.yaml
+          - configs:
+              - ingress-configuration
             path: ingress/skaffold.yaml
