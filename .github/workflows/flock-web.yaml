@@ -1,4 +1,4 @@
-name: Flock Web
+name: flock-web
 
 on:
   push:
