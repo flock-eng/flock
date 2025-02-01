@@ -1,0 +1,18 @@
+# Air configuration for live-reloading during development
+
+root = "."
+tmp_dir = "tmp"
+
+[build]
+  cmd = "go build -o ./tmp/flock-auth-service ./cmd/main.go"
+  bin = "./tmp/flock-auth-service"
+  delay = 1000
+  include_ext = ["go"]
+  exclude_dir = ["tmp", "vendor"]
+
+[color]
+  main = "magenta"
+  watcher = "cyan"
+
+[log]
+  time = false

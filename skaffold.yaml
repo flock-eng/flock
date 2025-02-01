@@ -12,8 +12,8 @@ requires:
       - ingress-configuration
     path: ingress/skaffold.yaml
   - configs:
-      - flock-web
-    path: flock-web/skaffold.yaml
+      - flock-auth-service-configuration
+    path: flock-auth-service/skaffold.yaml
 
 profiles:
   # This configures the infrastructure required for the application

@@ -1,19 +1,26 @@
 package main
 
 import (
-	connectcors "connectrpc.com/cors"
-	"github.com/flock-eng/flock/flock-api/internal/server"
-	"github.com/joho/godotenv"
-	"github.com/rs/cors"
-	"golang.org/x/net/http2"
-	"golang.org/x/net/http2/h2c"
-	"log"
 	"net/http"
 	"os"
 	"time"
+
+	connectcors "connectrpc.com/cors"
+	"github.com/flock-eng/flock/flock-api/internal/logger"
+	"github.com/flock-eng/flock/flock-api/internal/server"
+	"github.com/joho/godotenv"
+	"github.com/rs/cors"
+	"go.uber.org/zap"
+	"golang.org/x/net/http2"
+	"golang.org/x/net/http2/h2c"
 )
 
 func main() {
+	// Initialize logger
+	logger.Initialize(os.Getenv("ENV") != "production")
+	defer logger.Sync()
+	log := logger.Get()
+
 	cfg := &server.Config{
 		Port:           "8080",
 		ReadTimeout:    10 * time.Second,
@@ -34,9 +41,9 @@ func main() {
 		MaxHeaderBytes: cfg.MaxHeaderBytes,
 	}
 
-	log.Printf("Serving requests on port %s", cfg.Port)
+	log.Info("Starting server", zap.String("port", cfg.Port))
 	if err := httpServer.ListenAndServe(); err != nil {
-		log.Fatal(err)
+		log.Fatal("Server failed to start", zap.Error(err))
 	}
 }
 
@@ -57,11 +64,10 @@ func init() {
 	if _, err := os.Stat(".env"); err == nil {
 		err := godotenv.Load()
 		if err != nil {
-			log.Fatalf("Error loading .env file")
-		} else {
-			log.Println("Loaded .env file")
+			panic("Error loading .env file: " + err.Error())
 		}
+		logger.Get().Info("Loaded .env file")
 	} else {
-	    log.Println(".env file not found, skipping")
-    }
+		logger.Get().Info(".env file not found, skipping")
+	}
 }

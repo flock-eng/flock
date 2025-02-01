@@ -1,4 +1,4 @@
-module github.com/flock-eng/flock/flock-api
+module github.com/flock-eng/flock/{{SERVICE_NAME}}
 
 go 1.23.2
 
@@ -9,7 +9,6 @@ require (
 	connectrpc.com/cors v0.1.0
 	connectrpc.com/grpcreflect v1.3.0
 	github.com/joho/godotenv v1.5.1
-	github.com/rs/cors v1.11.1
 	go.uber.org/zap v1.27.0
 	golang.org/x/net v0.34.0
 	golang.org/x/time v0.9.0

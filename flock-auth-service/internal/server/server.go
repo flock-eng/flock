@@ -4,15 +4,10 @@ import (
 	"net/http"
 	"time"
 
-	"buf.build/gen/go/wcygan/flock/connectrpc/go/auth/v1/authv1connect"
-	"buf.build/gen/go/wcygan/flock/connectrpc/go/bff/v1/bffv1connect"
-	"buf.build/gen/go/wcygan/flock/connectrpc/go/post/v1/postv1connect"
 	"connectrpc.com/connect"
 	"connectrpc.com/grpcreflect"
-	"github.com/flock-eng/flock/flock-api/internal/auth"
-	"github.com/flock-eng/flock/flock-api/internal/bff"
-	"github.com/flock-eng/flock/flock-api/internal/post"
-	"github.com/flock-eng/flock/flock-api/internal/service"
+	"github.com/flock-eng/flock/flock-auth-service/internal/service"
+	"github.com/flock-eng/flock/flock-auth-service/internal/logger"
 )
 
 type Config struct {
@@ -59,19 +54,10 @@ func (b *Builder) RegisterService(svc service.Registerable) *Builder {
 
 // Build finalizes the server configuration and returns an immutable Server
 func (b *Builder) Build() *Server {
-	// Configure rate limiter
-	rateLimiter := NewRateLimitInterceptor(
-		100,         // token limit
-		10,          // tokens per period
-		time.Second, // replenishment period
-	)
-
 	// Register all handlers with common interceptors
 	options := []connect.HandlerOption{
 		connect.WithInterceptors(
 			LoggingInterceptor(),
-			AuthInterceptor(),
-			rateLimiter.InterceptConnect(),
 			TimeoutInterceptor(10*time.Second),
 			ValidationInterceptor(),
 		),
@@ -94,6 +80,7 @@ func (b *Builder) Build() *Server {
 
 	// Register health check
 	b.mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
+		logger.Get().Info("Health check request received")
 		w.WriteHeader(http.StatusOK)
 	})
 
@@ -111,36 +98,15 @@ func (s *Server) Handler() http.Handler {
 func NewServer(cfg *Config) *Server {
 	builder := NewServerBuilder(cfg)
 
-	// Register all services
-	builder.RegisterService(service.NewRegisterableService(
-		authv1connect.FlockAuthServiceName,
-		func(options ...connect.HandlerOption) (string, http.Handler) {
-			return authv1connect.NewFlockAuthServiceHandler(
-				auth.NewHandler(auth.NewService()),
-				options...,
-			)
-		},
-	))
-
-	builder.RegisterService(service.NewRegisterableService(
-		bffv1connect.FlockUserAggregationServiceName,
-		func(options ...connect.HandlerOption) (string, http.Handler) {
-			return bffv1connect.NewFlockUserAggregationServiceHandler(
-				bff.NewHandler(bff.NewService()),
-				options...,
-			)
-		},
-	))
-
-	builder.RegisterService(service.NewRegisterableService(
-		postv1connect.FlockPostServiceName,
-		func(options ...connect.HandlerOption) (string, http.Handler) {
-			return postv1connect.NewFlockPostServiceHandler(
-				post.NewHandler(post.NewService()),
-				options...,
-			)
-		},
-	))
+	// Register a sample service so that reflection has at least one service to report
+	// builder.RegisterService(service.NewRegisterableService(
+	// 	"ExampleService",
+	// 	func(options ...connect.HandlerOption) (string, http.Handler) {
+	// 		return "/example.ExampleService", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	// 			w.Write([]byte("Hello from ExampleService"))
+	// 		})
+	// 	},
+	// ))
 
 	return builder.Build()
 }

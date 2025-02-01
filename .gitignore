@@ -3,7 +3,7 @@
 .vscode/
 .DS_Store
 *.swp
-
+**/main
 # Dependencies
 node_modules/
 
