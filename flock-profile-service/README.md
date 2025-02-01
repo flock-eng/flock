@@ -73,6 +73,10 @@ docker push wcygan/flock-profile-service:latest
 
 The action is setup to build for `linux/amd64` and `linux/arm64`.
 
+## Docker
+
+The images are pushed to https://hub.docker.com/r/wcygan/flock-profile-service/tags
+
 ## Kubernetes
 
 ### Deploying new versions
@@ -82,3 +86,5 @@ After your Docker image is built and pushed to the registry, you can deploy a ne
 ```bash
 kubectl rollout restart deployment/flock-profile-service
 ```
+
+You can use the `:latest` tag to deploy the latest image to Kubernetes. If you're having trouble with that, you can use the `date +'%Y%m%d.%H%M%S'` tag to ensure the latest image is running.

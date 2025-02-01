@@ -14,6 +14,9 @@ requires:
   - configs:
       - flock-auth-service-configuration
     path: flock-auth-service/skaffold.yaml
+  - configs:
+      - flock-profile-service-configuration
+    path: flock-profile-service/skaffold.yaml
 
 profiles:
   # This configures the infrastructure required for the application
