@@ -1,13 +1,15 @@
 package server
 
 import (
+	"connectrpc.com/grpchealth"
+	"go.uber.org/zap"
 	"net/http"
 	"time"
 
 	"connectrpc.com/connect"
 	"connectrpc.com/grpcreflect"
-	"github.com/flock-eng/flock/{{SERVICE_NAME}}/internal/service"
 	"github.com/flock-eng/flock/{{SERVICE_NAME}}/internal/logger"
+	"github.com/flock-eng/flock/{{SERVICE_NAME}}/internal/service"
 )
 
 type Config struct {
@@ -49,6 +51,7 @@ func NewServerBuilder(cfg *Config) *Builder {
 // RegisterService adds a service to the builder
 func (b *Builder) RegisterService(svc service.Registerable) *Builder {
 	b.services = append(b.services, svc)
+	logger.Get().Info("Registered ", zap.String("service", svc.ServiceName()))
 	return b
 }
 
@@ -74,6 +77,7 @@ func (b *Builder) Build() *Server {
 	for i, svc := range b.services {
 		serviceNames[i] = svc.ServiceName()
 	}
+
 	reflector := grpcreflect.NewStaticReflector(serviceNames...)
 	path, handler := grpcreflect.NewHandlerV1(reflector)
 	b.mux.Handle(path, handler)
@@ -98,15 +102,11 @@ func (s *Server) Handler() http.Handler {
 func NewServer(cfg *Config) *Server {
 	builder := NewServerBuilder(cfg)
 
-	// Register a sample service so that reflection has at least one service to report
-	// builder.RegisterService(service.NewRegisterableService(
-	// 	"ExampleService",
-	// 	func(options ...connect.HandlerOption) (string, http.Handler) {
-	// 		return "/example.ExampleService", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-	// 			w.Write([]byte("Hello from ExampleService"))
-	// 		})
-	// 	},
-	// ))
-
+	builder.RegisterService(service.NewRegisterableService(
+		grpchealth.HealthV1ServiceName,
+		func(options ...connect.HandlerOption) (string, http.Handler) {
+			return grpchealth.NewHandler(grpchealth.NewStaticChecker(), options...)
+		},
+	))
 	return builder.Build()
 }

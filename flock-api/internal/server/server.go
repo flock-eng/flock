@@ -1,6 +1,7 @@
 package server
 
 import (
+	"connectrpc.com/grpchealth"
 	"net/http"
 	"time"
 
@@ -139,6 +140,13 @@ func NewServer(cfg *Config) *Server {
 				post.NewHandler(post.NewService()),
 				options...,
 			)
+		},
+	))
+
+	builder.RegisterService(service.NewRegisterableService(
+		grpchealth.HealthV1ServiceName,
+		func(options ...connect.HandlerOption) (string, http.Handler) {
+			return grpchealth.NewHandler(grpchealth.NewStaticChecker(), options...)
 		},
 	))
 
