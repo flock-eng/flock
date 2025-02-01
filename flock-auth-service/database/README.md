@@ -20,8 +20,8 @@ The databases will have the following names:
 ```mermaid
 flowchart LR
     A[Client] -->|API Request| B[Flock Auth Service]
-    B -->|SQL Queries| C@{ shape: cyl, label: "Database" }
-    B -->|Cache Get/Set| D{{Dragonfly Cache}}
+    B -->|SQL Queries| C@{ shape: cyl, label: "Postgres" }
+    B -->|Cache Get/Set| D{{Dragonfly}}
 
     style A fill:#ffccff,stroke:#333,stroke-width:2px,color:#000
     style B fill:#ccccff,stroke:#333,stroke-width:2px,color:#000
