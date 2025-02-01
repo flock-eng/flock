@@ -17,7 +17,15 @@ After creating your microservice, adjust the module name and any specific config
 2. Run `air` to start the microservice with live-reload. In another terminal, run `curl http://localhost:8080/healthz` to check that the microservice is running.
 3. Commit the changes & push them to GitHub to build the Docker image & push it to Docker Hub.
 4. Run `skaffold run` to start the microservice in Kubernetes.
-5. 
+
+## Protocol Buffers & ConnectRPC
+
+To start developing, install the following dependencies:
+
+- https://buf.build/wcygan/flock/sdks/main:connectrpc/go
+- https://buf.build/wcygan/flock/sdks/main:protocolbuffers/go
+- https://github.com/connectrpc/connect-go
+
 ## Docker
 
 Don't forget to add `.github/workflows/{{service-name}}.yml` to push to docker hub

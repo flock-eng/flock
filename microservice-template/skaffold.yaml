@@ -4,6 +4,6 @@ metadata:
   name: {{SERVICE_NAME}}-configuration
 manifests:
   rawYaml:
-    - deployment.yaml.yaml
+    - deployment.yaml
 deploy:
   kubectl: {}
