@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: flock-auth-service
-          image: wcygan/flock-auth-service:latest
+          image: wcygan/flock-auth-service:latest-v2
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
