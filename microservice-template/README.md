@@ -1,88 +1,114 @@
 # Microservice Template
 
-This is a barebones template for a microservice built with Go. It provides:
+This template provides a starting point for creating new microservices in the Flock ecosystem.
 
-- A Dockerfile for building a multi-stage Docker image.
-- Live-reload support using Air.
-- Kubernetes manifests for deployment.
-- Skaffold configuration for easy iterative development and deployment.
+## Features
 
-To create a new microservice from this template, run the provided script `create_microservice.sh` and pass your desired service name (for example, `profile-service`).
+- gRPC/Connect-based API with HTTP/2 support
+- Structured logging with Zap
+- Health check endpoint
+- gRPC reflection support
+- Configurable middleware/interceptors:
+  - Logging
+  - Timeout
+  - Request validation
+- Docker support
+- Kubernetes deployment configuration
+- GitHub Actions CI/CD pipeline
 
-After creating your microservice, adjust the module name and any specific configurations as needed.
+## Development
 
-## Template Quick Start
+### Prerequisites
 
-1. Run `./scripts/create_microservice.sh <service-name>` to create a new microservice.
-2. Run `air` to start the microservice with live-reload. In another terminal, run `curl http://localhost:8080/healthz` to check that the microservice is running.
-3. Commit the changes & push them to GitHub to build the Docker image & push it to Docker Hub.
-4. Run `skaffold run` to start the microservice in Kubernetes.
+- Go 1.23.2 or later
+- Docker
+- golangci-lint
 
-## Development Quick Start
+### Getting Started
+
+1. Copy this template directory and rename all occurrences of "service-name" to your service name
+2. Update the module name in `go.mod`
+3. Update the import paths in all Go files
+4. Update the service name in `github-actions-template.yaml` and move it to `.github/workflows/`
+
+### Local Development
 
 ```bash
+# Install dependencies
+go mod download
+
+# Run linter
+golangci-lint run
+
+# Run tests
+go test -v -race ./...
+
 # Run the service
-air
-curl http://localhost:8080/healthz
-
-# Or, run in Kubernetes with live reload through Telepresence
-skaffold run
-./scripts/live-reload-in-k8s.sh
+go run cmd/main.go
 ```
 
-### gRPC
-
-There are a few tools to help with gRPC development:
-
-- [grpcurl](https://github.com/fullstorydev/grpcurl)
-- [grpcui](https://github.com/fullstorydev/grpcui)
+### Docker Build
 
 ```bash
-grpcurl --plaintext localhost:8080 list
-grpc.health.v1.Health
-
-grpcurl --plaintext localhost:8080 grpc.health.v1.Health/Check
-{
-  "status": "SERVING"
-}
-
-grpcui --plaintext localhost:8080
-gRPC Web UI available at http://127.0.0.1:port/
+docker build -t service-name .
+docker run -p 8080:8080 service-name
 ```
 
-## Protocol Buffers & ConnectRPC
-
-To start developing, install the following dependencies:
-
-- https://buf.build/wcygan/flock/sdks/main:connectrpc/go
-- https://buf.build/wcygan/flock/sdks/main:protocolbuffers/go
-- https://github.com/connectrpc/connect-go
-
-## Docker
-
-Don't forget to add `.github/workflows/{{SERVICE_NAME}}.yaml` to push to docker hub. There is a file called `github-actions-template.yaml` that you can copy and modify. Don't forget to rename it.
-
-Generally it will be good to create a PR solely for the initial creation of the microservice and then merge it to trigger the docker build and push to docker hub.
-
-You can test out docker build and push by doing the following:
+### Kubernetes Deployment
 
 ```bash
-docker build -t wcygan/{{SERVICE_NAME}}:latest .
-docker push wcygan/{{SERVICE_NAME}}:latest
+kubectl apply -f deployment.yaml
 ```
 
-The action is setup to build for `linux/amd64` and `linux/arm64`.
+## Project Structure
 
-The images are pushed to https://hub.docker.com/r/wcygan/{{SERVICE_NAME}}/tags
-
-## Kubernetes
-
-### Deploying new versions
-
-After your Docker image is built and pushed to the registry, you can deploy a new version with the following command:
-
-```bash
-kubectl rollout restart deployment/{{SERVICE_NAME}}
+```
+.
+├── cmd/                    # Application entrypoints
+│   └── main.go            # Main application
+├── internal/              # Private application code
+│   ├── logger/            # Logging configuration
+│   ├── server/            # Server implementation
+│   └── service/           # Service implementations
+├── .golangci.yml          # Linter configuration
+├── Dockerfile             # Docker build configuration
+├── deployment.yaml        # Kubernetes deployment configuration
+├── github-actions-template.yaml  # CI/CD workflow template
+└── README.md             # This file
 ```
 
-You can use the `:latest` tag to deploy the latest image to Kubernetes. If you're having trouble with that, you can use the `date +'%Y%m%d.%H%M%S'` tag to ensure the latest image is running.
+## CI/CD Pipeline
+
+The template includes a GitHub Actions workflow that:
+
+1. On Pull Requests:
+   - Runs linting checks
+   - Runs tests with race detection
+   - Builds the Docker image (without pushing)
+
+2. On Push to Main:
+   - Runs linting checks
+   - Runs tests with race detection
+   - Builds and pushes multi-arch Docker images
+   - Tags images with both latest and timestamp versions
+
+### Linting
+
+The project uses golangci-lint with the following linters enabled:
+- gofmt: Format checking
+- govet: Suspicious constructs
+- errcheck: Error handling
+- staticcheck: Static analysis
+- gosimple: Code simplification
+- ineffassign: Assignment efficiency
+- typecheck: Type checking
+- unused: Unused code
+- misspell: Spelling
+- gosec: Security
+- prealloc: Slice preallocation
+- gocritic: Style and diagnostic
+- revive: Style and best practices
+
+## License
+
+[Add your license here]

@@ -35,26 +35,42 @@ fi
 
 cp -r $TEMPLATE_DIR $NEW_SERVICE_DIR
 
-# Replace template-service with the actual service name in all files
-find $NEW_SERVICE_DIR -type f -exec sed -i "" "s/template-service/$SERVICE_NAME/g" {} +
+# Use LC_ALL=C to handle special characters in sed
+# Also use different quotes to avoid issues with string interpretation
+LC_ALL=C find $NEW_SERVICE_DIR -type f -exec sed -i '' "s/template-service/${SERVICE_NAME}/g" {} +
+LC_ALL=C find $NEW_SERVICE_DIR -type f -exec sed -i '' "s/service-name/${SERVICE_NAME}/g" {} +
 
-# --- New steps to handle GitHub Actions file ---
 # Ensure the destination directory exists
 mkdir -p .github/workflows
 
-# Copy the github-actions-template.yaml into .github/workflows/${SERVICE_NAME}.yaml
+# Copy and rename the GitHub Actions workflow file
 cp $NEW_SERVICE_DIR/github-actions-template.yaml .github/workflows/${SERVICE_NAME}.yaml
 
-# Remove the original github-actions-template.yaml from the new service directory
+# Remove the template workflow file from the new service directory
 rm $NEW_SERVICE_DIR/github-actions-template.yaml
-# --- End new steps ---
 
-echo "Microservice $SERVICE_NAME created successfully in $NEW_SERVICE_DIR."
-echo "Read README.md to get started."
-echo "Run 'grpcurl --plaintext localhost:8080 grpc.health.v1.Health/Check' to check that the microservice is running."
-
+echo "Microservice $SERVICE_NAME created successfully in $NEW_SERVICE_DIR"
+echo "Setting up Go module..."
 cd $NEW_SERVICE_DIR
 go mod tidy
+
+echo "Running initial linting check..."
+if ! command -v golangci-lint &> /dev/null; then
+  echo "Warning: golangci-lint not found. Please install it to run linting checks."
+  echo "Installation instructions: https://golangci-lint.run/usage/install/"
+else
+  golangci-lint run ./...
+fi
+
+echo "Running initial tests..."
+go test -v -race ./...
+
+echo "Setup complete! Next steps:"
+echo "1. Review and update the module name in go.mod"
+echo "2. Review and update import paths in all Go files"
+echo "3. Review and customize the GitHub Actions workflow in .github/workflows/${SERVICE_NAME}.yaml"
+echo "4. Start the service with: cd $NEW_SERVICE_DIR && go run cmd/main.go"
+echo "5. Test the service with: grpcurl --plaintext localhost:8080 grpc.health.v1.Health/Check"
 
 # Start Air in the background
 echo "Starting Air for live reload..."

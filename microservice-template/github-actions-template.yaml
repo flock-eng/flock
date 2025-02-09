@@ -1,21 +1,21 @@
-name: template-service
+name: service-name
 
 on:
   push:
     branches: [ main ]
     # Only trigger the image generation action code for artifacts change
     paths:
-      - "template-service/**/*.go"
-      - "template-service/**/*.mod"
-      - "template-service/**/*.sum"
+      - "service-name/**/*.go"
+      - "service-name/**/*.mod"
+      - "service-name/**/*.sum"
   pull_request:
     branches: [ main ]
     paths:
-      - "template-service/**"
+      - "service-name/**"
 
 jobs:
   # 1) Build & test on Pull Request
-  build-template-service-pr:
+  build-service-pr:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
@@ -29,38 +29,49 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('template-service/go.sum') }}
+          key: ${{ runner.os }}-go-${{ hashFiles('service-name/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
 
-      # Optional: Lint/test steps
-      # - name: Go deps
-      #   run: |
-      #     cd template-service
-      #     go mod download
-      #
-      # - name: Go Lint
-      #   run: |
-      #     cd template-service
-      #     golangci-lint run
-      #
-      # - name: Go Test
-      #   run: |
-      #     cd template-service
-      #     go test ./...
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.23.2'
+          cache: true
+
+      - name: Install golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: latest
+          args: --timeout=5m
+
+      - name: Go deps
+        run: |
+          cd service-name
+          go mod download
+
+      - name: Go Lint
+        run: |
+          cd service-name
+          golangci-lint run ./...
+
+      - name: Go Test
+        run: |
+          cd service-name
+          go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
 
       - name: Build Docker image (no push)
         uses: docker/build-push-action@v5
         with:
-          context: ./template-service
-          file: ./template-service/Dockerfile
+          context: ./service-name
+          file: ./service-name/Dockerfile
           load: true  # Build for local testing
-          tags: wcygan/template-service:pr
+          tags: wcygan/service-name:pr
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
   # 2) Build & Push on push to main
-  build-and-push-template-service:
+  build-and-push-service:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
@@ -83,39 +94,50 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('template-service/go.sum') }}
+          key: ${{ runner.os }}-go-${{ hashFiles('service-name/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
 
-      # Optional: Lint/test steps
-      # - name: Go deps
-      #   run: |
-      #     cd template-service
-      #     go mod download
-      #
-      # - name: Go Lint
-      #   run: |
-      #     cd template-service
-      #     golangci-lint run
-      #
-      # - name: Go Test
-      #   run: |
-      #     cd template-service
-      #     go test ./...
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.23.2'
+          cache: true
+
+      - name: Install golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: latest
+          args: --timeout=5m
+
+      - name: Go deps
+        run: |
+          cd service-name
+          go mod download
+
+      - name: Go Lint
+        run: |
+          cd service-name
+          golangci-lint run ./...
+
+      - name: Go Test
+        run: |
+          cd service-name
+          go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
 
       - name: Determine version
         id: version
         run: echo "VERSION=$(date +'%Y%m%d.%H%M%S')" >> $GITHUB_ENV
 
-      - name: Build and Push the template-service image
+      - name: Build and Push the service image
         uses: docker/build-push-action@v5
         with:
-          context: ./template-service
-          file: ./template-service/Dockerfile
+          context: ./service-name
+          file: ./service-name/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          cache-from: type=registry,ref=wcygan/template-service:latest
+          cache-from: type=registry,ref=wcygan/service-name:latest
           cache-to: type=inline
           tags: |
-            wcygan/template-service:latest
-            wcygan/template-service:${{ env.VERSION }}
+            wcygan/service-name:latest
+            wcygan/service-name:${{ env.VERSION }}

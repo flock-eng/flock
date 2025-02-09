@@ -13,6 +13,7 @@ import (
 	"github.com/flock-eng/flock/template-service/internal/service"
 )
 
+// Config holds the server configuration parameters
 type Config struct {
 	Port           string
 	ReadTimeout    time.Duration
@@ -32,6 +33,7 @@ type Builder struct {
 	services []service.Registerable
 }
 
+// NewServerBuilder creates a new Builder instance with the given configuration
 func NewServerBuilder(cfg *Config) *Builder {
 	if cfg == nil {
 		cfg = &Config{

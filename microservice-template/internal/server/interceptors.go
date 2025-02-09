@@ -21,6 +21,7 @@ type RequestInfo struct {
 	UserAgent string
 }
 
+// LoggingInterceptor creates a new interceptor that logs request information
 func LoggingInterceptor() connect.UnaryInterceptorFunc {
 	return func(next connect.UnaryFunc) connect.UnaryFunc {
 		return func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
@@ -107,6 +108,7 @@ func getClientIP(header http.Header) string {
 	return "unknown"
 }
 
+// TimeoutInterceptor creates an interceptor that enforces a timeout for requests
 func TimeoutInterceptor(timeout time.Duration) connect.UnaryInterceptorFunc {
 	return func(next connect.UnaryFunc) connect.UnaryFunc {
 		return func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
@@ -118,6 +120,7 @@ func TimeoutInterceptor(timeout time.Duration) connect.UnaryInterceptorFunc {
 	}
 }
 
+// ValidationInterceptor creates an interceptor that validates request messages
 func ValidationInterceptor() connect.UnaryInterceptorFunc {
 	return func(next connect.UnaryFunc) connect.UnaryFunc {
 		return func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
