@@ -1,0 +1,97 @@
+---
+description: Enforces code quality checks for Go code, including formatting, linting, and testing requirements
+globs: *.go
+---
+# Code Quality Checks
+
+This rule enforces a consistent set of code quality checks that should be run after completing any code changes.
+
+<rule>
+name: code-quality-checks
+description: Enforces running formatting, linting, and testing checks after code changes
+
+filters:
+  - type: file_extension
+    pattern: "\\.(go|proto)$"
+  - type: directory
+    pattern: ".*"
+
+actions:
+  - type: suggest
+    message: |
+      After completing any code changes, run the following checks in order:
+
+      1. **Code Formatting**
+         ```bash
+         go fmt ./...
+         ```
+         - Ensures consistent code formatting
+         - Must pass with no changes
+         - If changes are made, review them and commit
+
+      2. **Linting**
+         ```bash
+         golangci-lint run ./...
+         ```
+         - Must pass with no warnings or errors
+         - Common issues to watch for:
+           - Unused variables/imports
+           - Error handling
+           - Race conditions
+           - Code style violations
+           - Performance issues
+         - Fix all reported issues before proceeding
+
+      3. **Testing**
+         ```bash
+         go test -v -race ./...
+         ```
+         - All tests must pass
+         - Race detector must report no issues
+         - Coverage should be maintained or improved
+         - Failed tests must be fixed before committing
+
+      **Important Notes**:
+      - Run these checks in the specified order
+      - All checks must pass before committing changes
+      - If any check fails:
+        1. Fix the reported issues
+        2. Start the check sequence again from the beginning
+        3. Repeat until all checks pass
+      - Consider adding these checks to your git pre-commit hooks
+
+      **Additional Recommendations**:
+      - Run tests with coverage: `go test -v -race -cover ./...`
+      - Run specific package tests: `go test -v -race ./path/to/package`
+      - Use -count=1 to disable test caching when needed
+      - Consider running `go vet` separately for additional checks
+
+examples:
+  - input: |
+      # After making code changes
+      $ go fmt ./...
+      $ golangci-lint run ./...
+      $ go test -v -race ./...
+    output: |
+      All quality checks passed:
+      - Code is properly formatted
+      - No lint issues found
+      - All tests passing with no race conditions
+
+metadata:
+  priority: high
+  version: 1.0.0
+  tags:
+    - quality
+    - testing
+    - linting
+    - formatting
+  references:
+    - https://golang.org/cmd/gofmt/
+    - https://golangci-lint.run/
+    - https://golang.org/pkg/testing/
+  evolution_history:
+    - date: "2024-02-09"
+      type: "initial"
+      description: "Initial version defining post-task code quality checks"
+</rule> 
