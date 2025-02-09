@@ -1,0 +1,82 @@
+---
+description: Enforces proper file organization and modifications within the monorepo structure
+globs: *
+---
+
+# Monorepo File Organization
+
+This rule ensures that file modifications and creations happen in the correct project directories within the monorepo structure.
+
+<rule>
+name: monorepo-file-organization
+description: Enforces proper file organization and modifications within the monorepo structure to maintain clean project boundaries
+
+filters:
+  - type: file_operation
+    pattern: ".*"
+
+actions:
+  - type: suggest
+    message: |
+      When working with files in the monorepo:
+      
+      1. Each service/project should maintain its own independent file structure
+      2. Common files (go.mod, package.json, etc.) should exist only within their respective project directories
+      3. Root-level files should be limited to:
+         - Repository-wide configuration (.github/, .gitignore, etc.)
+         - Documentation (README.md, CONTRIBUTING.md, etc.)
+         - Development tools (.cursor/, scripts/, etc.)
+         - Infrastructure configuration (skaffold.yaml, etc.)
+      
+      Project structure should follow:
+      ```
+      flock/
+      ├── .cursor/               # Cursor-specific tools and configurations
+      ├── .github/               # GitHub workflows and configurations (such as GitHub Actions for CI/CD)
+      ├── flock-api/             # API Gateway Service
+      │   ├── cmd/
+      │   ├── internal/
+      │   └── go.mod            # Service-specific dependencies
+      ├── flock-auth-service/    # Authentication Service
+      │   ├── cmd/
+      │   ├── internal/
+      │   └── go.mod            # Service-specific dependencies
+      └── other-services/       # Additional microservices
+          ├── cmd/
+          ├── internal/
+          └── go.mod            # Service-specific dependencies
+      ```
+
+  - type: reject
+    conditions:
+      - pattern: "^(go\\.mod|go\\.sum|package\\.json|package-lock\\.json|yarn\\.lock)$"
+        message: "Dependency files must be created within their respective service directories, not in the monorepo root"
+      
+      - pattern: "^(src|internal|cmd|pkg)/.*"
+        message: "Source code directories must be created within their respective service directories, not in the monorepo root"
+
+examples:
+  - input: |
+      Creating go.mod in root directory
+    output: "Error: go.mod should be created within a specific service directory (e.g., flock-api/go.mod)"
+  
+  - input: |
+      Creating flock-api/go.mod
+    output: "Success: Dependency file is correctly placed within the service directory"
+
+  - input: |
+      Creating src/handler.go in root
+    output: "Error: Source code should be within a service directory (e.g., flock-api/internal/handler.go)"
+
+metadata:
+  priority: high
+  version: 1.0.0
+  tags:
+    - monorepo
+    - organization
+    - structure
+  evolution_history:
+    - date: "2024-03-21"
+      type: "initial"
+      description: "Initial version of monorepo file organization rule"
+</rule> 
