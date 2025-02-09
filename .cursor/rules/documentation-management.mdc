@@ -1,0 +1,102 @@
+---
+description: This rule is helpful for automatically documenting the codebase & providing relevant context to the AI Agent
+globs: *
+---
+# Documentation Management Rule
+
+This rule provides guidance for automatically managing and organizing documentation in the `.cursor/notes` directory.
+
+<rule>
+name: documentation-management
+description: Manages automatic documentation creation and updates based on acquired knowledge
+
+filters:
+  - type: directory
+    pattern: ".cursor/notes/**/*.md"
+
+actions:
+  - type: organize
+    message: |
+      When managing documentation:
+
+      1. **Directory Structure**:
+         - Maintain clear separation between major concerns:
+           - `/backend` - Server-side components and infrastructure
+           - `/frontend` - Client-side and UI-related documentation
+         - Use subdirectories for specific domains:
+           - `/backend/database` - Database-specific documentation
+           - `/backend/server` - Server implementation details
+           - Add new subdirectories as needed for emerging patterns
+
+      2. **File Organization**:
+         - Use kebab-case for filenames: `example-topic.md`
+         - Group related topics in appropriate subdirectories
+         - Create new subdirectories when 3+ related files exist
+         - Keep documentation atomic - one topic per file
+
+      3. **Content Structure**:
+         Each markdown file should follow this structure:
+         ```markdown
+         # Topic Title
+
+         ## Overview
+         Brief description of the topic
+
+         ## Implementation Details
+         Technical specifics and implementation choices
+
+         ## Configuration
+         Setup and configuration details if applicable
+
+         ## Best Practices
+         Recommended patterns and practices
+
+         ## Related Topics
+         Links to related documentation
+
+         ## Evolution History
+         - Date: YYYY-MM-DD
+           Change: Description of update
+         ```
+
+      4. **Documentation Triggers**:
+         Create or update documentation when:
+         - New technology is introduced
+         - Architectural decisions are made
+         - Best practices are established
+         - Significant implementation patterns emerge
+         - Breaking changes occur
+
+      5. **Cross-Referencing**:
+         - Use relative links between documents
+         - Maintain a clear hierarchy of information
+         - Update related documents when connections emerge
+
+examples:
+  - input: |
+      New database technology added: TimescaleDB
+    output: |
+      Create: .cursor/notes/backend/database/timescaledb.md
+      
+      # TimescaleDB
+
+      ## Overview
+      TimescaleDB is a time-series database built on PostgreSQL.
+
+      ## Implementation Details
+      ...
+
+  - input: |
+      Update to existing authentication implementation
+    output: |
+      Update: .cursor/notes/frontend/auth.md
+      Add new section or modify existing content
+
+metadata:
+  priority: high
+  version: 1.0.0
+  evolution_history:
+    - date: "2024-03-21"
+      type: "initial"
+      description: "Initial version of documentation management rule"
+</rule> 
