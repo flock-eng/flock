@@ -1,0 +1,120 @@
+---
+description: Enforce best practices in skaffold.yaml files
+globs: *.{yaml,yml}
+---
+
+# Skaffold Best Practices
+
+<rule>
+name: skaffold-best-practices
+description: Checks for recommended patterns in skaffold.yaml files (multi-profile, kustomize usage, tagPolicy, etc.)
+
+filters:
+  # Match only .yaml or .yml files
+  - type: file_extension
+    pattern: "\\.ya?ml$"
+  # Further filter: must contain a skaffold config
+  - type: content
+    pattern: "apiVersion:\\s*skaffold.*"
+
+actions:
+  - type: suggest
+    message: |
+      **Skaffold Best Practices**:
+      
+      1. **Profiles**: 
+         - Provide a `development` profile activated via `command: dev`
+         - Provide staging or production profiles referencing environment-appropriate Kustomize overlays
+      2. **tagPolicy**:
+         - Use `sha256` in your build configuration for reproducible builds, e.g.:
+           ```yaml
+           build:
+             tagPolicy:
+               sha256: {}
+           ```
+      3. **kustomize**:
+         - Use `kustomize.paths` to manage per‑environment overlays
+      4. **requires**:
+         - In monorepo or multi-service setups, aggregate each microservice's skaffold.yaml via `requires:` blocks
+      5. **Cloud Testing**:
+         - Encourage a `test` section that runs code style checks, unit tests, or coverage tasks
+
+      **Example**:
+      ```yaml
+      apiVersion: skaffold/v4beta1
+      kind: Config
+      metadata:
+        name: example-service
+      requires:
+        - configs: ["accounts"]
+          path: src/accounts/skaffold.yaml
+      build:
+        artifacts:
+          - image: example-service
+            context: .
+        tagPolicy:
+          sha256: {}
+      deploy:
+        kubectl: {}
+      profiles:
+        - name: development
+          activation:
+            - command: dev
+          build:
+            artifacts:
+              - image: example-service
+                context: .
+            tagPolicy:
+              sha256: {}
+          manifests:
+            kustomize:
+              paths:
+                - k8s/overlays/development
+      ```
+
+examples:
+  - input: |
+      apiVersion: skaffold/v4beta1
+      kind: Config
+      metadata:
+        name: accounts-db
+      build:
+        artifacts:
+        - image: accounts-db
+          context: .
+        tagPolicy:
+          sha256: {}
+      deploy:
+        kubectl: {}
+      profiles:
+      - name: development
+        activation:
+          - command: dev
+        build:
+          artifacts:
+            - image: accounts-db
+              context: .
+          tagPolicy:
+            sha256: {}
+        manifests:
+          kustomize:
+            paths: [ "k8s/overlays/development" ]
+    output: "Skaffold file uses recommended best practices (profiles, sha256, kustomize)."
+
+  - input: |
+      apiVersion: skaffold/v4beta1
+      kind: Config
+      metadata:
+        name: incomplete-service
+      build:
+        artifacts:
+        - image: incomplete-service
+          context: .
+      deploy:
+        kubectl: {}
+    output: "Missing dev profile or tagPolicy. Suggest adding them for best-practice compliance."
+
+metadata:
+  priority: medium
+  version: 1.0.0
+</rule> 
