@@ -51,7 +51,28 @@ actions:
            - Document any new lessons learned in
              [adaptive-learning.mdc](mdc:adaptive-learning.mdc), so the entire team can benefit from fresh insights and patterns.
 
-      3. **Documentation and Notes**:
+      3. **Feature Planning and Implementation**:
+         - **Before Starting New Features**:
+           - Consult [feature-planning.mdc](mdc:feature-planning.mdc) for structured planning guidance
+           - Break down high-level features into granular tasks
+           - Create a feature plan in `.cursor/plans` directory using the specified JSON schema
+           - Identify dependencies, constraints, and critical paths
+         - **During Implementation**:
+           - Follow the task sequence defined in the feature plan
+           - Update task status as work progresses
+           - Document blockers and risks
+           - Regular plan review and adjustment
+         - **Quality Assurance**:
+           - Ensure each task has clear success criteria
+           - Validate dependencies are met before starting dependent tasks
+           - Track progress and maintain up-to-date documentation
+         - **Best Practices**:
+           - Keep tasks small and independently verifiable
+           - Document decisions and trade-offs
+           - Consider infrastructure requirements early
+           - Plan for testing coverage across all components
+
+      4. **Documentation and Notes**:
          - When creating or updating any documentation, follow the guidance in
            @documentation-management.mdc.
          - Maintain all technical notes and design discussions in `.cursor/notes/`, keeping them organized by domain (e.g., `/backend/server`, `/frontend`, etc.).
@@ -59,14 +80,14 @@ actions:
          - Keep docs brief yet comprehensive: future contributors should have all the context needed to understand design decisions.
          - Regularly review and update documentation so it remains accurate over time.
 
-      4. **General Guidelines**:
+      5. **General Guidelines**:
          This section will expand to include:
          - Project-wide conventions
          - Common patterns
          - Standard practices
          - Cross-cutting concerns
 
-      5. **Tooling and Automation Insights**:
+      6. **Tooling and Automation Insights**:
          - Explore the tools available in the `.cursor/tools/` directory to automate routine tasks and improve workflow efficiency.
          - **Examples include**:
            - **new-scratchpad.sh**: Quickly create new scratchpad files for experimental work.
@@ -75,7 +96,7 @@ actions:
          - Regularly review [tool-usage.mdc](mdc:tool-usage.mdc) for detailed guidelines on using and creating tools.
          - Consider leveraging automated tools for code formatting, linting, testing, and deployment to maintain consistent, high-quality code across the project.
 
-      6. **Future Extensibility**:
+      7. **Future Extensibility**:
          Additional sections can be added here for:
          - New project-wide standards
          - Common requirements
@@ -103,4 +124,7 @@ metadata:
     - date: "2024-03-21"
       type: "update"
       description: "Added information about listing rules using ls command"
+    - date: "2024-03-21"
+      type: "update"
+      description: "Added Feature Planning and Implementation section to provide structured guidance for new features"
 </rule> 

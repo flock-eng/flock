@@ -1,0 +1,232 @@
+---
+description: This rule is helpful for planning new features and refactoring
+globs: 
+---
+# Feature Planning and Decomposition
+
+## Overview
+
+This rule enforces a structured approach to feature planning and decomposition before implementation begins. It ensures that high-level tasks are broken down into well-defined subtasks with clear objectives, dependencies, and priorities.
+
+## Rule Details
+
+The agent must follow these steps when planning features:
+
+1. **Initial Analysis**
+   - Understand the feature requirements completely
+   - Identify key stakeholders and dependencies
+   - Document assumptions and constraints
+
+2. **Task Decomposition**
+   - Break down high-level features into granular tasks
+   - Ensure each task is atomic and independently verifiable
+   - Identify technical dependencies between tasks
+   - Prioritize unblocked tasks first
+
+3. **Documentation Requirements**
+   - All plans must be stored in `.cursor/plans` directory
+   - Plans must follow the specified JSON schema
+   - File naming convention: `plan-<feature-name>.json`
+   - Each task must have a unique ID and clear success criteria
+
+## Best Practices
+
+1. **Task Granularity**
+   - Tasks should be completable within 1-2 days
+   - If a task is too large, break it down further
+   - Each task should have a clear, measurable outcome
+
+2. **Dependency Management**
+   - Minimize dependencies between tasks where possible
+   - Clearly document external dependencies
+   - Identify critical path tasks
+
+3. **Progress Tracking**
+   - Update task status as work progresses
+   - Document blockers and risks
+   - Regular plan review and adjustment
+
+4. **Documentation**
+   - Keep plans up-to-date
+   - Document decisions and trade-offs
+   - Link related resources and documentation
+
+## Implementation Guidelines
+
+1. **Creating a New Plan**
+   ```bash
+   # Example command to create a new plan
+   mkdir -p .cursor/plans
+   touch .cursor/plans/plan-<feature-name>.json
+   ```
+
+2. **Plan Review**
+   - Review dependencies for completeness
+   - Validate JSON schema
+   - Ensure all tasks have clear acceptance criteria
+
+3. **Plan Updates**
+   - Track progress by updating task status
+   - Add new tasks as needed
+   - Document completed work
+
+## Error Prevention
+
+1. **Common Pitfalls**
+   - Incomplete dependency mapping
+   - Overly optimistic time estimates
+   - Missing infrastructure requirements
+   - Insufficient testing coverage planning
+
+2. **Quality Checks**
+   - Validate JSON schema before saving
+   - Ensure all task IDs are unique
+   - Verify dependency references exist
+   - Check for circular dependencies
+
+## Maintenance
+
+1. **Plan Archive**
+   - Archive completed plans
+   - Document lessons learned
+   - Update templates based on experience
+
+2. **Regular Review**
+   - Review active plans weekly
+   - Update status and blockers
+   - Adjust priorities as needed 
+
+## Plan Format
+
+The plan will be a JSON file that contains the following fields:
+- id: The id of the plan.
+- name: The name of the plan.
+- description: The description of the plan.
+- tasks: The tasks that need to be completed to achieve the plan.
+- status: The status of the plan.
+- created_at: The date and time the plan was created.
+
+The tasks will be a JSON array of objects that contain the following fields:
+- id: The id of the task.
+- name: The name of the task.
+- description: The description of the task.
+- status: The status of the task.
+- created_at: The date and time the task was created.
+- completed_at: The date and time the task was completed.
+- dependencies: The ids of the tasks that must be completed before this task can be started.
+
+## Example Request
+
+`.cursor/plans/plan-authentication.json
+
+```bash
+I'd like to implement a new feature: authentication. The registration flow will involve starting a temporal workflow for the "User Registration Workflow", which will be started in an auth microservice. One activity will be to create a user record, and another activity will be to create a profile record in the profile microservice. None of this is setup so far, for example we need to create both microservices, create a postgres database for each of them, create a central temporal workflow service backed by scyllaDB, and also define the User Registration Workflow in Code. Can you help me plan all of this out?
+```
+
+## Example Response
+
+```json
+{
+  "id": "plan-authentication-001",
+  "name": "Implement Authentication Feature with Temporal Workflow",
+  "description": "Plan to implement a new authentication feature where the registration flow uses a Temporal workflow. The workflow, started from the auth microservice, will include activities for creating a user record and a profile record (in the profile microservice). This plan includes creating the necessary microservices, provisioning PostgreSQL databases for each, setting up a central Temporal workflow service backed by ScyllaDB, and coding the workflow definition.",
+  "tasks": [
+    {
+      "id": "task-1",
+      "name": "Create Auth Microservice",
+      "description": "Set up the auth microservice codebase and repository.",
+      "status": "pending",
+      "created_at": "2025-02-09T00:00:00Z",
+      "completed_at": null,
+      "dependencies": []
+    },
+    {
+      "id": "task-2",
+      "name": "Create Profile Microservice",
+      "description": "Set up the profile microservice codebase and repository.",
+      "status": "pending",
+      "created_at": "2025-02-09T00:00:00Z",
+      "completed_at": null,
+      "dependencies": []
+    },
+    {
+      "id": "task-3",
+      "name": "Setup PostgreSQL for Auth Microservice",
+      "description": "Provision and configure a PostgreSQL database for the auth microservice.",
+      "status": "pending",
+      "created_at": "2025-02-09T00:00:00Z",
+      "completed_at": null,
+      "dependencies": ["task-1"]
+    },
+    {
+      "id": "task-4",
+      "name": "Setup PostgreSQL for Profile Microservice",
+      "description": "Provision and configure a PostgreSQL database for the profile microservice.",
+      "status": "pending",
+      "created_at": "2025-02-09T00:00:00Z",
+      "completed_at": null,
+      "dependencies": ["task-2"]
+    },
+    {
+      "id": "task-5",
+      "name": "Setup Central Temporal Workflow Service",
+      "description": "Provision and configure the Temporal workflow service backed by ScyllaDB.",
+      "status": "pending",
+      "created_at": "2025-02-09T00:00:00Z",
+      "completed_at": null,
+      "dependencies": []
+    },
+    {
+      "id": "task-6",
+      "name": "Define User Registration Workflow",
+      "description": "Implement the 'User Registration Workflow' in code, including both the workflow definition and its activities.",
+      "status": "pending",
+      "created_at": "2025-02-09T00:00:00Z",
+      "completed_at": null,
+      "dependencies": ["task-5"]
+    },
+    {
+      "id": "task-7",
+      "name": "Integrate Workflow Start in Auth Microservice",
+      "description": "Implement the functionality in the auth microservice to start the 'User Registration Workflow'.",
+      "status": "pending",
+      "created_at": "2025-02-09T00:00:00Z",
+      "completed_at": null,
+      "dependencies": ["task-1", "task-5", "task-6"]
+    },
+    {
+      "id": "task-8",
+      "name": "Implement Create User Record Activity",
+      "description": "Develop the activity in the auth microservice to create a user record as part of the workflow.",
+      "status": "pending",
+      "created_at": "2025-02-09T00:00:00Z",
+      "completed_at": null,
+      "dependencies": ["task-7"]
+    },
+    {
+      "id": "task-9",
+      "name": "Implement Create Profile Record Activity",
+      "description": "Develop the activity in the profile microservice to create a profile record as part of the workflow.",
+      "status": "pending",
+      "created_at": "2025-02-09T00:00:00Z",
+      "completed_at": null,
+      "dependencies": ["task-7", "task-4"]
+    },
+    {
+      "id": "task-10",
+      "name": "Integration and Testing",
+      "description": "Perform end-to-end integration testing for the registration flow and workflow execution.",
+      "status": "pending",
+      "created_at": "2025-02-09T00:00:00Z",
+      "completed_at": null,
+      "dependencies": ["task-8", "task-9"]
+    }
+  ],
+  "status": "pending",
+  "created_at": "2025-02-09T00:00:00Z"
+}
+```
+
+
+
+   
