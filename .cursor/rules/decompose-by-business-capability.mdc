@@ -1,0 +1,80 @@
+---
+description: Guidelines for decomposing microservices by business capability
+globs: *.go,*.proto,*.yaml,*.yml
+---
+
+# Decompose by Business Capability
+
+Guidelines for decomposing microservices based on business capabilities, following Domain-Driven Design principles.
+
+<rule>
+name: decompose-by-business-capability
+description: Standards for organizing microservices around business capabilities rather than technical concerns
+
+filters:
+  - type: file_extension
+    pattern: "\\.(go|proto|ya?ml)$"
+  - type: content
+    pattern: "service|package|namespace"
+
+actions:
+  - type: suggest
+    message: |
+      When designing microservices, follow these business capability decomposition principles:
+
+      1. **Business Capability Identification**:
+         - Each microservice should represent a distinct business capability
+         - Services should be named after their business capability (e.g., OrderService, InventoryService)
+         - Avoid technical names (e.g., DatabaseService, CacheService)
+
+      2. **Domain Model Boundaries**:
+         - Keep domain models and business logic within their respective service boundaries
+         - Avoid sharing domain models across services
+         - Use DTOs/Protocol Buffers for inter-service communication
+
+      3. **Service Independence**:
+         - Each service should have its own data storage
+         - Implement asynchronous communication patterns where possible
+         - Use event-driven architecture for cross-capability workflows
+
+      4. **Team Organization**:
+         - Align teams with business capabilities
+         - Practice "you build it, you run it" ownership model
+         - Maintain clear documentation of service responsibilities
+
+      5. **Service Granularity**:
+         - Size services based on business capability scope
+         - Consider team cognitive load
+         - Balance between too fine-grained and too coarse-grained
+
+      6. **Evolution Strategy**:
+         - Start with larger services and decompose as needed
+         - Use bounded contexts to identify natural service boundaries
+         - Monitor service coupling and cohesion metrics
+
+examples:
+  - input: |
+      // Bad: Technical-focused service
+      package main
+      
+      type DatabaseService struct {
+          // Generic database operations
+      }
+  - output: |
+      // Good: Business capability focused service
+      package order
+      
+      type OrderService struct {
+          // Order-specific business logic
+      }
+
+metadata:
+  priority: high
+  version: 1.0.0
+  references:
+    - https://microservices.io/patterns/decomposition/decompose-by-business-capability.html
+  evolution_history:
+    - date: "2024-03-21"
+      type: "initial"
+      description: "Initial version defining business capability decomposition guidelines"
+</rule> 

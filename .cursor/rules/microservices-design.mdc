@@ -1,0 +1,198 @@
+---
+description: Guidelines for designing, implementing, and evolving microservices architecture
+globs: *.{go,proto,yaml,yml}
+---
+# Microservices Design and Evolution Guidelines
+
+This rule provides comprehensive guidance for designing, implementing, and evolving microservices architecture within the system.
+
+<rule>
+name: microservices-design
+description: Standards and best practices for microservices architecture design and evolution
+
+filters:
+  # Match Go files
+  - type: file_extension
+    pattern: "\\.go$"
+  # Match Proto files
+  - type: file_extension
+    pattern: "\\.proto$"
+  # Match YAML configuration files
+  - type: file_extension
+    pattern: "\\.(yaml|yml)$"
+  # Match service-related file paths
+  - type: path
+    pattern: "(internal|pkg|cmd|api|service)"
+
+actions:
+  - type: suggest
+    message: |
+      When designing and implementing microservices:
+
+      ## Service Design Principles
+
+      ### Domain-Driven Design
+      - Each service should encapsulate a single business capability or subdomain
+      - Use bounded contexts to define service boundaries
+      - Maintain a shared ubiquitous language within each service domain
+      - Document domain models and their relationships
+
+      ### Service Autonomy
+      - Services must be independently deployable
+      - Each service should own its data and be the single source of truth
+      - Implement asynchronous communication patterns where possible
+      - Use event-driven architecture for loose coupling
+
+      ### Data Management
+      - Each service maintains its own database
+      - Use the Database-per-Service pattern
+      - Implement eventual consistency for cross-service data
+      - Use the Saga pattern for distributed transactions
+      - Apply the CQRS pattern where read/write patterns differ significantly
+
+      ## Communication Patterns
+
+      ### Synchronous Communication
+      - Use RESTful APIs for simple request/response patterns
+      - Implement gRPC for performance-critical service-to-service communication
+      - Apply rate limiting and circuit breakers
+      - Document APIs using OpenAPI/Protobuf specifications
+
+      ### Asynchronous Communication
+      - Use event-driven architecture for loose coupling
+      - Implement message queues for reliable communication
+      - Apply the Event Sourcing pattern where appropriate
+      - Use the Outbox pattern for reliable event publishing
+
+      ## Service Evolution Guidelines
+
+      ### Version Management
+      - Use semantic versioning for APIs
+      - Maintain backward compatibility
+      - Implement API versioning strategies
+      - Document breaking changes and migration paths
+
+      ### Refactoring Considerations
+      - Identify service boundaries through domain analysis
+      - Use the Strangler Fig pattern for legacy system migration
+      - Implement feature flags for controlled rollouts
+      - Monitor service dependencies and coupling
+
+      ## Operational Excellence
+
+      ### Observability
+      - Implement distributed tracing
+      - Use correlation IDs for request tracking
+      - Maintain centralized logging
+      - Monitor service health metrics
+
+      ### Resilience
+      - Implement retry policies with exponential backoff
+      - Use circuit breakers for fault tolerance
+      - Implement fallback mechanisms
+      - Design for partial availability
+
+      ### Security
+      - Implement service-to-service authentication
+      - Use API gateways for edge security
+      - Apply the principle of least privilege
+      - Implement rate limiting and throttling
+
+      ## Implementation Checklist
+
+      ### New Service Creation
+      - [ ] Define service boundaries and responsibilities
+      - [ ] Document API contracts and event schemas
+      - [ ] Set up independent CI/CD pipeline
+      - [ ] Implement health checks and metrics
+      - [ ] Define SLOs and error budgets
+
+      ### Service Evolution
+      - [ ] Analyze impact on dependent services
+      - [ ] Plan backward compatibility strategy
+      - [ ] Document migration paths
+      - [ ] Update service discovery configuration
+      - [ ] Review security implications
+
+examples:
+  - input: |
+      # Bad: Monolithic service structure
+      /src
+      ├── api
+      │   └── all_endpoints.go
+      ├── models
+      │   └── shared_models.go
+      └── database
+          └── shared_db.go
+    output: "Service structure violates microservice principles - needs decomposition"
+  
+  - input: |
+      # Good: Microservice structure
+      /services
+      ├── auth-service
+      │   ├── api
+      │   ├── internal
+      │   └── pkg
+      ├── user-service
+      │   ├── api
+      │   ├── internal
+      │   └── pkg
+      └── order-service
+          ├── api
+          ├── internal
+          └── pkg
+    output: "Well-structured microservices with clear boundaries and responsibilities"
+
+  - input: |
+      # Bad: Direct database access
+      func (s *OrderService) GetUserDetails(userID string) (*User, error) {
+          return s.userDB.GetUser(userID)
+      }
+    output: "Violates service boundaries - should use API calls instead"
+
+  - input: |
+      # Good: Service-to-service communication
+      func (s *OrderService) GetUserDetails(ctx context.Context, userID string) (*User, error) {
+          return s.userClient.GetUser(ctx, userID)
+      }
+    output: "Proper service-to-service communication through defined APIs"
+
+metadata:
+  priority: high
+  version: 1.0.0
+  evolution_history:
+    - date: "2024-03-21"
+      type: "initial"
+      description: "Initial version of microservices design guidelines"
+</rule>
+
+## Anti-Patterns to Avoid
+- Shared databases between services
+- Synchronous chains of service calls
+- Direct database access across service boundaries
+- Tight coupling through shared libraries
+- Lack of service contracts or documentation
+
+## Metrics and Success Indicators
+- Deployment frequency per service
+- Mean time to recovery (MTTR)
+- Change failure rate
+- Lead time for changes
+- Service independence score
+- API versioning overhead
+
+## Tools and Practices
+- Service mesh for operational control
+- API gateway for edge services
+- Distributed tracing (e.g., OpenTelemetry)
+- Event streaming platforms
+- Service discovery mechanisms
+- Container orchestration (e.g., Kubernetes)
+
+## Decision Records
+Document architectural decisions using ADRs (Architecture Decision Records) for:
+- Service boundary changes
+- Communication pattern choices
+- Technology stack selections
+- Data consistency approaches
+- Security implementations 
