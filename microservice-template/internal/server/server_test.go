@@ -1,6 +1,8 @@
 package server
 
 import (
+	"context"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -10,6 +12,26 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+// mockDependencyInitializer implements DependencyInitializer for testing
+type mockDependencyInitializer struct {
+	initializeFunc func(ctx context.Context) (*Dependencies, error)
+	cleanupFunc    func(ctx context.Context, deps *Dependencies) error
+}
+
+func (m *mockDependencyInitializer) Initialize(ctx context.Context) (*Dependencies, error) {
+	if m.initializeFunc != nil {
+		return m.initializeFunc(ctx)
+	}
+	return &Dependencies{}, nil
+}
+
+func (m *mockDependencyInitializer) Cleanup(ctx context.Context, deps *Dependencies) error {
+	if m.cleanupFunc != nil {
+		return m.cleanupFunc(ctx, deps)
+	}
+	return nil
+}
 
 func TestNewServerBuilder(t *testing.T) {
 	tests := []struct {
@@ -51,6 +73,7 @@ func TestNewServerBuilder(t *testing.T) {
 			assert.Equal(t, tt.want, builder.cfg)
 			assert.NotNil(t, builder.mux)
 			assert.Empty(t, builder.services)
+			assert.Nil(t, builder.deps)
 		})
 	}
 }
@@ -87,7 +110,7 @@ func TestBuilder_RegisterService(t *testing.T) {
 }
 
 func TestServer_HealthCheck(t *testing.T) {
-	server := NewServer(nil)
+	server := NewServer(nil, nil)
 	require.NotNil(t, server)
 
 	req := httptest.NewRequest(http.MethodGet, "/healthz", nil)
@@ -108,11 +131,13 @@ func TestServer_Build(t *testing.T) {
 		path:    "/test.v1.TestService/",
 	}
 
-	builder.RegisterService(svc)
+	deps := &Dependencies{}
+	builder.WithDependencies(deps).RegisterService(svc)
 	server := builder.Build()
 
 	assert.NotNil(t, server)
 	assert.NotNil(t, server.Handler())
+	assert.Equal(t, deps, server.Dependencies())
 
 	// Test registered service endpoint
 	req := httptest.NewRequest(http.MethodGet, "/test.v1.TestService/", nil)
@@ -121,7 +146,7 @@ func TestServer_Build(t *testing.T) {
 }
 
 func TestServer_DefaultServices(t *testing.T) {
-	server := NewServer(nil)
+	server := NewServer(nil, nil)
 	require.NotNil(t, server)
 
 	// Test health check endpoint
@@ -136,4 +161,54 @@ func TestServer_DefaultServices(t *testing.T) {
 	server.Handler().ServeHTTP(w, req)
 	// We expect a 415 because we're not sending a proper gRPC request
 	assert.Equal(t, http.StatusUnsupportedMediaType, w.Code)
+}
+
+func TestNewServerWithInit(t *testing.T) {
+	tests := []struct {
+		name        string
+		initializer DependencyInitializer
+		wantErr     bool
+	}{
+		{
+			name:        "nil initializer",
+			initializer: nil,
+			wantErr:     false,
+		},
+		{
+			name: "successful initialization",
+			initializer: &mockDependencyInitializer{
+				initializeFunc: func(ctx context.Context) (*Dependencies, error) {
+					return &Dependencies{}, nil
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "initialization error",
+			initializer: &mockDependencyInitializer{
+				initializeFunc: func(ctx context.Context) (*Dependencies, error) {
+					return nil, errors.New("initialization failed")
+				},
+			},
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctx := context.Background()
+			server, err := NewServerWithInit(ctx, nil, tt.initializer)
+
+			if tt.wantErr {
+				assert.Error(t, err)
+				assert.Nil(t, server)
+			} else {
+				assert.NoError(t, err)
+				assert.NotNil(t, server)
+				if tt.initializer != nil {
+					assert.NotNil(t, server.Dependencies())
+				}
+			}
+		})
+	}
 } 

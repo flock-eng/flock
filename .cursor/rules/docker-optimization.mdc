@@ -57,7 +57,7 @@ examples:
       CMD ["npm", "start"]
 
   - input: |
-      FROM golang:1.21
+      FROM golang:1.23.3
       WORKDIR /app
       COPY go.mod go.sum ./
       RUN go mod download
