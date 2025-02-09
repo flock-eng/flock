@@ -1,0 +1,168 @@
+---
+description: Guidelines for implementing transport (gRPC/Protobuf) and persistence (domain) model translation in Go microservices
+globs: *.go
+---
+
+# Transport and Persistence Model Translation
+
+<rule>
+name: transport-persistence-translation
+description: Best practices for separating and translating between transport (gRPC/Protobuf) and persistence (domain) models in Go microservices.
+
+filters:
+  - type: file_extension
+    pattern: "\\.go$"
+  - type: content
+    pattern: "(?i)(proto|grpc|domain model|persistence)"
+
+actions:
+  - type: suggest
+    message: |
+      When implementing transport and persistence model translation in Go microservices:
+
+      1. **Model Separation**
+         - Keep transport (Protobuf/gRPC) models separate from domain models
+         - Place transport models in a `proto` or `api` package
+         - Place domain models in a `domain` or `model` package
+         ```go
+         // transport/proto model (generated)
+         type UserProto struct {
+             Id    int64  `protobuf:"varint,1,opt,name=id"`
+             Email string `protobuf:"bytes,2,opt,name=email"`
+         }
+
+         // domain model
+         type User struct {
+             ID        int64
+             Email     string
+             CreatedAt time.Time
+             // Additional business logic fields
+         }
+         ```
+
+      2. **Translation Layer**
+         - Create explicit translation functions in a dedicated `translator` package
+         - Implement bidirectional conversion methods
+         - Keep translation logic at service boundaries
+         ```go
+         package translator
+
+         func UserFromProto(p *pb.UserProto) *domain.User {
+             return &domain.User{
+                 ID:    p.Id,
+                 Email: p.Email,
+             }
+         }
+
+         func UserToProto(u *domain.User) *pb.UserProto {
+             return &pb.UserProto{
+                 Id:    u.ID,
+                 Email: u.Email,
+             }
+         }
+         ```
+
+      3. **Service Implementation**
+         - Convert transport models to domain models at service entry points
+         - Use domain models within business logic
+         - Convert back to transport models before responding
+         ```go
+         func (s *Service) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
+             // Convert to domain model
+             user := translator.UserFromProto(req.User)
+             
+             // Apply business logic using domain model
+             if err := s.userRepo.Create(ctx, user); err != nil {
+                 return nil, err
+             }
+             
+             // Convert back to transport model
+             return &pb.CreateUserResponse{
+                 User: translator.UserToProto(user),
+             }, nil
+         }
+         ```
+
+      4. **Validation**
+         - Implement validation at both transport and domain layers
+         - Transport validation: basic request structure
+         - Domain validation: business rules and constraints
+         ```go
+         // Domain validation
+         func (u *User) Validate() error {
+             if !isValidEmail(u.Email) {
+                 return ErrInvalidEmail
+             }
+             return nil
+         }
+
+         // Transport validation (in service)
+         func validateCreateUserRequest(req *pb.CreateUserRequest) error {
+             if req == nil || req.User == nil {
+                 return status.Error(codes.InvalidArgument, "missing user data")
+             }
+             return nil
+         }
+         ```
+
+      5. **Error Handling**
+         - Convert domain errors to appropriate gRPC status codes
+         - Maintain error context while translating between layers
+         ```go
+         func mapDomainError(err error) error {
+             switch {
+             case errors.Is(err, domain.ErrNotFound):
+                 return status.Error(codes.NotFound, err.Error())
+             case errors.Is(err, domain.ErrInvalidInput):
+                 return status.Error(codes.InvalidArgument, err.Error())
+             default:
+                 return status.Error(codes.Internal, "internal error")
+             }
+         }
+         ```
+
+examples:
+  - input: |
+      // Bad: Using proto models directly in business logic
+      func (s *Service) ProcessUser(user *pb.User) error {
+          return s.repo.Save(user)
+      }
+    output: |
+      // Good: Converting to domain model
+      func (s *Service) ProcessUser(protoUser *pb.User) error {
+          user := translator.UserFromProto(protoUser)
+          return s.repo.Save(user)
+      }
+  - input: |
+      // Bad: Mixing transport and domain concerns
+      type User struct {
+          ID    int64  `protobuf:"varint,1" gorm:"column:id"`
+          Email string `protobuf:"bytes,2" gorm:"column:email"`
+      }
+    output: |
+      // Good: Separate transport and domain models
+      // proto/user.proto
+      message User {
+          int64 id = 1;
+          string email = 2;
+      }
+      
+      // domain/user.go
+      type User struct {
+          ID    int64
+          Email string
+      }
+
+metadata:
+  priority: high
+  version: 1.0.0
+  tags:
+    - microservices
+    - grpc
+    - domain-driven-design
+    - best-practices
+  evolution_history:
+    - date: "2024-03-21"
+      type: "initial"
+      description: "Initial version with core guidelines for transport and persistence model translation"
+</rule> 
