@@ -1,0 +1,99 @@
+---
+description: Guidance on creating and structuring Cursor rule files
+globs: *.mdc
+---
+# Cursor Rules Guidance
+
+This file explains how to create and structure Cursor rule files. It describes the purpose of each section in a rule file and provides an example to guide your implementation.
+
+<rule>
+name: cursor_rules_guidance
+description: Guidelines for structuring Cursor rule files, including section organization and example patterns.
+
+filters:
+  - type: file_extension
+    pattern: "\\.mdc$"
+
+actions:
+  - type: suggest
+    message: |
+      When writing a Cursor rule, organize your file into distinct sections:
+
+      1. **YAML Front Matter**:
+         - **Purpose**: Provides metadata about the rule file (e.g., description and file matching patterns).
+         - **Format**:
+           ```
+           ---
+           description: Brief description of the rule's purpose
+           globs: *.mdc
+           globs: *.mdc
+           ---
+           ```
+
+      2. **Markdown Header**:
+         - **Purpose**: Titles the file for easy identification.
+         - **Format**:
+           ```
+           # Cursor Rules Guidance
+           ```
+
+      3. **Rule Block (<rule> ... </rule>)**:
+         - **Purpose**: Encapsulates the rule’s definition.
+         - **Key Sections**:
+           - **name**: A unique identifier for the rule.
+           - **description**: A summary of the rule’s purpose.
+           - **filters**: Conditions to select applicable files or events (e.g., matching `.mdc` files).
+           - **actions**: Steps to take when filters match (such as `reject` or `suggest`), with associated messages or conditions.
+           - **examples**: Illustrative input/output examples that show proper rule usage.
+           - **metadata**: Additional attributes such as rule priority and version.
+
+      4. **Example YAML Structure**:
+         This is an example structure for a Cursor rule represented using a YAML-like format:
+         ```
+         name: example_rule
+         description: A sample rule demonstrating proper structure
+         filters:
+           - type: file_extension
+             pattern: "\\.mdc$"
+         actions:
+           - type: reject
+             conditions:
+               - pattern: "^(?!\\.\\/\\.cursor\\/rules\\/.*\\.mdc$)"
+                 message: "Rule files must be placed in the .cursor/rules directory"
+         examples:
+           - input: |
+               incorrect/path.mdc
+             output: "Error: Rule file is not in the correct directory"
+           - input: |
+               .cursor/rules/example-rule.mdc
+             output: "Rule file is correctly placed"
+         metadata:
+           priority: high
+           version: 1.0
+         ```
+
+      Follow these guidelines to ensure all your Cursor rule files are well-organized, clear, and consistent.
+
+examples:
+  - input: |
+      # Poorly structured rule file example
+      rule_example.mdc
+      (missing YAML front matter and structured <rule> block)
+    output: "The rule file is missing required sections."
+  - input: |
+      ---
+      description: Sample Rule
+      globs: *.mdc
+      ---
+      # Cursor Rules Guidance
+      <rule>
+      name: sample_rule
+      description: A sample rule file following the guidelines.
+      ...
+      </rule>
+    output: "The rule file is structured correctly."
+
+metadata:
+  priority: medium
+  version: 1.0
+</rule>
