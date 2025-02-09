@@ -1,33 +1,31 @@
 ---
-description: Guidelines for Go development and testing practices
-globs: *.go
+description: Guidelines for Go unit testing practices
+globs: "*_test.go"
 ---
 
-# Go Development and Testing Practices
+# Go Unit Testing Practices
 
 <rule>
-name: go-development
-description: Defines standards for Go development workflow and testing practices
+name: go-unit-testing
+description: Defines standards for Go unit testing practices and patterns
 
 filters:
   - type: file_extension
-    pattern: "\\.go$"
+    pattern: "_test\\.go$"
   - type: directory
-    pattern: ".*service.*"
+    pattern: ".*"
 
 actions:
   - type: suggest
     message: |
-      When working with Go microservices:
+      When writing Go unit tests:
 
-      1. **Unit Testing Best Practices**:
-         
-         **Test Structure and Naming**:
+      1. **Test Structure and Naming**:
          - Place tests in `*_test.go` files adjacent to the code being tested
          - Name test functions as `TestXxx` where Xxx describes the functionality
          - Use descriptive test names that explain the scenario being tested
          
-         **Table-Driven Tests**:
+      2. **Table-Driven Tests**:
          ```go
          func TestFunction(t *testing.T) {
              tests := []struct {
@@ -59,7 +57,7 @@ actions:
          }
          ```
 
-         **Dependency Injection and Mocking**:
+      3. **Dependency Injection and Mocking**:
          - Design interfaces for external dependencies
          - Use dependency injection for better testability
          - Create mocks using `go generate` and `mockgen`
@@ -73,7 +71,7 @@ actions:
          }
          ```
 
-         **Test Isolation and Cleanup**:
+      4. **Test Isolation and Cleanup**:
          ```go
          func TestWithResources(t *testing.T) {
              // Use t.TempDir() for temporary files
@@ -88,7 +86,7 @@ actions:
          }
          ```
 
-         **Parallel Testing**:
+      5. **Parallel Testing**:
          ```go
          func TestParallel(t *testing.T) {
              t.Parallel() // Mark test for parallel execution
@@ -107,7 +105,7 @@ actions:
          }
          ```
 
-         **Coverage and Benchmarks**:
+      6. **Coverage and Benchmarks**:
          ```bash
          # Run tests with coverage
          go test -cover ./...
@@ -120,62 +118,17 @@ actions:
          go test -bench=. -benchmem ./...
          ```
 
-         **Best Practices**:
+      7. **Best Practices**:
          1. Focus on behavior, not implementation details
          2. One assertion per test when possible
          3. Use subtests for better organization
          4. Keep tests independent and idempotent
          5. Write tests before fixing bugs
          6. Maintain test code with the same standards as production code
-
-      2. **gRPC Testing and Introspection**:
-         - Prefer `grpcurl` for testing deployed gRPC services
-         - Always use introspection to understand service and message definitions
-         - Document all gRPC endpoints with example `grpcurl` commands
-         - Test both success and error scenarios
-
-         **Service Discovery and Health Checks**:
-         ```bash
-         # List all available services
-         grpcurl --plaintext localhost:8080 list
-
-         # Check service health
-         grpcurl --plaintext localhost:8080 grpc.health.v1.Health/Check
-         ```
-
-         **Service Introspection**:
-         ```bash
-         # Describe a service and its methods
-         grpcurl --plaintext localhost:8080 describe service.v1.ServiceName
-
-         # Real example - describing the Health service
-         grpcurl --plaintext localhost:8080 describe grpc.health.v1.Health
-         ```
-
-         **Message Template Inspection**:
-         ```bash
-         # Get the message template for a request type
-         grpcurl -msg-template --plaintext localhost:8080 describe service.v1.RequestType
-
-         # Real example - get health check request template
-         grpcurl -msg-template --plaintext localhost:8080 describe .grpc.health.v1.HealthCheckRequest
-         ```
-
-         **Making Requests**:
-         ```bash
-         # Make a request with data
-         grpcurl -d '{"field": "value"}' --plaintext localhost:8080 service.v1.ServiceName/MethodName
-
-         # Real example - health check
-         grpcurl --plaintext localhost:8080 grpc.health.v1.Health/Check
-         ```
-
-         **Best Practices**:
-         1. Always inspect message templates before making requests
-         2. Use service description to understand available methods
-         3. Document example requests and responses in service README
-         4. Include both success and error case examples
-         5. Use `-msg-template` flag to understand required fields
+         7. Test edge cases and error conditions
+         8. Use meaningful test data that represents real scenarios
+         9. Keep test output clear and actionable
+         10. Regularly run the full test suite
 
 examples:
   - input: |
@@ -189,31 +142,19 @@ examples:
       }
     output: "Good use of dependency injection. Create a mock using:\n//go:generate mockgen -source=service.go -destination=mock/service.go"
   - input: |
-      func main() {
-        // Server setup
+      func TestComplexOperation(t *testing.T) {
+          result := ComplexOperation()
+          if result != expected {
+              t.Error("failed")
+          }
       }
-    output: "Remember to test this endpoint using grpcurl once deployed. Start by describing the service: grpcurl --plaintext localhost:8080 describe ServiceName"
-  - input: |
-      // Handler implementation
-      func (s *Server) CreateResource(ctx context.Context, req *pb.CreateResourceRequest) (*pb.CreateResourceResponse, error) {
-        // Implementation
-      }
-    output: "Document the following grpcurl commands in your README:\n1. Message template: grpcurl -msg-template --plaintext localhost:8080 describe .ServiceName.CreateResourceRequest\n2. Example request: grpcurl -d '{...}' --plaintext localhost:8080 ServiceName/CreateResource"
+    output: "Consider breaking this into multiple test cases using table-driven tests and provide more descriptive error messages"
 
 metadata:
-  priority: medium
-  version: 1.1.0
+  priority: high
+  version: 1.0.0
   evolution_history:
     - date: "2024-03-21"
       type: "initial"
-      description: "Initial version defining Go development and testing practices"
-    - date: "2024-03-21"
-      type: "update"
-      description: "Enhanced grpcurl documentation with real introspection examples"
-    - date: "2024-03-21"
-      type: "update"
-      description: "Updated version number to follow semantic versioning MAJOR.MINOR.PATCH format"
-    - date: "2024-03-21"
-      type: "update"
-      description: "Added comprehensive unit testing best practices and examples"
+      description: "Initial version of Go unit testing practices"
 </rule> 
