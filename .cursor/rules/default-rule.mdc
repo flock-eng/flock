@@ -66,7 +66,16 @@ actions:
          - Standard practices
          - Cross-cutting concerns
 
-      5. **Future Extensibility**:
+      5. **Tooling and Automation Insights**:
+         - Explore the tools available in the `.cursor/tools/` directory to automate routine tasks and improve workflow efficiency.
+         - **Examples include**:
+           - **new-scratchpad.sh**: Quickly create new scratchpad files for experimental work.
+           - Other custom scripts that aid in code review, dependency management, and environment setup.
+         - Integrate these tools into your daily workflow to enforce standards and reduce manual effort.
+         - Regularly review [tool-usage.mdc](mdc:tool-usage.mdc) for detailed guidelines on using and creating tools.
+         - Consider leveraging automated tools for code formatting, linting, testing, and deployment to maintain consistent, high-quality code across the project.
+
+      6. **Future Extensibility**:
          Additional sections can be added here for:
          - New project-wide standards
          - Common requirements
