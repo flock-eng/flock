@@ -1,0 +1,173 @@
+---
+description: Guidelines for implementing distributed transactions using the saga pattern with Temporal
+globs: "*.go"
+---
+
+# Distributed Transactions with Temporal
+
+This rule provides guidance for implementing distributed transactions across microservices using the saga pattern with Temporal.io.
+
+<rule>
+name: distributed-transactions
+description: Standards and best practices for implementing distributed transactions using the saga pattern with Temporal
+
+filters:
+  # Match Go files
+  - type: file_extension
+    pattern: "\\.go$"
+  # Match service-related paths
+  - type: path
+    pattern: "(internal|pkg|cmd|api|service)"
+
+actions:
+  - type: suggest
+    message: |
+      When implementing distributed transactions across microservices:
+
+      ## Saga Pattern Implementation with Temporal
+
+      ### Core Principles
+      - Use Temporal Workflows to orchestrate distributed transactions
+      - Each service operation should have a corresponding compensating action
+      - Maintain data consistency across services using the Database-per-Service pattern
+      - Design for eventual consistency and fault tolerance
+
+      ### Implementation Guidelines
+
+      #### Workflow Structure
+      ```go
+      // Example Temporal workflow structure
+      func YourTransactionWorkflow(ctx workflow.Context, params TransactionParams) error {
+          // Define compensation context
+          ctx = workflow.WithActivityOptions(ctx, workflow.ActivityOptions{
+              StartToCloseTimeout: 10 * time.Minute,
+              RetryPolicy: &temporal.RetryPolicy{
+                  InitialInterval:    time.Second,
+                  BackoffCoefficient: 2.0,
+                  MaximumInterval:    time.Minute,
+                  MaximumAttempts:    3,
+              },
+          })
+
+          // Step 1: First service operation
+          if err := workflow.ExecuteActivity(ctx, Service1Operation, params).Get(ctx, nil); err != nil {
+              return err
+          }
+
+          // Step 2: Second service operation with compensation
+          if err := workflow.ExecuteActivity(ctx, Service2Operation, params).Get(ctx, nil); err != nil {
+              // Compensate for Service1
+              _ = workflow.ExecuteActivity(ctx, Service1Compensation, params).Get(ctx, nil)
+              return err
+          }
+
+          return nil
+      }
+      ```
+
+      #### Best Practices
+      1. **Workflow Design**
+         - Keep workflows idempotent and deterministic
+         - Use workflow.ExecuteActivity for service operations
+         - Implement clear compensation logic for each step
+         - Handle timeouts and retries explicitly
+
+      2. **Error Handling**
+         - Implement compensating transactions for each step
+         - Use Temporal's retry policies for transient failures
+         - Log compensation actions for debugging
+         - Monitor workflow execution status
+
+      3. **Data Management**
+         - Each service maintains its own database
+         - Use local transactions within services
+         - Implement event sourcing for audit trails
+         - Consider using the Outbox pattern for reliability
+
+      4. **Monitoring and Observability**
+         - Use Temporal's built-in visibility features
+         - Implement custom metrics for business operations
+         - Track compensation actions separately
+         - Monitor workflow execution times
+
+      ### Implementation Steps
+
+      1. **Setup Temporal Client**
+         ```go
+         client, err := client.NewClient(client.Options{
+             HostPort:  "temporal:7233",
+             Namespace: "your-namespace",
+         })
+         ```
+
+      2. **Define Workflow Interface**
+         ```go
+         type TransactionWorkflow interface {
+             Execute(ctx workflow.Context, params TransactionParams) error
+         }
+         ```
+
+      3. **Implement Activities**
+         ```go
+         func Service1Operation(ctx context.Context, params TransactionParams) error {
+             // Implement service operation
+             return nil
+         }
+
+         func Service1Compensation(ctx context.Context, params TransactionParams) error {
+             // Implement compensation logic
+             return nil
+         }
+         ```
+
+      4. **Start Workflow**
+         ```go
+         workflowOptions := client.StartWorkflowOptions{
+             ID:        "transaction-" + uuid.New().String(),
+             TaskQueue: "transaction-queue",
+         }
+         
+         we, err := client.ExecuteWorkflow(context.Background(), workflowOptions, 
+             YourTransactionWorkflow, params)
+         ```
+
+examples:
+  - input: |
+      // Bad: Direct service calls without saga pattern
+      func ProcessOrder(ctx context.Context, order Order) error {
+          if err := paymentService.Process(ctx, order.Payment); err != nil {
+              return err
+          }
+          return inventoryService.Update(ctx, order.Items)
+      }
+    output: "Missing compensation logic and proper transaction management"
+
+  - input: |
+      // Good: Using Temporal workflow with saga pattern
+      func OrderWorkflow(ctx workflow.Context, order Order) error {
+          if err := workflow.ExecuteActivity(ctx, ProcessPayment, order.Payment).Get(ctx, nil); err != nil {
+              return err
+          }
+          
+          if err := workflow.ExecuteActivity(ctx, UpdateInventory, order.Items).Get(ctx, nil); err != nil {
+              // Compensate payment
+              _ = workflow.ExecuteActivity(ctx, RefundPayment, order.Payment).Get(ctx, nil)
+              return err
+          }
+          return nil
+      }
+    output: "Proper saga implementation with compensation handling"
+
+metadata:
+  priority: high
+  version: 1.0.0
+  evolution_history:
+    - date: "2024-03-21"
+      type: "initial"
+      description: "Initial version of distributed transactions guidelines using Temporal"
+</rule>
+
+## References
+- Saga Pattern: https://microservices.io/patterns/data/saga.html
+- Database per Service: https://microservices.io/patterns/data/database-per-service.html
+- Temporal Documentation: https://docs.temporal.io/ 
