@@ -1,0 +1,114 @@
+---
+description: Rules for dependency version introspection and management across different package ecosystems
+globs: *.{go.mod,package.json,Chart.yaml,Dockerfile}
+---
+
+# Dependency Management Introspection
+
+This rule defines how to introspect on dependency versions in our application by querying external sources for the most up-to-date version information instead of relying on static or outdated knowledge.
+
+<rule>
+name: dependency-management
+description: Standards for checking and updating dependency versions using live queries to package managers and registries
+
+filters:
+  - type: file_extension
+    pattern: "\\.(go\\.mod|package\\.json|ya?ml|Dockerfile)$"
+  - type: content
+    pattern: "(?s)(require|dependencies|FROM|version)"
+
+actions:
+  - type: suggest
+    message: |
+      When working with dependencies:
+
+      1. **Go Dependencies**:
+         - Check available versions for a module:
+           ```bash
+           go list -m -versions github.com/gorilla/mux
+           ```
+         - Check latest Go version:
+           ```bash
+           brew info go
+           ```
+         - List all outdated dependencies:
+           ```bash
+           go list -u -m all
+           ```
+
+      2. **Docker Images**:
+         - List available tags:
+           ```bash
+           docker registry-1.docker.io/v2/<image>/tags/list
+           ```
+         - Pull latest version:
+           ```bash
+           docker pull <image_name>:latest
+           ```
+         - Inspect image details:
+           ```bash
+           docker inspect <image_name>:<tag>
+           ```
+
+      3. **Helm Charts**:
+         - Search for available versions:
+           ```bash
+           helm search repo <chart_name>
+           ```
+         - Update repo and list latest:
+           ```bash
+           helm repo update && helm search repo <chart_name> --versions
+           ```
+
+      4. **JavaScript/TypeScript (pnpm)**:
+         - List outdated packages:
+           ```bash
+           pnpm outdated
+           ```
+         - Get package info:
+           ```bash
+           pnpm info <package_name>
+           ```
+         - Check for security vulnerabilities:
+           ```bash
+           pnpm audit
+           ```
+
+      Security Considerations:
+      - Never expose registry credentials in queries
+      - Use authenticated requests where required
+      - Validate checksums for downloaded artifacts
+      - Scan dependencies for vulnerabilities
+      - Use private registries when handling internal packages
+
+      Best Practices:
+      - Document version update decisions
+      - Test thoroughly after version changes
+      - Keep lockfiles under version control
+      - Use version ranges carefully
+      - Consider semantic versioning implications
+
+examples:
+  - input: |
+      # Checking Go dependency versions
+      require (
+          github.com/gorilla/mux v1.8.0
+      )
+    output: |
+      Run: go list -m -versions github.com/gorilla/mux
+      Consider updating if newer stable version available
+  - input: |
+      # Dockerfile base image
+      FROM golang:1.19
+    output: |
+      Run: docker pull golang:latest
+      Check available tags for newer stable versions
+
+metadata:
+  priority: high
+  version: 1.0.0
+  evolution_history:
+    - date: "2024-03-21"
+      type: "initial"
+      description: "Initial version of dependency management rule"
+</rule> 
