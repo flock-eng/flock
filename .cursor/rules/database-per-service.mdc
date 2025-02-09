@@ -15,23 +15,46 @@ filters:
   - type: file_extension
     pattern: "\\.(ya?ml|go)$"
   - type: content
-    pattern: "database|helm|skaffold|dragonfly|postgres|mongodb"
+    pattern: "database|helm|skaffold|dragonfly|postgres|redpanda|scylla"
 
 actions:
   - type: suggest
     message: |
       When implementing the database-per-service pattern:
 
-      1. **Directory Structure**
+      1. **Recommended Databases and Helm Charts**
+      
+      - **RDBMS (PostgreSQL)**
+        * Use CloudNativePG Operator
+        * Helm Repository: https://cloudnative-pg.github.io/charts
+        * Use for: Transactional data, complex queries, ACID compliance
+      
+      - **Message Queue (RedPanda)**
+        * Use RedPanda Operator
+        * Helm Repository: https://charts.redpanda.com
+        * Use for: Event streaming, pub/sub messaging, log aggregation
+      
+      - **Cache (DragonflyDB)**
+        * Use DragonflyDB Operator
+        * Operator Documentation: https://www.dragonflydb.io/docs/getting-started/kubernetes-operator
+        * Use for: High-performance caching, session storage, rate limiting
+      
+      - **Wide-Column Store (ScyllaDB)**
+        * Use Scylla Operator
+        * Helm Repository: https://scylla-operator-charts.storage.googleapis.com/stable
+        * Documentation: https://operator.docs.scylladb.com/stable/installation/helm.html
+        * Use for: Time-series data, large-scale analytics, high-throughput workloads
+
+      2. **Directory Structure**
       ```
       service/
       ├── db/
-      │   ├── postgres/     # For PostgreSQL databases
+      │   ├── postgres/     # For PostgreSQL databases (CloudNativePG)
       │   │   ├── Chart.yaml
       │   │   ├── values.yaml
       │   │   ├── templates/
       │   │   │   ├── secret.yaml
-      │   │   │   └── deployment.yaml
+      │   │   │   └── cluster.yaml
       │   │   └── skaffold.yaml
       │   ├── dragonfly/    # For DragonflyDB caches
       │   │   ├── Chart.yaml
@@ -40,22 +63,29 @@ actions:
       │   │   │   ├── secret.yaml
       │   │   │   └── dragonfly.yaml
       │   │   └── skaffold.yaml
-      │   └── mongodb/      # For MongoDB databases
+      │   ├── redpanda/     # For RedPanda message queues
+      │   │   ├── Chart.yaml
+      │   │   ├── values.yaml
+      │   │   ├── templates/
+      │   │   │   ├── secret.yaml
+      │   │   │   └── cluster.yaml
+      │   │   └── skaffold.yaml
+      │   └── scylla/       # For ScyllaDB wide-column store
       │       ├── Chart.yaml
       │       ├── values.yaml
       │       ├── templates/
       │       │   ├── secret.yaml
-      │       │   └── deployment.yaml
+      │       │   └── cluster.yaml
       │       └── skaffold.yaml
       ```
 
-      2. **Installation Pattern**
+      3. **Installation Pattern**
       - Use Helm for database installation and configuration
       - Use Skaffold for deployment orchestration
       - Install database operators first if required (e.g., DragonflyDB operator)
       - Configure database instances through custom resources
 
-      3. **Skaffold Configuration**
+      4. **Skaffold Configuration**
       - Use profiles for operator installation vs database configuration
       - Separate configurations for different deployment stages
       - Example structure:
@@ -76,13 +106,13 @@ actions:
                     path: db/[database]/skaffold.yaml
         ```
 
-      4. **Database Isolation**
+      5. **Database Isolation**
       - Each service must have its own database namespace/schema
       - No direct database access from other services
       - Use service-specific database credentials
       - Configure resource limits and requests
 
-      5. **Best Practices**
+      6. **Best Practices**
       - Database Operators:
         * Install operators in dedicated namespaces
         * Use operator-specific CRDs for database configuration
@@ -101,26 +131,62 @@ actions:
         * Enable automated backups
 
 examples:
-  - description: "DragonflyDB Operator Installation"
+  - description: "CloudNativePG Cluster Configuration"
     input: |
-      # skaffold.yaml
-      apiVersion: skaffold/v4beta1
-      kind: Config
-      deploy:
-        kubectl: {}
-    output: |
-      # skaffold.yaml
-      apiVersion: skaffold/v4beta1
-      kind: Config
+      # cluster.yaml basic structure
+      apiVersion: v1
+      kind: ConfigMap
       metadata:
-        name: dragonfly-operator-install
-      manifests:
-        rawYaml:
-          - dragonfly-operator.yaml
-      deploy:
-        kubectl:
-          flags:
-            apply: ["--namespace=dragonfly-operator-system"]
+        name: postgres-config
+    output: |
+      # cluster.yaml
+      apiVersion: postgresql.cnpg.io/v1
+      kind: Cluster
+      metadata:
+        name: service-db
+      spec:
+        instances: 3
+        storage:
+          size: 10Gi
+        bootstrap:
+          initdb:
+            database: service_db
+            owner: service_user
+        postgresql:
+          parameters:
+            max_connections: "100"
+            shared_buffers: "256MB"
+
+  - description: "RedPanda Cluster Configuration"
+    input: |
+      # cluster.yaml basic structure
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: redpanda-config
+    output: |
+      # cluster.yaml
+      apiVersion: redpanda.vectorized.io/v1alpha1
+      kind: Cluster
+      metadata:
+        name: service-queue
+      spec:
+        image: "vectorized/redpanda"
+        replicas: 3
+        resources:
+          requests:
+            cpu: "1"
+            memory: 1Gi
+          limits:
+            cpu: "2"
+            memory: 2Gi
+        configuration:
+          rpcServer:
+            port: 33145
+          kafkaApi:
+            - port: 9092
+          adminApi:
+            - port: 9644
 
   - description: "DragonflyDB Instance Configuration"
     input: |
@@ -149,6 +215,39 @@ examples:
             cpu: 600m
             memory: 750Mi
 
+  - description: "ScyllaDB Cluster Configuration"
+    input: |
+      # cluster.yaml basic structure
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: scylla-config
+    output: |
+      # cluster.yaml
+      apiVersion: scylla.scylladb.com/v1
+      kind: ScyllaCluster
+      metadata:
+        name: service-store
+      spec:
+        version: 5.2.0
+        repository: docker.io/scylladb/scylla
+        agentRepository: docker.io/scylladb/scylla-manager-agent
+        developerMode: true
+        datacenter:
+          name: dc1
+          racks:
+            - name: rack1
+              members: 3
+              storage:
+                capacity: 10Gi
+              resources:
+                requests:
+                  cpu: 1
+                  memory: 4Gi
+                limits:
+                  cpu: 2
+                  memory: 8Gi
+
   - description: "Database Secret Configuration"
     input: |
       # secret.yaml without proper structure
@@ -163,10 +262,10 @@ examples:
       apiVersion: v1
       kind: Secret
       metadata:
-        name: service-cache-credentials
+        name: service-db-credentials
         labels:
-          app.kubernetes.io/name: dragonfly
-          app.kubernetes.io/instance: service-cache
+          app.kubernetes.io/name: postgres
+          app.kubernetes.io/instance: service-db
       type: Opaque
       stringData:
         username: service_user
@@ -174,8 +273,12 @@ examples:
 
 metadata:
   priority: high
-  version: 1.1.0
+  version: 1.2.0
   references:
+    - https://cloudnative-pg.github.io/charts
+    - https://charts.redpanda.com
+    - https://www.dragonflydb.io/docs/getting-started/kubernetes-operator
+    - https://operator.docs.scylladb.com/stable/installation/helm.html
     - https://microservices.io/patterns/data/database-per-service.html
     - https://skaffold.dev/docs/deployers/helm/
     - https://helm.sh/docs/topics/charts/
@@ -186,4 +289,7 @@ metadata:
     - date: "2024-03-22"
       type: "update"
       description: "Added Skaffold deployment patterns and operator installation guidance"
+    - date: "2024-03-23"
+      type: "update"
+      description: "Updated with specific database recommendations and Helm chart sources for PostgreSQL, RedPanda, DragonflyDB, and ScyllaDB"
 </rule> 
