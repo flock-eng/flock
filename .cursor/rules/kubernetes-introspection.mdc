@@ -1,0 +1,98 @@
+---
+description: Rules for Kubernetes resource introspection and interaction
+globs: *.{yaml,yml}
+---
+
+# Kubernetes Introspection Rule
+
+This rule provides guidance for interacting with and reasoning about Kubernetes resources.
+
+<rule>
+name: kubernetes-introspection
+description: Defines patterns and practices for Kubernetes resource introspection and interaction
+
+filters:
+  - type: file_extension
+    pattern: "\\.(yaml|yml)$"
+  - type: content
+    pattern: "kind:\\s*(Deployment|Service|ConfigMap|Secret|Ingress|StatefulSet|DaemonSet|Job|CronJob)"
+
+actions:
+  - type: suggest
+    message: |
+      When working with Kubernetes resources:
+
+      1. **Resource Inspection Commands**:
+         ```bash
+         # Get resource details
+         kubectl get <resource> [-n namespace]
+         kubectl describe <resource> <name> [-n namespace]
+         
+         # View logs
+         kubectl logs <pod> [-n namespace] [-c container]
+         
+         # Resource status
+         kubectl get <resource> <name> -o jsonpath='{.status}'
+         
+         # Resource yaml
+         kubectl get <resource> <name> -o yaml
+         ```
+
+      2. **Resource Types to Consider**:
+         - Workloads: Deployments, StatefulSets, DaemonSets, Jobs
+         - Services & Networking: Services, Ingress
+         - Config & Storage: ConfigMaps, Secrets, PersistentVolumes
+         - RBAC: ServiceAccounts, Roles, RoleBindings
+
+      3. **Best Practices**:
+         - Always specify namespace with -n flag
+         - Use labels for resource organization
+         - Implement resource limits and requests
+         - Follow least privilege principle
+         - Use declarative configuration
+
+      4. **Common Patterns**:
+         - Health checks (readiness/liveness probes)
+         - Rolling updates and rollback strategies
+         - Resource quotas and limits
+         - Network policies
+         - Horizontal Pod Autoscaling
+
+      5. **Troubleshooting**:
+         - Check pod status and events
+         - Examine container logs
+         - Verify resource configurations
+         - Check network connectivity
+         - Monitor resource utilization
+
+examples:
+  - input: |
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: example-app
+    output: |
+      Suggested commands for inspection:
+      - kubectl get deployment example-app -o yaml
+      - kubectl describe deployment example-app
+      - kubectl get pods -l app=example-app
+
+  - input: |
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: example-service
+    output: |
+      Suggested commands for inspection:
+      - kubectl get service example-service -o yaml
+      - kubectl describe service example-service
+      - kubectl get endpoints example-service
+
+metadata:
+  priority: high
+  version: 1.0
+  evolution_history:
+    - date: "2024-03-21"
+      type: "initial"
+      description: "Initial version of Kubernetes introspection rule"
+</rule>

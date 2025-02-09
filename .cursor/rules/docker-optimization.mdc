@@ -1,0 +1,80 @@
+---
+description: Rules for optimizing Dockerfile layer caching and build performance
+globs: *Dockerfile*
+---
+# Docker Optimization Rules
+
+<rule>
+name: docker-optimization
+description: Enforces Docker build optimization best practices with a focus on layer caching
+
+filters:
+  - type: file_name
+    pattern: "Dockerfile.*"
+
+actions:
+  - type: suggest
+    message: |
+      Ensure your Dockerfile follows these layer caching optimization practices:
+
+      1. **Order Dependencies by Change Frequency**:
+         - Place least frequently changed commands at the top
+         - Put frequently changed files and commands towards the bottom
+         
+      2. **Dependency Management**:
+         - Copy dependency files (package.json, go.mod, etc.) separately before source code
+         - Install dependencies in a separate layer from application code
+         
+      3. **Multi-stage Builds**:
+         - Use multi-stage builds to separate build dependencies from runtime
+         - Only copy necessary artifacts to the final stage
+         
+      4. **Layer Consolidation**:
+         - Combine related RUN commands using && to reduce layers
+         - Use .dockerignore to exclude unnecessary files
+         
+      5. **Cache Busting**:
+         - Only invalidate cache when dependencies actually change
+         - Avoid ADD/COPY commands that might unnecessarily bust cache
+
+      6. **Base Image**:
+         - Use specific version tags instead of 'latest'
+         - Consider using slim/alpine variants where appropriate
+
+examples:
+  - input: |
+      FROM node:latest
+      COPY . /app
+      RUN npm install
+      CMD ["npm", "start"]
+    output: |
+      Suboptimal Dockerfile. Consider this optimized version:
+      FROM node:20-alpine
+      WORKDIR /app
+      COPY package*.json ./
+      RUN npm install
+      COPY . .
+      CMD ["npm", "start"]
+
+  - input: |
+      FROM golang:1.21
+      WORKDIR /app
+      COPY go.mod go.sum ./
+      RUN go mod download
+      COPY . .
+      RUN go build -o main .
+      CMD ["./main"]
+    output: |
+      Good layer caching! This Dockerfile:
+      - Separates dependency installation from code copy
+      - Uses specific version tag
+      - Follows proper layer ordering
+
+metadata:
+  priority: high
+  version: 1.0
+  evolution_history:
+    - date: "2024-03-21"
+      type: "initial"
+      description: "Initial version with Docker optimization guidelines"
+</rule> 
