@@ -1,0 +1,139 @@
+package server
+
+import (
+	"net/http"
+	"net/http/httptest"
+	"testing"
+	"time"
+
+	"connectrpc.com/connect"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+)
+
+func TestNewServerBuilder(t *testing.T) {
+	tests := []struct {
+		name string
+		cfg  *Config
+		want *Config
+	}{
+		{
+			name: "with nil config",
+			cfg:  nil,
+			want: &Config{
+				Port:           "8080",
+				ReadTimeout:    10 * time.Second,
+				WriteTimeout:   10 * time.Second,
+				MaxHeaderBytes: 1 << 20,
+			},
+		},
+		{
+			name: "with custom config",
+			cfg: &Config{
+				Port:           "9090",
+				ReadTimeout:    5 * time.Second,
+				WriteTimeout:   5 * time.Second,
+				MaxHeaderBytes: 1 << 10,
+			},
+			want: &Config{
+				Port:           "9090",
+				ReadTimeout:    5 * time.Second,
+				WriteTimeout:   5 * time.Second,
+				MaxHeaderBytes: 1 << 10,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			builder := NewServerBuilder(tt.cfg)
+			assert.NotNil(t, builder)
+			assert.Equal(t, tt.want, builder.cfg)
+			assert.NotNil(t, builder.mux)
+			assert.Empty(t, builder.services)
+		})
+	}
+}
+
+type mockService struct {
+	name     string
+	handler  http.Handler
+	path     string
+	validate bool
+}
+
+func (m *mockService) ServiceName() string {
+	return m.name
+}
+
+func (m *mockService) Handler(opts ...connect.HandlerOption) (string, http.Handler) {
+	return m.path, m.handler
+}
+
+func TestBuilder_RegisterService(t *testing.T) {
+	builder := NewServerBuilder(nil)
+	mockHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {})
+	
+	svc := &mockService{
+		name:    "test-service",
+		handler: mockHandler,
+		path:    "/test.v1.TestService/",
+	}
+
+	builder.RegisterService(svc)
+
+	assert.Len(t, builder.services, 1)
+	assert.Equal(t, svc, builder.services[0])
+}
+
+func TestServer_HealthCheck(t *testing.T) {
+	server := NewServer(nil)
+	require.NotNil(t, server)
+
+	req := httptest.NewRequest(http.MethodGet, "/healthz", nil)
+	w := httptest.NewRecorder()
+
+	server.Handler().ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+}
+
+func TestServer_Build(t *testing.T) {
+	builder := NewServerBuilder(nil)
+	mockHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {})
+	
+	svc := &mockService{
+		name:    "test-service",
+		handler: mockHandler,
+		path:    "/test.v1.TestService/",
+	}
+
+	builder.RegisterService(svc)
+	server := builder.Build()
+
+	assert.NotNil(t, server)
+	assert.NotNil(t, server.Handler())
+
+	// Test registered service endpoint
+	req := httptest.NewRequest(http.MethodGet, "/test.v1.TestService/", nil)
+	w := httptest.NewRecorder()
+	server.Handler().ServeHTTP(w, req)
+}
+
+func TestServer_DefaultServices(t *testing.T) {
+	server := NewServer(nil)
+	require.NotNil(t, server)
+
+	// Test health check endpoint
+	req := httptest.NewRequest(http.MethodGet, "/healthz", nil)
+	w := httptest.NewRecorder()
+	server.Handler().ServeHTTP(w, req)
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	// Test gRPC health check endpoint exists
+	req = httptest.NewRequest(http.MethodPost, "/grpc.health.v1.Health/Check", nil)
+	w = httptest.NewRecorder()
+	server.Handler().ServeHTTP(w, req)
+	// We expect a 415 because we're not sending a proper gRPC request
+	assert.Equal(t, http.StatusUnsupportedMediaType, w.Code)
+} 
