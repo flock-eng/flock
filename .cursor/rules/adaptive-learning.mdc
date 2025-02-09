@@ -1,0 +1,88 @@
+---
+description: Rule for managing and leveraging past solutions and learnings
+globs: .cursor/solutions/*.md
+---
+
+# Adaptive Learning Rule
+
+This rule manages the collection, organization, and reuse of successful solutions and learnings from past development efforts.
+
+<rule>
+name: adaptive-learning
+description: Maintains a knowledge base of successful solutions and patterns for future reference and improvement
+
+filters:
+  - type: file_extension
+    pattern: "\\.md$"
+  - type: path
+    pattern: "^.cursor/solutions/"
+
+actions:
+  - type: suggest
+    message: |
+      When adding a new solution or learning:
+
+      1. Create a markdown file in `.cursor/solutions/` with a descriptive name
+      2. Use the following template structure:
+         ```markdown
+         # Solution Title
+
+         ## Context
+         Brief description of the problem or challenge that was solved
+
+         ## Solution
+         Detailed explanation of the implemented solution
+
+         ## Benefits
+         List of benefits and improvements achieved
+
+         ## Considerations
+         Any important considerations, trade-offs, or limitations
+
+         ## Tags
+         Relevant categories or topics for easy reference
+
+         ## Metadata
+         - Date: YYYY-MM-DD
+         - Author: [Optional]
+         - Related PRs: [Optional]
+         ```
+
+      3. Tag the solution appropriately for future reference
+      4. Include any relevant code snippets or architecture diagrams
+      5. Document the context and reasoning behind the solution
+
+examples:
+  - input: |
+      # Follow the Rules
+      
+      ## Context
+      Need to establish consistent practices across the codebase
+      
+      ## Solution
+      Implement and follow cursor rules for various aspects of development
+      
+      ## Benefits
+      - Consistent code quality
+      - Automated enforcement of best practices
+      - Reduced technical debt
+      
+      ## Considerations
+      - Rules should be regularly reviewed and updated
+      - Balance between strictness and flexibility
+      
+      ## Tags
+      #best-practices #automation #quality
+      
+      ## Metadata
+      - Date: 2024-03-21
+    output: "Valid solution documentation format"
+
+metadata:
+  priority: high
+  version: 1.0.0
+  evolution_history:
+    - date: "2024-03-21"
+      type: "initial"
+      description: "Initial version of adaptive learning rule with solution template"
+</rule> 
