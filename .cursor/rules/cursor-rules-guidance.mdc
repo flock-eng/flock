@@ -95,7 +95,7 @@ examples:
     output: "The rule file is structured correctly."
 
 metadata:
-  priority: medium
+  priority: high
   version: 1.0.0
   evolution_history:
     - date: "2024-03-21"

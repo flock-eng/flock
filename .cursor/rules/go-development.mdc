@@ -88,7 +88,7 @@ examples:
     output: "Document the following grpcurl commands in your README:\n1. Message template: grpcurl -msg-template --plaintext localhost:8080 describe .ServiceName.CreateResourceRequest\n2. Example request: grpcurl -d '{...}' --plaintext localhost:8080 ServiceName/CreateResource"
 
 metadata:
-  priority: high
+  priority: medium
   version: 1.0.0
   evolution_history:
     - date: "2024-03-21"

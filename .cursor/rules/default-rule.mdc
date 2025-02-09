@@ -54,7 +54,7 @@ examples:
     output: "Apply default guidelines and cursor rule management where applicable"
 
 metadata:
-  priority: high
+  priority: critical
   version: 1.0.0
   evolution_history:
     - date: "2024-03-21"

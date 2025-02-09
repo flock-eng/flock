@@ -71,7 +71,7 @@ examples:
       - Follows proper layer ordering
 
 metadata:
-  priority: high
+  priority: medium
   version: 1.0.0
   evolution_history:
     - date: "2024-03-21"
