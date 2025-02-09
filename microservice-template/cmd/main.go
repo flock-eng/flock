@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
@@ -13,10 +14,14 @@ import (
 	"go.uber.org/zap"
 )
 
-func main() {
+func run() error {
 	// Initialize logger
 	log := logger.Get()
-	defer log.Sync()
+	defer func() {
+		if err := log.Sync(); err != nil {
+			fmt.Fprintf(os.Stderr, "failed to sync logger: %v\n", err)
+		}
+	}()
 
 	// Create server configuration
 	cfg := &server.Config{
@@ -33,7 +38,7 @@ func main() {
 	// Initialize server with dependencies
 	srv, err := server.NewServerWithInit(ctx, cfg, nil)
 	if err != nil {
-		log.Fatal("Failed to initialize server", zap.Error(err))
+		return fmt.Errorf("failed to initialize server: %w", err)
 	}
 
 	// Create HTTP server
@@ -45,17 +50,25 @@ func main() {
 		MaxHeaderBytes: cfg.MaxHeaderBytes,
 	}
 
+	// Channel to capture server errors
+	errChan := make(chan error, 1)
+
 	// Start server
 	go func() {
 		log.Info("Starting server", zap.String("port", cfg.Port))
 		if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatal("Failed to start server", zap.Error(err))
+			errChan <- fmt.Errorf("server error: %w", err)
 		}
 	}()
 
-	// Wait for interrupt signal
-	<-ctx.Done()
-	log.Info("Shutting down server...")
+	// Wait for interrupt signal or server error
+	select {
+	case <-ctx.Done():
+		log.Info("Shutting down server...")
+	case err := <-errChan:
+		log.Error("Server failed", zap.Error(err))
+		return err
+	}
 
 	// Create shutdown context with timeout
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -64,7 +77,16 @@ func main() {
 	// Shutdown server
 	if err := httpServer.Shutdown(shutdownCtx); err != nil {
 		log.Error("Server forced to shutdown", zap.Error(err))
+		return fmt.Errorf("forced shutdown: %w", err)
 	}
 
 	log.Info("Server exited properly")
+	return nil
+}
+
+func main() {
+	if err := run(); err != nil {
+		fmt.Fprintf(os.Stderr, "error: %v\n", err)
+		os.Exit(1)
+	}
 }

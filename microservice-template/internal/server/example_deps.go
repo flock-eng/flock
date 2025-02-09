@@ -56,16 +56,20 @@ func (i *ExampleDependencyInitializer) Initialize(ctx context.Context) (*Depende
 
 	// Initialize Redis connection
 	if err = i.initRedis(ctx, deps); err != nil {
-		// Clean up database connection before returning
-		i.cleanupDB(ctx, deps)
+		if cleanupErr := i.cleanupDB(ctx, deps); cleanupErr != nil {
+			i.logger.Error("failed to cleanup DB during Redis init failure", zap.Error(cleanupErr))
+		}
 		return nil, fmt.Errorf("failed to initialize Redis: %w", err)
 	}
 
 	// Initialize Kafka/Redpanda client
 	if err = i.initKafka(ctx, deps); err != nil {
-		// Clean up other connections before returning
-		i.cleanupRedis(ctx, deps)
-		i.cleanupDB(ctx, deps)
+		if cleanupErr := i.cleanupRedis(ctx, deps); cleanupErr != nil {
+			i.logger.Error("failed to cleanup Redis during Kafka init failure", zap.Error(cleanupErr))
+		}
+		if cleanupErr := i.cleanupDB(ctx, deps); cleanupErr != nil {
+			i.logger.Error("failed to cleanup DB during Kafka init failure", zap.Error(cleanupErr))
+		}
 		return nil, fmt.Errorf("failed to initialize Kafka: %w", err)
 	}
 
@@ -88,11 +92,12 @@ func (i *ExampleDependencyInitializer) initDB(ctx context.Context, deps *Depende
 
 	// Verify connection
 	if err = db.PingContext(ctx); err != nil {
-		db.Close()
+		if closeErr := db.Close(); closeErr != nil {
+			i.logger.Error("failed to close DB after ping failure", zap.Error(closeErr))
+		}
 		return fmt.Errorf("failed to ping database: %w", err)
 	}
 
-	// deps.DB = db // Uncomment when adding DB field to Dependencies struct
 	return nil
 }
 
@@ -108,7 +113,6 @@ func (i *ExampleDependencyInitializer) initRedis(ctx context.Context, deps *Depe
 		return fmt.Errorf("failed to ping Redis: %w", err)
 	}
 
-	// deps.RedisClient = rdb // Uncomment when adding RedisClient field to Dependencies struct
 	return nil
 }
 
@@ -128,7 +132,7 @@ func (k *kafkaLogger) Log(level kgo.LogLevel, msg string, keyvals ...interface{}
 			fields = append(fields, zap.Any(fmt.Sprint(keyvals[i]), keyvals[i+1]))
 		}
 	}
-	
+
 	switch level {
 	case kgo.LogLevelError:
 		k.logger.Error(msg, fields...)
@@ -157,7 +161,6 @@ func (i *ExampleDependencyInitializer) initKafka(ctx context.Context, deps *Depe
 		return fmt.Errorf("failed to ping Kafka: %w", err)
 	}
 
-	// deps.KafkaClient = client // Uncomment when adding KafkaClient field to Dependencies struct
 	return nil
 }
 
@@ -187,22 +190,13 @@ func (i *ExampleDependencyInitializer) Cleanup(ctx context.Context, deps *Depend
 }
 
 func (i *ExampleDependencyInitializer) cleanupDB(ctx context.Context, deps *Dependencies) error {
-	// if deps.DB != nil {
-	//     return deps.DB.Close()
-	// }
 	return nil
 }
 
 func (i *ExampleDependencyInitializer) cleanupRedis(ctx context.Context, deps *Dependencies) error {
-	// if deps.RedisClient != nil {
-	//     return deps.RedisClient.Close()
-	// }
 	return nil
 }
 
 func (i *ExampleDependencyInitializer) cleanupKafka(ctx context.Context, deps *Dependencies) error {
-	// if deps.KafkaClient != nil {
-	//     deps.KafkaClient.Close()
-	// }
 	return nil
-} 
+}

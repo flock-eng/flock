@@ -79,10 +79,9 @@ func TestNewServerBuilder(t *testing.T) {
 }
 
 type mockService struct {
-	name     string
-	handler  http.Handler
-	path     string
-	validate bool
+	name    string
+	handler http.Handler
+	path    string
 }
 
 func (m *mockService) ServiceName() string {
@@ -96,7 +95,7 @@ func (m *mockService) Handler(opts ...connect.HandlerOption) (string, http.Handl
 func TestBuilder_RegisterService(t *testing.T) {
 	builder := NewServerBuilder(nil)
 	mockHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {})
-	
+
 	svc := &mockService{
 		name:    "test-service",
 		handler: mockHandler,
@@ -113,7 +112,7 @@ func TestServer_HealthCheck(t *testing.T) {
 	server := NewServer(nil, nil)
 	require.NotNil(t, server)
 
-	req := httptest.NewRequest(http.MethodGet, "/healthz", nil)
+	req := httptest.NewRequest(http.MethodGet, "/healthz", http.NoBody)
 	w := httptest.NewRecorder()
 
 	server.Handler().ServeHTTP(w, req)
@@ -124,7 +123,7 @@ func TestServer_HealthCheck(t *testing.T) {
 func TestServer_Build(t *testing.T) {
 	builder := NewServerBuilder(nil)
 	mockHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {})
-	
+
 	svc := &mockService{
 		name:    "test-service",
 		handler: mockHandler,
@@ -140,7 +139,7 @@ func TestServer_Build(t *testing.T) {
 	assert.Equal(t, deps, server.Dependencies())
 
 	// Test registered service endpoint
-	req := httptest.NewRequest(http.MethodGet, "/test.v1.TestService/", nil)
+	req := httptest.NewRequest(http.MethodGet, "/test.v1.TestService/", http.NoBody)
 	w := httptest.NewRecorder()
 	server.Handler().ServeHTTP(w, req)
 }
@@ -150,13 +149,13 @@ func TestServer_DefaultServices(t *testing.T) {
 	require.NotNil(t, server)
 
 	// Test health check endpoint
-	req := httptest.NewRequest(http.MethodGet, "/healthz", nil)
+	req := httptest.NewRequest(http.MethodGet, "/healthz", http.NoBody)
 	w := httptest.NewRecorder()
 	server.Handler().ServeHTTP(w, req)
 	assert.Equal(t, http.StatusOK, w.Code)
 
 	// Test gRPC health check endpoint exists
-	req = httptest.NewRequest(http.MethodPost, "/grpc.health.v1.Health/Check", nil)
+	req = httptest.NewRequest(http.MethodPost, "/grpc.health.v1.Health/Check", http.NoBody)
 	w = httptest.NewRecorder()
 	server.Handler().ServeHTTP(w, req)
 	// We expect a 415 because we're not sending a proper gRPC request
@@ -211,4 +210,4 @@ func TestNewServerWithInit(t *testing.T) {
 			}
 		})
 	}
-} 
+}

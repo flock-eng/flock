@@ -20,10 +20,10 @@ type mockRequest struct {
 	msg       interface{}
 }
 
-func (m *mockRequest) Header() http.Header                 { return m.header }
-func (m *mockRequest) Spec() connect.Spec                  { return connect.Spec{Procedure: m.procedure} }
-func (m *mockRequest) HTTPMethod() string                  { return m.method }
-func (m *mockRequest) Any() interface{}                    { return m.msg }
+func (m *mockRequest) Header() http.Header { return m.header }
+func (m *mockRequest) Spec() connect.Spec  { return connect.Spec{Procedure: m.procedure} }
+func (m *mockRequest) HTTPMethod() string  { return m.method }
+func (m *mockRequest) Any() interface{}    { return m.msg }
 
 type validateMsg struct {
 	shouldError bool
@@ -241,4 +241,4 @@ func TestGetClientIP(t *testing.T) {
 			assert.Equal(t, tt.expected, getClientIP(header))
 		})
 	}
-} 
+}
