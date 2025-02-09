@@ -1,0 +1,86 @@
+---
+description: Enforces service integration contract testing and service component testing patterns for microservices
+globs: **/go.mod
+---
+
+# Microservice Testing Patterns
+
+This rule enforces the implementation of service integration contract testing and service component testing patterns for all microservices in the project.
+
+<rule>
+name: microservice-testing-patterns
+description: Ensures proper implementation of contract testing and component testing for microservices
+
+filters:
+  - type: file_pattern
+    pattern: "**/go.mod"
+  - type: directory_pattern
+    pattern: "**/internal/tests"
+
+actions:
+  - type: suggest
+    message: |
+      Your microservice should implement both contract tests and component tests following these patterns:
+
+      1. Contract Testing Requirements:
+         - Create a `contracts` directory under `internal/tests`
+         - Implement consumer-driven contract tests using a tool like Pact
+         - Define service contracts in `contracts/*.json`
+         - Verify both consumer and provider sides
+         - Include contract verification in CI pipeline
+         
+      Example structure:
+      ```
+      internal/tests/contracts/
+      ├── consumer/
+      │   └── expectations.json
+      ├── provider/
+      │   └── verifications.json
+      └── pact_helper.go
+      ```
+
+      2. Component Testing Requirements:
+         - Create a `component` directory under `internal/tests`
+         - Use test containers for dependencies
+         - Implement startup/shutdown of the service
+         - Test all external interfaces (REST, gRPC, etc.)
+         - Include health checks and readiness probes
+         
+      Example structure:
+      ```
+      internal/tests/component/
+      ├── setup.go
+      ├── health_test.go
+      └── api_test.go
+      ```
+
+      Implementation Guidelines:
+      1. Use testcontainers-go for managing test dependencies
+      2. Implement test doubles for external services
+      3. Use environment variables for configuration
+      4. Include timing assertions for async operations
+      5. Log test execution for debugging
+
+  - type: reject
+    conditions:
+      - pattern: "^(?!.*internal/tests/(contracts|component)/.*_test\\.go$)"
+        message: "Missing required contract or component tests"
+
+examples:
+  - input: |
+      myservice/
+      └── internal/
+          └── tests/
+              ├── contracts/
+              │   └── consumer_test.go
+              └── component/
+                  └── api_test.go
+    output: "Testing structure follows the required pattern"
+
+metadata:
+  priority: high
+  version: 1.0.0
+  references:
+    - https://microservices.io/patterns/testing/service-integration-contract-test.html
+    - https://microservices.io/patterns/testing/service-component-test.html
+</rule> 
