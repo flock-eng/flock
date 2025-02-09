@@ -1,3 +1,5 @@
+# Run with `golangci-lint run`
+
 linters:
   enable:
     - gofmt
