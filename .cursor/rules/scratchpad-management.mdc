@@ -1,0 +1,136 @@
+---
+description: This rule provides guidance for creating, managing, and searching scratchpads in the `.cursor/scratchpad` directory for brainstorming, iterative prototyping, and temporary working memory.
+globs: .cursor/scratchpad/**/*.md
+---
+# Scratchpad Management Rule
+
+This rule provides guidance for creating, managing, and searching scratchpads in the `.cursor/scratchpad` directory, serving as a dedicated space for brainstorming, iterative prototyping, and temporary working memory.
+
+<rule>
+name: scratchpad-management
+description: Manages the creation, organization, and searching of scratchpads for agentic programming and experimental work
+
+filters:
+  - type: directory
+    pattern: ".cursor/scratchpad/**/*.md"
+
+actions:
+  - type: manage
+    message: |
+      When working with scratchpads:
+
+      1. **Purpose & Philosophy**:
+         - Use scratchpads as a safe space for experimental thinking
+         - Iterate on ideas before formalizing them into production code
+         - Document both successful and failed experiments
+         - Use as temporary working memory during complex tasks
+         - Prototype solutions before implementing them
+
+      2. **Creation & Structure**:
+         - Use `.cursor/tools/new-scratchpad.sh` to create new scratchpads
+         - Follow the date-based directory structure: `.cursor/scratchpad/YYYY/MM/DD/`
+         - Use timestamp-based filenames: `HH-MM-SS-TZ.md`
+         - Include YAML front matter for metadata:
+           ```yaml
+           ---
+           title: "Scratchpad: [Brief Task Description]"
+           created: "YYYY-MM-DDTHH:MM:SSZ"
+           updated: "YYYY-MM-DDTHH:MM:SSZ"
+           tags: [relevant, tags, here]
+           id: "scratchpad-YYYYMMDD-HHMMSS"
+           status: "draft|prototype|complete"
+           ---
+           ```
+
+      3. **Content Structure**:
+         Each scratchpad should contain these sections:
+         ```markdown
+         # Context & Objectives
+         _Explain the problem, goals, and any background info._
+
+         # Brainstorming & Exploration
+         _Free-form area for initial thoughts, diagrams, and rough ideas._
+
+         # Prototypes & Experiments
+         _Code snippets, proof-of-concepts, and experimental approaches._
+
+         # Thought Process
+         _Outline the reasoning steps, analysis of tradeoffs, and evolution of ideas._
+
+         # Decisions & Actions
+         - **Decision:** [E.g., "Adopt multi-stage Docker builds"]
+         - **Reasoning:** [Concise justification based on tradeoffs]
+         - **Next Steps:** [Action items, code changes, etc.]
+
+         # Observations & Results
+         _Record outcomes, test results, and feedback for future reference._
+
+         # Integration Path
+         _Steps to move from prototype to production (if applicable)._
+         ```
+
+      4. **Search & Navigation**:
+         - Search within scratchpads:
+           ```bash
+           rg --hidden 'query' .cursor/scratchpad
+           ```
+         - Search entire codebase context:
+           ```bash
+           rg --hidden 'query' .cursor
+           ```
+         - Search full codebase:
+           ```bash
+           rg 'query'
+           ```
+
+      5. **Best Practices**:
+         - Keep each scratchpad focused on a single task or exploration
+         - Update the YAML front matter when making changes
+         - Use clear, descriptive titles
+         - Tag scratchpads appropriately for better searchability
+         - Link related scratchpads using their IDs
+         - Document decisions and their rationales
+         - Include relevant code snippets and examples
+         - Record both successful and failed approaches
+         - Use as a sandbox for experimental ideas
+         - Document the path from prototype to production
+         - Maintain a balance between exploration and documentation
+
+examples:
+  - input: |
+      Create a new scratchpad for exploring authentication implementation
+    output: |
+      1. Run creation script:
+         ```bash
+         .cursor/tools/new-scratchpad.sh
+         ```
+      
+      2. Add metadata:
+         ```yaml
+         ---
+         title: "Scratchpad: Authentication System Design Exploration"
+         created: "2025-02-09T12:00:00Z"
+         updated: "2025-02-09T12:00:00Z"
+         tags: [auth, security, design]
+         id: "scratchpad-20250209-120000"
+         status: "complete"
+         ---
+         ```
+
+      3. Fill in sections with authentication-specific content
+
+  - input: |
+      Search for previous database-related explorations
+    output: |
+      ```bash
+      rg --hidden 'database' .cursor/scratchpad
+      ```
+
+metadata:
+  priority: high
+  version: 1.0.0
+  evolution_history:
+    - date: "2024-02-09"
+      type: "initial"
+      description: "Initial version of scratchpad management rule"
+</rule>
