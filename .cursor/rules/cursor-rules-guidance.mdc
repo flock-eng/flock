@@ -70,7 +70,7 @@ actions:
              output: "Rule file is correctly placed"
          metadata:
            priority: high
-           version: 1.0
+           version: 1.0.0
          ```
 
       Follow these guidelines to ensure all your Cursor rule files are well-organized, clear, and consistent.
@@ -96,11 +96,14 @@ examples:
 
 metadata:
   priority: medium
-  version: 1.0
+  version: 1.0.0
   evolution_history:
     - date: "2024-03-21"
       type: "initial"
       description: "Initial version with core guidance for cursor rule structure"
+    - date: "2024-03-21"
+      type: "update"
+      description: "Updated version number to follow semantic versioning MAJOR.MINOR.PATCH format"
 </rule>
 
 NOTE: Please provide the glob pattern exactly as *.mdc. Do not wrap it in parentheses (e.g., (*.mdc) is not valid).

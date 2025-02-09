@@ -89,7 +89,7 @@ examples:
 
 metadata:
   priority: high
-  version: 1.0
+  version: 1.0.0
   evolution_history:
     - date: "2024-03-21"
       type: "initial"
@@ -97,4 +97,7 @@ metadata:
     - date: "2024-03-21"
       type: "update"
       description: "Enhanced grpcurl documentation with real introspection examples"
+    - date: "2024-03-21"
+      type: "update"
+      description: "Updated version number to follow semantic versioning MAJOR.MINOR.PATCH format"
 </rule> 

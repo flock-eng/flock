@@ -48,13 +48,21 @@ actions:
          - Description: Brief description of what prompted the change
          ```
 
-      2. Update affected rules:
+      2. Version Management:
+         - Follow semantic versioning (MAJOR.MINOR.PATCH)
+         - MAJOR: Breaking changes that require migration
+         - MINOR: New features or substantial updates
+         - PATCH: Bug fixes and minor improvements
+         - Always increment PATCH version by 1 for each update
+         - Example: 1.0.105 → 1.0.106
+
+      3. Update affected rules:
          - Add new patterns or restrictions
          - Update examples with real-world scenarios
-         - Increment rule version
          - Document migration path if breaking
+         - Update version following versioning rules
 
-      3. Validate changes:
+      4. Validate changes:
          - Test against existing codebase
          - Ensure backward compatibility where possible
          - Update related documentation
@@ -64,7 +72,7 @@ examples:
       # Before Evolution
       <rule>
       name: api-error-handling
-      version: 1.0
+      version: 1.0.0
       actions:
         - type: suggest
           message: "Use standard error types"
@@ -73,18 +81,21 @@ examples:
       # After Feature Completion (New Error Patterns)
       <rule>
       name: api-error-handling
-      version: 1.1
+      version: 1.0.1
       actions:
         - type: suggest
           message: "Use domain-specific error types with error codes"
       </rule>
-    output: "Rule evolved based on feature learnings"
+    output: "Rule evolved based on feature learnings with patch version increment"
 
 metadata:
   priority: high
-  version: 1.0
+  version: 1.0.1
   evolution_history:
     - date: "2024-03-21"
       type: "initial"
       description: "Initial creation of evolution guidance"
+    - date: "2024-03-21"
+      type: "update"
+      description: "Added semantic versioning requirements with incremental version bumps"
 </rule> 
