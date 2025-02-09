@@ -28,6 +28,7 @@ actions:
            globs: *.mdc
            ---
            ```
+         - **Notes**: Do NOT wrap the globs with a parentheses like "*.mdc". Instead, list it without parentheses like *.mdc.
 
       2. **Markdown Header**:
          - **Purpose**: Titles the file for easy identification.
@@ -38,10 +39,10 @@ actions:
            ```
 
       3. **Rule Block (<rule> ... </rule>)**:
-         - **Purpose**: Encapsulates the rule’s definition.
+         - **Purpose**: Encapsulates the rule's definition.
          - **Key Sections**:
            - **name**: A unique identifier for the rule. (rule name can only contain lowercase letters, numbers, and hyphens)
-           - **description**: A summary of the rule’s purpose.
+           - **description**: A summary of the rule's purpose.
            - **filters**: Conditions to select applicable files or events (e.g., matching `.mdc` files).
            - **actions**: Steps to take when filters match (such as `reject` or `suggest`), with associated messages or conditions.
            - **examples**: Illustrative input/output examples that show proper rule usage.
@@ -96,4 +97,10 @@ examples:
 metadata:
   priority: medium
   version: 1.0
+  evolution_history:
+    - date: "2024-03-21"
+      type: "initial"
+      description: "Initial version with core guidance for cursor rule structure"
 </rule>
+
+NOTE: Please provide the glob pattern exactly as *.mdc. Do not wrap it in parentheses (e.g., (*.mdc) is not valid).

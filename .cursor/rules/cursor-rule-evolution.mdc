@@ -1,0 +1,90 @@
+---
+description: Rules for self-evolution of cursor rules based on project milestones and learnings
+globs: *.mdc
+---
+# Cursor Rules Evolution
+
+This rule provides guidance on when and how to evolve cursor rules based on project milestones, new knowledge, and changing constraints.
+
+<rule>
+name: cursor-rule-evolution
+description: Standards for evolving and updating cursor rules as the project grows and changes
+
+filters:
+  - type: file_extension
+    pattern: "\\.mdc$"
+  - type: content
+    pattern: "(?s)<rule>.*?</rule>"
+
+actions:
+  - type: suggest
+    message: |
+      Consider evolving cursor rules when:
+
+      1. **Feature Completion**:
+         - New patterns or anti-patterns discovered during implementation
+         - Best practices emerged from successful feature delivery
+         - Performance optimizations identified
+         - Security considerations uncovered
+
+      2. **Knowledge Acquisition**:
+         - Team learnings from production incidents
+         - Architectural decisions that impact coding standards
+         - New testing strategies proven effective
+         - Performance bottlenecks identified and resolved
+
+      3. **Constraint Changes**:
+         - Updated security requirements
+         - New compliance standards
+         - Changes in infrastructure or deployment patterns
+         - Modified scalability requirements
+
+      Evolution Process:
+      1. Document the trigger for evolution:
+         ```markdown
+         ## Evolution Trigger
+         - Date: YYYY-MM-DD
+         - Type: [Feature|Knowledge|Constraint]
+         - Description: Brief description of what prompted the change
+         ```
+
+      2. Update affected rules:
+         - Add new patterns or restrictions
+         - Update examples with real-world scenarios
+         - Increment rule version
+         - Document migration path if breaking
+
+      3. Validate changes:
+         - Test against existing codebase
+         - Ensure backward compatibility where possible
+         - Update related documentation
+
+examples:
+  - input: |
+      # Before Evolution
+      <rule>
+      name: api-error-handling
+      version: 1.0
+      actions:
+        - type: suggest
+          message: "Use standard error types"
+      </rule>
+
+      # After Feature Completion (New Error Patterns)
+      <rule>
+      name: api-error-handling
+      version: 1.1
+      actions:
+        - type: suggest
+          message: "Use domain-specific error types with error codes"
+      </rule>
+    output: "Rule evolved based on feature learnings"
+
+metadata:
+  priority: high
+  version: 1.0
+  evolution_history:
+    - date: "2024-03-21"
+      type: "initial"
+      description: "Initial creation of evolution guidance"
+</rule> 

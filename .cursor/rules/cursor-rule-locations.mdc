@@ -72,4 +72,8 @@ examples:
 metadata:
   priority: high
   version: 1.0
+  evolution_history:
+    - date: "2024-03-21"
+      type: "initial"
+      description: "Initial version defining rule file locations and structure"
 </rule>
