@@ -38,7 +38,6 @@ cp -r $TEMPLATE_DIR $NEW_SERVICE_DIR
 # Use LC_ALL=C to handle special characters in sed
 # Also use different quotes to avoid issues with string interpretation
 LC_ALL=C find $NEW_SERVICE_DIR -type f -exec sed -i '' "s/template-service/${SERVICE_NAME}/g" {} +
-LC_ALL=C find $NEW_SERVICE_DIR -type f -exec sed -i '' "s/service-name/${SERVICE_NAME}/g" {} +
 
 # Ensure the destination directory exists
 mkdir -p .github/workflows

@@ -26,7 +26,7 @@ This template provides a starting point for creating new microservices in the Fl
 
 ### Getting Started
 
-1. Copy this template directory and rename all occurrences of "service-name" to your service name
+1. Copy this template directory and rename all occurrences of "template-service" to your service name
 2. Update the module name in `go.mod`
 3. Update the import paths in all Go files
 4. Update the service name in `github-actions-template.yaml` and move it to `.github/workflows/`
@@ -50,8 +50,8 @@ go run cmd/main.go
 ### Docker Build
 
 ```bash
-docker build -t service-name .
-docker run -p 8080:8080 service-name
+docker build -t template-service .
+docker run -p 8080:8080 template-service
 ```
 
 ### Kubernetes Deployment

@@ -1,17 +1,17 @@
-name: service-name
+name: template-service
 
 on:
   push:
     branches: [ main ]
     # Only trigger the image generation action code for artifacts change
     paths:
-      - "service-name/**/*.go"
-      - "service-name/**/*.mod"
-      - "service-name/**/*.sum"
+      - "template-service/**/*.go"
+      - "template-service/**/*.mod"
+      - "template-service/**/*.sum"
   pull_request:
     branches: [ main ]
     paths:
-      - "service-name/**"
+      - "template-service/**"
 
 jobs:
   # 1) Build & test on Pull Request
@@ -29,7 +29,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('service-name/go.sum') }}
+          key: ${{ runner.os }}-go-${{ hashFiles('template-service/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
 
@@ -47,26 +47,26 @@ jobs:
 
       - name: Go deps
         run: |
-          cd service-name
+          cd template-service
           go mod download
 
       - name: Go Lint
         run: |
-          cd service-name
+          cd template-service
           golangci-lint run ./...
 
       - name: Go Test
         run: |
-          cd service-name
+          cd template-service
           go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
 
       - name: Build Docker image (no push)
         uses: docker/build-push-action@v5
         with:
-          context: ./service-name
-          file: ./service-name/Dockerfile
+          context: ./template-service
+          file: ./template-service/Dockerfile
           load: true  # Build for local testing
-          tags: wcygan/service-name:pr
+          tags: wcygan/template-service:pr
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -94,7 +94,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('service-name/go.sum') }}
+          key: ${{ runner.os }}-go-${{ hashFiles('template-service/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
 
@@ -112,17 +112,17 @@ jobs:
 
       - name: Go deps
         run: |
-          cd service-name
+          cd template-service
           go mod download
 
       - name: Go Lint
         run: |
-          cd service-name
+          cd template-service
           golangci-lint run ./...
 
       - name: Go Test
         run: |
-          cd service-name
+          cd template-service
           go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
 
       - name: Determine version
@@ -132,12 +132,12 @@ jobs:
       - name: Build and Push the service image
         uses: docker/build-push-action@v5
         with:
-          context: ./service-name
-          file: ./service-name/Dockerfile
+          context: ./template-service
+          file: ./template-service/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          cache-from: type=registry,ref=wcygan/service-name:latest
+          cache-from: type=registry,ref=wcygan/template-service:latest
           cache-to: type=inline
           tags: |
-            wcygan/service-name:latest
-            wcygan/service-name:${{ env.VERSION }}
+            wcygan/template-service:latest
+            wcygan/template-service:${{ env.VERSION }}
