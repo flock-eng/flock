@@ -1,8 +1,11 @@
 package main
 
 import (
+	"context"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	connectcors "connectrpc.com/cors"
@@ -31,6 +34,10 @@ func run() int {
 	}()
 	log := logger.Get()
 
+	// Create a context that will be canceled on SIGINT or SIGTERM
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+
 	cfg := &server.Config{
 		Port:           "8080",
 		ReadTimeout:    10 * time.Second,
@@ -38,7 +45,13 @@ func run() int {
 		MaxHeaderBytes: 1 << 21, // 1MB
 	}
 
-	srv := server.NewServer(cfg)
+	// Initialize server with dependencies
+	srv, err := server.NewServerWithInit(ctx, cfg, nil) // Replace nil with a DependencyInitializer when needed
+	if err != nil {
+		log.Error("Failed to initialize server", zap.Error(err))
+		return 1
+	}
+
 	muxHandler := srv.Handler()
 	corsHandler := withCORS(muxHandler)
 	h2cHandler := h2c.NewHandler(corsHandler, &http2.Server{})
@@ -51,11 +64,36 @@ func run() int {
 		MaxHeaderBytes: cfg.MaxHeaderBytes,
 	}
 
-	log.Info("Starting server", zap.String("port", cfg.Port))
-	if err := httpServer.ListenAndServe(); err != nil {
-		log.Error("Server failed to start", zap.Error(err))
+	// Start server in a goroutine
+	serverErr := make(chan error, 1)
+	go func() {
+		log.Info("Starting server", zap.String("port", cfg.Port))
+		if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Error("Server failed to start", zap.Error(err))
+			serverErr <- err
+		}
+	}()
+
+	// Wait for interrupt signal or server error
+	select {
+	case err := <-serverErr:
+		log.Error("Server error", zap.Error(err))
+		return 1
+	case <-ctx.Done():
+		log.Info("Received shutdown signal")
+	}
+
+	// Create a timeout context for graceful shutdown
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	// Attempt graceful shutdown
+	if err := httpServer.Shutdown(shutdownCtx); err != nil {
+		log.Error("Server shutdown failed", zap.Error(err))
 		return 1
 	}
+
+	log.Info("Server shutdown complete")
 	return 0
 }
 

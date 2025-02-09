@@ -1,10 +1,13 @@
 package server
 
 import (
+	"context"
+	"fmt"
 	"net/http"
 	"time"
 
 	"connectrpc.com/grpchealth"
+	"go.uber.org/zap"
 
 	"buf.build/gen/go/wcygan/flock/connectrpc/go/auth/v1/authv1connect"
 	"buf.build/gen/go/wcygan/flock/connectrpc/go/bff/v1/bffv1connect"
@@ -13,6 +16,7 @@ import (
 	"connectrpc.com/grpcreflect"
 	"github.com/flock-eng/flock/flock-api/internal/auth"
 	"github.com/flock-eng/flock/flock-api/internal/bff"
+	"github.com/flock-eng/flock/flock-api/internal/logger"
 	"github.com/flock-eng/flock/flock-api/internal/post"
 	"github.com/flock-eng/flock/flock-api/internal/service"
 )
@@ -25,9 +29,23 @@ type Config struct {
 	MaxHeaderBytes int
 }
 
+// Dependencies holds all external dependencies required by the server
+type Dependencies struct {
+	AuthService *auth.Service
+	BffService  *bff.Service
+	PostService *post.Service
+}
+
+// DependencyInitializer is responsible for initializing external dependencies
+type DependencyInitializer interface {
+	Initialize(ctx context.Context) (*Dependencies, error)
+	Cleanup(ctx context.Context, deps *Dependencies) error
+}
+
 // Server is an immutable server instance after construction
 type Server struct {
 	handler http.Handler
+	deps    *Dependencies
 }
 
 // Builder handles the registration of services during server construction
@@ -35,6 +53,7 @@ type Builder struct {
 	cfg      *Config
 	mux      *http.ServeMux
 	services []service.Registerable
+	deps     *Dependencies
 }
 
 // NewServerBuilder creates a new Builder instance with the given configuration
@@ -55,9 +74,16 @@ func NewServerBuilder(cfg *Config) *Builder {
 	}
 }
 
+// WithDependencies adds initialized dependencies to the builder
+func (b *Builder) WithDependencies(deps *Dependencies) *Builder {
+	b.deps = deps
+	return b
+}
+
 // RegisterService adds a service to the builder
 func (b *Builder) RegisterService(svc service.Registerable) *Builder {
 	b.services = append(b.services, svc)
+	logger.Get().Info("Registered", zap.String("service", svc.ServiceName()))
 	return b
 }
 
@@ -98,11 +124,13 @@ func (b *Builder) Build() *Server {
 
 	// Register health check
 	b.mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
+		logger.Get().Info("Health check request received")
 		w.WriteHeader(http.StatusOK)
 	})
 
 	return &Server{
 		handler: b.mux,
+		deps:    b.deps,
 	}
 }
 
@@ -111,16 +139,31 @@ func (s *Server) Handler() http.Handler {
 	return s.handler
 }
 
-// NewServer creates a new server with the default services
-func NewServer(cfg *Config) *Server {
+// Dependencies returns the server's dependencies
+func (s *Server) Dependencies() *Dependencies {
+	return s.deps
+}
+
+// NewServer creates a new server with the default services and optional dependencies
+func NewServer(cfg *Config, deps *Dependencies) *Server {
 	builder := NewServerBuilder(cfg)
+
+	if deps != nil {
+		builder.WithDependencies(deps)
+	}
 
 	// Register all services
 	builder.RegisterService(service.NewRegisterableService(
 		authv1connect.FlockAuthServiceName,
 		func(options ...connect.HandlerOption) (string, http.Handler) {
+			var authService *auth.Service
+			if deps != nil && deps.AuthService != nil {
+				authService = deps.AuthService
+			} else {
+				authService = auth.NewService()
+			}
 			return authv1connect.NewFlockAuthServiceHandler(
-				auth.NewHandler(auth.NewService()),
+				auth.NewHandler(authService),
 				options...,
 			)
 		},
@@ -129,8 +172,14 @@ func NewServer(cfg *Config) *Server {
 	builder.RegisterService(service.NewRegisterableService(
 		bffv1connect.FlockUserAggregationServiceName,
 		func(options ...connect.HandlerOption) (string, http.Handler) {
+			var bffService *bff.Service
+			if deps != nil && deps.BffService != nil {
+				bffService = deps.BffService
+			} else {
+				bffService = bff.NewService()
+			}
 			return bffv1connect.NewFlockUserAggregationServiceHandler(
-				bff.NewHandler(bff.NewService()),
+				bff.NewHandler(bffService),
 				options...,
 			)
 		},
@@ -139,8 +188,14 @@ func NewServer(cfg *Config) *Server {
 	builder.RegisterService(service.NewRegisterableService(
 		postv1connect.FlockPostServiceName,
 		func(options ...connect.HandlerOption) (string, http.Handler) {
+			var postService *post.Service
+			if deps != nil && deps.PostService != nil {
+				postService = deps.PostService
+			} else {
+				postService = post.NewService()
+			}
 			return postv1connect.NewFlockPostServiceHandler(
-				post.NewHandler(post.NewService()),
+				post.NewHandler(postService),
 				options...,
 			)
 		},
@@ -154,4 +209,18 @@ func NewServer(cfg *Config) *Server {
 	))
 
 	return builder.Build()
+}
+
+// NewServerWithInit creates a new server with dependencies initialized by the provided initializer
+func NewServerWithInit(ctx context.Context, cfg *Config, initializer DependencyInitializer) (*Server, error) {
+	if initializer == nil {
+		return NewServer(cfg, nil), nil
+	}
+
+	deps, err := initializer.Initialize(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to initialize dependencies: %w", err)
+	}
+
+	return NewServer(cfg, deps), nil
 }

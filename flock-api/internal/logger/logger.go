@@ -1,6 +1,8 @@
 package logger
 
 import (
+	"fmt"
+
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -41,5 +43,8 @@ func With(fields ...zapcore.Field) *zap.Logger {
 
 // Sync flushes any buffered log entries
 func Sync() error {
-	return log.Sync()
+	if err := log.Sync(); err != nil {
+		return fmt.Errorf("failed to sync logger: %w", err)
+	}
+	return nil
 }
