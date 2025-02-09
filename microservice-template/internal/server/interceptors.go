@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"connectrpc.com/connect"
-	"github.com/flock-eng/flock/{{SERVICE_NAME}}/internal/logger"
+	"github.com/flock-eng/flock/template-service/internal/logger"
 	"go.uber.org/zap"
 )
 

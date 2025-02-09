@@ -1,15 +1,16 @@
 package server
 
 import (
-	"connectrpc.com/grpchealth"
-	"go.uber.org/zap"
 	"net/http"
 	"time"
 
+	"connectrpc.com/grpchealth"
+	"go.uber.org/zap"
+
 	"connectrpc.com/connect"
 	"connectrpc.com/grpcreflect"
-	"github.com/flock-eng/flock/{{SERVICE_NAME}}/internal/logger"
-	"github.com/flock-eng/flock/{{SERVICE_NAME}}/internal/service"
+	"github.com/flock-eng/flock/template-service/internal/logger"
+	"github.com/flock-eng/flock/template-service/internal/service"
 )
 
 type Config struct {

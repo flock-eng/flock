@@ -14,9 +14,9 @@ RUN go mod download
 # Copy the rest of the code
 COPY . .
 
-# Build the microservice binary (the SERVICE_NAME placeholder will be replaced)
+# Build the microservice binary
 RUN --mount=type=cache,target=/root/.cache/go-build \
-    CGO_ENABLED=0 GOOS=linux go build -o /{{SERVICE_NAME}} ./cmd/main.go
+    CGO_ENABLED=0 GOOS=linux go build -o /template-service ./cmd/main.go
 
 #############################################
 # Stage 2: Create a lightweight runtime image
@@ -24,13 +24,13 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
 FROM alpine:3.14
 
 # Add a non-root user for better security
-RUN addgroup -S {{SERVICE_NAME}} && adduser -S {{SERVICE_NAME}} -G {{SERVICE_NAME}}
+RUN addgroup -S template-service && adduser -S template-service -G template-service
 
 WORKDIR /app
 
-COPY --from=builder /{{SERVICE_NAME}} /app/{{SERVICE_NAME}}
+COPY --from=builder /template-service /app/template-service
 
-USER {{SERVICE_NAME}}
+USER template-service
 
 EXPOSE 8080
-ENTRYPOINT ["/app/{{SERVICE_NAME}}"]
+ENTRYPOINT ["/app/template-service"]

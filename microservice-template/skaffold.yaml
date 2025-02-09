@@ -1,7 +1,7 @@
 apiVersion: skaffold/v4beta1
 kind: Config
 metadata:
-  name: {{SERVICE_NAME}}-configuration
+  name: template-service-configuration
 manifests:
   rawYaml:
     - deployment.yaml

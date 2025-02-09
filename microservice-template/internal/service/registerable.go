@@ -35,4 +35,4 @@ func (s *RegisterableService) ServiceName() string {
 
 func (s *RegisterableService) Handler(options ...connect.HandlerOption) (string, http.Handler) {
 	return s.handler(options...)
-} 
+}

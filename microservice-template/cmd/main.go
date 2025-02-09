@@ -1,14 +1,15 @@
 package main
 
 import (
-	"github.com/flock-eng/flock/{{SERVICE_NAME}}/internal/logger"
-	"github.com/flock-eng/flock/{{SERVICE_NAME}}/internal/server"
-	"go.uber.org/zap"
-	"golang.org/x/net/http2"
-	"golang.org/x/net/http2/h2c"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/flock-eng/flock/template-service/internal/logger"
+	"github.com/flock-eng/flock/template-service/internal/server"
+	"go.uber.org/zap"
+	"golang.org/x/net/http2"
+	"golang.org/x/net/http2/h2c"
 )
 
 func main() {
@@ -40,7 +41,7 @@ func main() {
 		MaxHeaderBytes: cfg.MaxHeaderBytes,
 	}
 
-	log.Info("Starting flock-auth-service on port " + port)
+	log.Info("Starting template-service on port " + port)
 	if err := httpServer.ListenAndServe(); err != nil {
 		log.Fatal("Server failed to start", zap.Error(err))
 	}

@@ -4,7 +4,7 @@
 cleanup() {
     echo "Caught Ctrl+C, stopping processes..."
     kill $AIR_PID 2>/dev/null
-    telepresence leave {{SERVICE_NAME}}
+    telepresence leave template-service
     exit 0
 }
 
@@ -17,7 +17,7 @@ AIR_PID=$!
 
 # Run the telepresence commands
 telepresence connect
-telepresence intercept {{SERVICE_NAME}} --namespace default --service {{SERVICE_NAME}} --port 8080:8080
+telepresence intercept template-service --namespace default --service template-service --port 8080:8080
 
 # Wait for both processes to finish (though air will run indefinitely)
 wait $AIR_PID

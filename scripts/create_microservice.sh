@@ -35,14 +35,14 @@ fi
 
 cp -r $TEMPLATE_DIR $NEW_SERVICE_DIR
 
-# Replace placeholder text "{{SERVICE_NAME}}" with the actual service name
-find $NEW_SERVICE_DIR -type f -exec sed -i "" "s/{{SERVICE_NAME}}/$SERVICE_NAME/g" {} +
+# Replace template-service with the actual service name in all files
+find $NEW_SERVICE_DIR -type f -exec sed -i "" "s/template-service/$SERVICE_NAME/g" {} +
 
 # --- New steps to handle GitHub Actions file ---
 # Ensure the destination directory exists
 mkdir -p .github/workflows
 
-# Copy the github-actions-template.yaml into .github/workflows/{{SERVICE_NAME}}.yaml
+# Copy the github-actions-template.yaml into .github/workflows/${SERVICE_NAME}.yaml
 cp $NEW_SERVICE_DIR/github-actions-template.yaml .github/workflows/${SERVICE_NAME}.yaml
 
 # Remove the original github-actions-template.yaml from the new service directory

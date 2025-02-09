@@ -1,21 +1,21 @@
-name: {{SERVICE_NAME}}
+name: template-service
 
 on:
   push:
     branches: [ main ]
     # Only trigger the image generation action code for artifacts change
     paths:
-      - "{{SERVICE_NAME}}/**/*.go"
-      - "{{SERVICE_NAME}}/**/*.mod"
-      - "{{SERVICE_NAME}}/**/*.sum"
+      - "template-service/**/*.go"
+      - "template-service/**/*.mod"
+      - "template-service/**/*.sum"
   pull_request:
     branches: [ main ]
     paths:
-      - "{{SERVICE_NAME}}/**"
+      - "template-service/**"
 
 jobs:
   # 1) Build & test on Pull Request
-  build-{{SERVICE_NAME}}-pr:
+  build-template-service-pr:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
@@ -29,38 +29,38 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('{{SERVICE_NAME}}/go.sum') }}
+          key: ${{ runner.os }}-go-${{ hashFiles('template-service/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
 
       # Optional: Lint/test steps
       # - name: Go deps
       #   run: |
-      #     cd {{SERVICE_NAME}}
+      #     cd template-service
       #     go mod download
       #
       # - name: Go Lint
       #   run: |
-      #     cd {{SERVICE_NAME}}
+      #     cd template-service
       #     golangci-lint run
       #
       # - name: Go Test
       #   run: |
-      #     cd {{SERVICE_NAME}}
+      #     cd template-service
       #     go test ./...
 
       - name: Build Docker image (no push)
         uses: docker/build-push-action@v5
         with:
-          context: ./{{SERVICE_NAME}}
-          file: ./{{SERVICE_NAME}}/Dockerfile
+          context: ./template-service
+          file: ./template-service/Dockerfile
           load: true  # Build for local testing
-          tags: wcygan/{{SERVICE_NAME}}:pr
+          tags: wcygan/template-service:pr
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
   # 2) Build & Push on push to main
-  build-and-push-{{SERVICE_NAME}}:
+  build-and-push-template-service:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
@@ -83,39 +83,39 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('{{SERVICE_NAME}}/go.sum') }}
+          key: ${{ runner.os }}-go-${{ hashFiles('template-service/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
 
       # Optional: Lint/test steps
       # - name: Go deps
       #   run: |
-      #     cd {{SERVICE_NAME}}
+      #     cd template-service
       #     go mod download
       #
       # - name: Go Lint
       #   run: |
-      #     cd {{SERVICE_NAME}}
+      #     cd template-service
       #     golangci-lint run
       #
       # - name: Go Test
       #   run: |
-      #     cd {{SERVICE_NAME}}
+      #     cd template-service
       #     go test ./...
 
       - name: Determine version
         id: version
         run: echo "VERSION=$(date +'%Y%m%d.%H%M%S')" >> $GITHUB_ENV
 
-      - name: Build and Push the {{SERVICE_NAME}} image
+      - name: Build and Push the template-service image
         uses: docker/build-push-action@v5
         with:
-          context: ./{{SERVICE_NAME}}
-          file: ./{{SERVICE_NAME}}/Dockerfile
+          context: ./template-service
+          file: ./template-service/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          cache-from: type=registry,ref=wcygan/{{SERVICE_NAME}}:latest
+          cache-from: type=registry,ref=wcygan/template-service:latest
           cache-to: type=inline
           tags: |
-            wcygan/{{SERVICE_NAME}}:latest
-            wcygan/{{SERVICE_NAME}}:${{ env.VERSION }}
+            wcygan/template-service:latest
+            wcygan/template-service:${{ env.VERSION }}

@@ -4,8 +4,8 @@ root = "."
 tmp_dir = "tmp"
 
 [build]
-  cmd = "go build -o ./tmp/{{SERVICE_NAME}} ./cmd/main.go"
-  bin = "./tmp/{{SERVICE_NAME}}"
+  cmd = "go build -o ./tmp/template-service ./cmd/main.go"
+  bin = "./tmp/template-service"
   delay = 1000
   include_ext = ["go"]
   exclude_dir = ["tmp", "vendor"]
