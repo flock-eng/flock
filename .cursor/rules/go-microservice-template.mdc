@@ -1,0 +1,191 @@
+---
+description: This rule is useful when creating microservices
+globs: 
+---
+# Go Microservice Template Rule
+
+This rule provides guidance for creating and maintaining Go-based microservices using ConnectRPC and Protocol Buffers.
+
+<rule>
+name: go-microservice-template
+description: Standards and patterns for Go microservices using ConnectRPC and Protocol Buffers
+
+filters:
+  - type: directory_pattern
+    pattern: "*-service/*"
+  - type: file_extension
+    pattern: "*.go"
+  - type: file_name
+    pattern: "Dockerfile|skaffold.yaml|deployment.yaml"
+
+actions:
+  - type: suggest
+    message: |
+      When working with Go microservices in this project:
+
+      1. **Creating a New Microservice**:
+         ```bash
+         # Initialize a new microservice (must be prefixed with 'flock')
+         ./scripts/create_microservice.sh flock-your-service-name
+         ```
+         The script will:
+         - Create a new service directory from the template
+         - Set up GitHub Actions workflow
+         - Initialize Go modules
+         - Start the service with live reload
+         - Verify health check endpoint
+         
+         Requirements:
+         - Service name must be prefixed with 'flock'
+         - Directory must not already exist
+         - Air must be installed for live reload
+
+      2. **Project Structure**:
+         ```
+         service-name/
+         ├── Dockerfile              # Multi-stage build with development and production stages
+         ├── README.md              # Service-specific documentation
+         ├── cmd/
+         │   └── main.go           # Application entry point
+         ├── deployment.yaml       # Kubernetes deployment manifests
+         ├── go.mod               # Go module definition
+         ├── internal/           # Private application code
+         │   ├── logger/        # Structured logging setup
+         │   ├── server/       # HTTP/gRPC server setup
+         │   └── service/     # Business logic implementation
+         ├── scripts/        # Development and deployment scripts
+         └── skaffold.yaml  # Development workflow configuration
+         ```
+
+      3. **ConnectRPC Integration**:
+         - Use buf.build for Protocol Buffer management
+         - Implement service interfaces generated from .proto files
+         - Follow the service registration pattern using the Builder pattern
+         - Include health checks and reflection services
+         - Use interceptors for cross-cutting concerns
+
+      4. **Development Practices**:
+         - Use Air for live reload during development
+         - Implement graceful shutdown
+         - Use dependency injection
+         - Follow idiomatic Go practices
+         - Implement proper error handling and logging
+         - Use context for cancellation and timeouts
+
+      5. **Docker Best Practices**:
+         - Use multi-stage builds
+         - Implement proper layer caching
+         - Include security scanning
+         - Build for multiple architectures (amd64, arm64)
+         - Use minimal base images
+
+      6. **Kubernetes Integration**:
+         - Include resource limits and requests
+         - Implement proper health checks
+         - Use configmaps and secrets
+         - Configure proper pod lifecycle
+         - Include service mesh annotations
+
+      7. **Testing Requirements**:
+         - Unit tests for business logic
+         - Integration tests for API endpoints
+         - Performance tests for critical paths
+         - Contract tests for API compatibility
+         - Mocking of external dependencies
+
+      8. **Observability**:
+         - Structured logging with correlation IDs
+         - Metrics exposition
+         - Distributed tracing
+         - Error reporting
+         - Resource monitoring
+
+      9. **Security Considerations**:
+         - TLS configuration
+         - Authentication/Authorization
+         - Rate limiting
+         - Input validation
+         - Secure configuration management
+
+examples:
+  - input: |
+      # Creating a new microservice
+      ./scripts/create_microservice.sh flock-user-service
+    output: |
+      ```
+      Microservice flock-user-service created successfully in flock-user-service.
+      Read README.md to get started.
+      Run 'grpcurl --plaintext localhost:8080 grpc.health.v1.Health/Check' to check that the microservice is running.
+      ```
+
+  - input: |
+      # Creating a new microservice with invalid name
+      ./scripts/create_microservice.sh user-service
+    output: |
+      ```
+      Error: Service name must be prefixed with 'flock'.
+      ```
+
+  - input: |
+      # Main application entry point
+      cmd/main.go
+    output: |
+      ```go
+      package main
+
+      import (
+          "context"
+          "os"
+          "os/signal"
+          "syscall"
+          
+          "internal/server"
+          "internal/logger"
+      )
+
+      func main() {
+          ctx, cancel := context.WithCancel(context.Background())
+          defer cancel()
+
+          log := logger.Get()
+          
+          // Initialize server
+          srv := server.NewServer(&server.Config{
+              Port: os.Getenv("PORT"),
+          })
+
+          // Handle graceful shutdown
+          sigChan := make(chan os.Signal, 1)
+          signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+          
+          go func() {
+              sig := <-sigChan
+              log.Info("Received shutdown signal", "signal", sig)
+              cancel()
+          }()
+
+          if err := srv.Start(ctx); err != nil {
+              log.Error("Server error", "error", err)
+              os.Exit(1)
+          }
+      }
+      ```
+
+metadata:
+  priority: high
+  version: 1.0.1
+  evolution_history:
+    - date: "2024-03-21"
+      type: "initial"
+      description: "Initial version of Go microservice template rule"
+    - date: "2024-03-21"
+      type: "update"
+      description: "Added initialization script documentation and examples"
+  references:
+    - title: "Microservices Template Pattern"
+      url: "https://microservices.io/patterns/service-template.html"
+    - title: "ConnectRPC Documentation"
+      url: "https://connectrpc.com/"
+    - title: "Protocol Buffers"
+      url: "https://protobuf.dev/"
+</rule>
