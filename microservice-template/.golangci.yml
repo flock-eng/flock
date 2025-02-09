@@ -15,6 +15,12 @@ linters:
     - prealloc
     - gocritic
     - revive
+    - bodyclose    # Checks whether HTTP response bodies are closed
+    - errorlint    # Checks for error handling issues
+    - gocognit     # Checks cognitive complexity
+    - wrapcheck    # Ensures errors from external packages are wrapped
+    - thelper      # Ensures proper testing patterns
+    - nolintlint   # Ensures proper usage of //nolint directives
 
 linters-settings:
   gocritic:
@@ -22,11 +28,47 @@ linters-settings:
       - diagnostic
       - style
       - performance
+      - experimental  # Enable experimental checks
+  
   revive:
     rules:
       - name: exported
         severity: warning
         disabled: false
+      # Additional important revive rules
+      - name: error-return
+        severity: warning
+      - name: error-strings
+        severity: warning
+      - name: errorf
+        severity: warning
+
+  gosec:
+    excludes:
+      - G104  # Subset of errcheck, already covered
+    config:
+      G306: "0600"  # Ensures strict file permissions
+      G301: "0600"  # Ensures strict file permissions
+
+  errorlint:
+    # Checks for error comparisons
+    errorf: true
+    asserts: true
+    comparison: true
+
+  wrapcheck:
+    # Ensures errors from external packages are wrapped
+    ignoreSigs:
+      - .Errorf(
+      - errors.New(
+      - errors.Unwrap(
+      - .Wrap(
+      - .Wrapf(
+      - .WithMessage(
+
+  gocognit:
+    # Lower than default (30) to ensure simpler functions
+    min-complexity: 20
 
 run:
   timeout: 5m
@@ -37,6 +79,12 @@ issues:
   exclude-use-default: false
   max-issues-per-linter: 0
   max-same-issues: 0
+  # Additional issue settings
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - gosec  # Security checks less relevant for tests
+        - errcheck  # Error checking less strict in tests
 
 severity:
   default-severity: error
