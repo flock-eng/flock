@@ -1,0 +1,133 @@
+---
+description: Best practices for designing software in Go, including project structure, code organization, and idiomatic patterns
+globs: *.go
+---
+
+# Go Design Best Practices
+
+<rule>
+name: go-design-practices
+description: Comprehensive guidelines for designing robust, maintainable, and idiomatic Go software.
+
+filters:
+  - type: file_extension
+    pattern: "\\.go$"
+
+actions:
+  - type: suggest
+    message: |
+      # Go Software Design Best Practices
+
+      ## 1. Project Structure and Organization
+      - Follow the standard Go project layout:
+        ```
+        /cmd           # Main applications
+        /internal     # Private application code
+        /pkg         # Public library code
+        /api        # API definitions
+        /test       # Additional test files
+        ```
+      - Keep packages small and focused on a single responsibility
+      - Use meaningful package names that describe their purpose
+      - Avoid package name collisions and circular dependencies
+
+      ## 2. Code Design Principles
+      - Embrace simplicity and clarity over cleverness
+      - Use early returns for error handling
+      - Keep functions small and focused
+      - Prefer composition over inheritance
+      - Use dependency injection instead of global state
+      - Follow SOLID principles
+
+      ## 3. Interface Design
+      - Keep interfaces small (preferably 1-3 methods)
+      - Define interfaces at the consumer, not the implementation
+      - Use interface composition for larger interfaces
+      - Example:
+        ```go
+        type Reader interface {
+            Read(p []byte) (n int, err error)
+        }
+        ```
+
+      ## 4. Error Handling
+      - Always handle errors explicitly
+      - Use error wrapping with context:
+        ```go
+        if err != nil {
+            return fmt.Errorf("operation failed: %w", err)
+        }
+        ```
+      - Create custom error types for specific error cases
+      - Use sentinel errors sparingly
+
+      ## 5. Concurrency Patterns
+      - Use channels for communication, mutexes for state
+      - Always provide cancellation mechanisms
+      - Prevent goroutine leaks
+      - Use buffered channels appropriately
+      - Consider using errgroup for concurrent error handling
+
+      ## 6. Testing Best Practices
+      - Write table-driven tests
+      - Use subtests for better organization
+      - Mock interfaces, not implementations
+      - Use testify for assertions and mocking
+      - Aim for high test coverage of critical paths
+
+      ## 7. Documentation
+      - Write clear godoc comments for exported identifiers
+      - Include examples in documentation
+      - Document failure modes and error conditions
+      - Use meaningful variable and function names
+
+      ## 8. Performance Considerations
+      - Profile before optimizing
+      - Use sync.Pool for frequently allocated objects
+      - Consider memory alignment in structs
+      - Use buffered I/O operations
+      - Implement proper connection pooling
+
+examples:
+  - input: |
+      // Bad: Global state
+      var globalDB *sql.DB
+
+      func GetUser(id int) (*User, error) {
+          return globalDB.QueryRow("SELECT * FROM users WHERE id = ?", id)
+      }
+    output: |
+      // Good: Dependency injection
+      type UserService struct {
+          db *sql.DB
+      }
+
+      func (s *UserService) GetUser(id int) (*User, error) {
+          return s.db.QueryRow("SELECT * FROM users WHERE id = ?", id)
+      }
+
+  - input: |
+      // Bad: Ignoring errors
+      data, _ := json.Marshal(obj)
+      fmt.Println(string(data))
+    output: |
+      // Good: Proper error handling
+      data, err := json.Marshal(obj)
+      if err != nil {
+          return fmt.Errorf("failed to marshal object: %w", err)
+      }
+      fmt.Println(string(data))
+
+metadata:
+  priority: high
+  version: 1.0.0
+  tags:
+    - go
+    - design
+    - best-practices
+    - architecture
+  references:
+    - https://go.dev/doc/effective_go
+    - https://github.com/golang-standards/project-layout
+    - https://dave.cheney.net/practical-go
+</rule> 
