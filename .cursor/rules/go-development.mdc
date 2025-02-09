@@ -20,10 +20,113 @@ actions:
     message: |
       When working with Go microservices:
 
-      1. **Local Development**:
-         - Use `air` for hot-reloading during development
-         - Configure `.air.toml` in your service root directory
-         - Start the service with `air` command for automatic rebuilds
+      1. **Unit Testing Best Practices**:
+         
+         **Test Structure and Naming**:
+         - Place tests in `*_test.go` files adjacent to the code being tested
+         - Name test functions as `TestXxx` where Xxx describes the functionality
+         - Use descriptive test names that explain the scenario being tested
+         
+         **Table-Driven Tests**:
+         ```go
+         func TestFunction(t *testing.T) {
+             tests := []struct {
+                 name     string
+                 input    SomeType
+                 expected ResultType
+                 wantErr  bool
+             }{
+                 {
+                     name:     "happy path",
+                     input:    SomeType{},
+                     expected: ResultType{},
+                     wantErr:  false,
+                 },
+                 // Add more test cases
+             }
+
+             for _, tt := range tests {
+                 t.Run(tt.name, func(t *testing.T) {
+                     got, err := Function(tt.input)
+                     if (err != nil) != tt.wantErr {
+                         t.Errorf("unexpected error: %v", err)
+                     }
+                     if !reflect.DeepEqual(got, tt.expected) {
+                         t.Errorf("got %v, want %v", got, tt.expected)
+                     }
+                 })
+             }
+         }
+         ```
+
+         **Dependency Injection and Mocking**:
+         - Design interfaces for external dependencies
+         - Use dependency injection for better testability
+         - Create mocks using `go generate` and `mockgen`
+         
+         Example interface and mock generation:
+         ```go
+         //go:generate mockgen -source=repository.go -destination=mock/repository.go
+         type Repository interface {
+             Get(ctx context.Context, id string) (*Entity, error)
+             Save(ctx context.Context, entity *Entity) error
+         }
+         ```
+
+         **Test Isolation and Cleanup**:
+         ```go
+         func TestWithResources(t *testing.T) {
+             // Use t.TempDir() for temporary files
+             tmpDir := t.TempDir()
+             
+             // Register cleanup functions
+             t.Cleanup(func() {
+                 // Cleanup resources
+             })
+             
+             // Test logic here
+         }
+         ```
+
+         **Parallel Testing**:
+         ```go
+         func TestParallel(t *testing.T) {
+             t.Parallel() // Mark test for parallel execution
+             
+             tests := []struct{
+                 // test cases
+             }{}
+             
+             for _, tt := range tests {
+                 tt := tt // Capture range variable
+                 t.Run(tt.name, func(t *testing.T) {
+                     t.Parallel() // Run subtests in parallel
+                     // Test logic
+                 })
+             }
+         }
+         ```
+
+         **Coverage and Benchmarks**:
+         ```bash
+         # Run tests with coverage
+         go test -cover ./...
+         
+         # Generate coverage report
+         go test -coverprofile=coverage.out ./...
+         go tool cover -html=coverage.out
+         
+         # Run benchmarks
+         go test -bench=. -benchmem ./...
+         ```
+
+         **Best Practices**:
+         1. Focus on behavior, not implementation details
+         2. One assertion per test when possible
+         3. Use subtests for better organization
+         4. Keep tests independent and idempotent
+         5. Write tests before fixing bugs
+         6. Maintain test code with the same standards as production code
 
       2. **gRPC Testing and Introspection**:
          - Prefer `grpcurl` for testing deployed gRPC services
@@ -76,6 +179,16 @@ actions:
 
 examples:
   - input: |
+      func TestRepository_Get(t *testing.T) {
+          // Test implementation
+      }
+    output: "Consider using table-driven tests and t.Run() for better organization. Example:\nt.Run(tc.name, func(t *testing.T) { ... })"
+  - input: |
+      type Service struct {
+          repo Repository
+      }
+    output: "Good use of dependency injection. Create a mock using:\n//go:generate mockgen -source=service.go -destination=mock/service.go"
+  - input: |
       func main() {
         // Server setup
       }
@@ -89,7 +202,7 @@ examples:
 
 metadata:
   priority: medium
-  version: 1.0.0
+  version: 1.1.0
   evolution_history:
     - date: "2024-03-21"
       type: "initial"
@@ -100,4 +213,7 @@ metadata:
     - date: "2024-03-21"
       type: "update"
       description: "Updated version number to follow semantic versioning MAJOR.MINOR.PATCH format"
+    - date: "2024-03-21"
+      type: "update"
+      description: "Added comprehensive unit testing best practices and examples"
 </rule> 
