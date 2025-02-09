@@ -1,9 +1,10 @@
 package server
 
 import (
-	"connectrpc.com/grpchealth"
 	"net/http"
 	"time"
+
+	"connectrpc.com/grpchealth"
 
 	"buf.build/gen/go/wcygan/flock/connectrpc/go/auth/v1/authv1connect"
 	"buf.build/gen/go/wcygan/flock/connectrpc/go/bff/v1/bffv1connect"
@@ -16,6 +17,7 @@ import (
 	"github.com/flock-eng/flock/flock-api/internal/service"
 )
 
+// Config holds the server configuration parameters
 type Config struct {
 	Port           string
 	ReadTimeout    time.Duration
@@ -35,6 +37,7 @@ type Builder struct {
 	services []service.Registerable
 }
 
+// NewServerBuilder creates a new Builder instance with the given configuration
 func NewServerBuilder(cfg *Config) *Builder {
 	if cfg == nil {
 		cfg = &Config{

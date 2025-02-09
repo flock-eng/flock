@@ -15,14 +15,18 @@ import (
 	"golang.org/x/net/http2/h2c"
 )
 
-func main() {
+// run executes the main server logic and returns an exit code
+func run() int {
 	// Initialize logger
 	logger.Initialize(os.Getenv("ENV") != "production")
 	defer func() {
 		if err := logger.Sync(); err != nil {
 			// We can't use the logger here since we're shutting it down
 			// Print to stderr instead
-			os.Stderr.WriteString("Failed to sync logger: " + err.Error() + "\n")
+			if _, err := os.Stderr.WriteString("Failed to sync logger: " + err.Error() + "\n"); err != nil {
+				// If we can't even write to stderr, we're in real trouble
+				return
+			}
 		}
 	}()
 	log := logger.Get()
@@ -49,8 +53,14 @@ func main() {
 
 	log.Info("Starting server", zap.String("port", cfg.Port))
 	if err := httpServer.ListenAndServe(); err != nil {
-		log.Fatal("Server failed to start", zap.Error(err))
+		log.Error("Server failed to start", zap.Error(err))
+		return 1
 	}
+	return 0
+}
+
+func main() {
+	os.Exit(run())
 }
 
 func withCORS(h http.Handler) http.Handler {

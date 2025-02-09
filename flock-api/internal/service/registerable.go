@@ -21,7 +21,7 @@ type RegisterableService struct {
 	handler func(...connect.HandlerOption) (string, http.Handler)
 }
 
-// NewRegisterableService creates a new RegisterableService
+// NewRegisterableService creates a new RegisterableService with the given name and handler function
 func NewRegisterableService(name string, handler func(...connect.HandlerOption) (string, http.Handler)) *RegisterableService {
 	return &RegisterableService{
 		name:    name,
@@ -29,10 +29,12 @@ func NewRegisterableService(name string, handler func(...connect.HandlerOption) 
 	}
 }
 
+// ServiceName returns the fully qualified protobuf service name
 func (s *RegisterableService) ServiceName() string {
 	return s.name
 }
 
+// Handler returns the connect handler for the service with the given options
 func (s *RegisterableService) Handler(options ...connect.HandlerOption) (string, http.Handler) {
 	return s.handler(options...)
 }
