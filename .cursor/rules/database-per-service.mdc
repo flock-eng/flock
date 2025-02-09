@@ -273,7 +273,7 @@ examples:
 
 metadata:
   priority: high
-  version: 1.2.0
+  version: 1.2.1
   references:
     - https://cloudnative-pg.github.io/charts
     - https://charts.redpanda.com
@@ -282,6 +282,11 @@ metadata:
     - https://microservices.io/patterns/data/database-per-service.html
     - https://skaffold.dev/docs/deployers/helm/
     - https://helm.sh/docs/topics/charts/
+    # Example Implementations with Skaffold and Helm
+    - https://github.com/wcygan/redpanda-k8s      # RedPanda implementation example
+    - https://github.com/wcygan/dragonfly-k8s     # DragonflyDB implementation example
+    - https://github.com/wcygan/ping/tree/main/postgres  # PostgreSQL implementation example
+    - https://github.com/wcygan/scylladb-k8s      # ScyllaDB implementation example
   evolution_history:
     - date: "2024-03-21"
       type: "initial"
@@ -292,4 +297,7 @@ metadata:
     - date: "2024-03-23"
       type: "update"
       description: "Updated with specific database recommendations and Helm chart sources for PostgreSQL, RedPanda, DragonflyDB, and ScyllaDB"
+    - date: "2024-03-24"
+      type: "update"
+      description: "Added references to example implementations using Skaffold and Helm for all recommended databases"
 </rule> 
