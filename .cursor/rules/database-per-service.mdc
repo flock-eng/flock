@@ -1,0 +1,189 @@
+---
+description: Guidelines for implementing the database-per-service pattern with Helm deployment
+globs: *.{yaml,yml,go}
+---
+
+# Database Per Service Pattern
+
+This rule enforces the database-per-service pattern for microservices architecture, ensuring data autonomy and service independence through Helm and Skaffold deployments.
+
+<rule>
+name: database-per-service
+description: Standards for implementing database-per-service pattern using Helm and Skaffold
+
+filters:
+  - type: file_extension
+    pattern: "\\.(ya?ml|go)$"
+  - type: content
+    pattern: "database|helm|skaffold|dragonfly|postgres|mongodb"
+
+actions:
+  - type: suggest
+    message: |
+      When implementing the database-per-service pattern:
+
+      1. **Directory Structure**
+      ```
+      service/
+      ├── db/
+      │   ├── postgres/     # For PostgreSQL databases
+      │   │   ├── Chart.yaml
+      │   │   ├── values.yaml
+      │   │   ├── templates/
+      │   │   │   ├── secret.yaml
+      │   │   │   └── deployment.yaml
+      │   │   └── skaffold.yaml
+      │   ├── dragonfly/    # For DragonflyDB caches
+      │   │   ├── Chart.yaml
+      │   │   ├── values.yaml
+      │   │   ├── templates/
+      │   │   │   ├── secret.yaml
+      │   │   │   └── dragonfly.yaml
+      │   │   └── skaffold.yaml
+      │   └── mongodb/      # For MongoDB databases
+      │       ├── Chart.yaml
+      │       ├── values.yaml
+      │       ├── templates/
+      │       │   ├── secret.yaml
+      │       │   └── deployment.yaml
+      │       └── skaffold.yaml
+      ```
+
+      2. **Installation Pattern**
+      - Use Helm for database installation and configuration
+      - Use Skaffold for deployment orchestration
+      - Install database operators first if required (e.g., DragonflyDB operator)
+      - Configure database instances through custom resources
+
+      3. **Skaffold Configuration**
+      - Use profiles for operator installation vs database configuration
+      - Separate configurations for different deployment stages
+      - Example structure:
+        ```yaml
+        # Root skaffold.yaml
+        requires:
+          - configs:
+            - db-config
+            path: db/[database]/skaffold.yaml
+        profiles:
+          - name: bootstrap
+            patches:
+              - op: replace
+                path: /requires
+                value:
+                  - configs:
+                    - db-operator-install
+                    path: db/[database]/skaffold.yaml
+        ```
+
+      4. **Database Isolation**
+      - Each service must have its own database namespace/schema
+      - No direct database access from other services
+      - Use service-specific database credentials
+      - Configure resource limits and requests
+
+      5. **Best Practices**
+      - Database Operators:
+        * Install operators in dedicated namespaces
+        * Use operator-specific CRDs for database configuration
+        * Configure monitoring and metrics collection
+      - Helm Charts:
+        * Version control all Helm charts
+        * Use dependencies section for operator charts
+        * Maintain consistent naming conventions
+      - Security:
+        * Store credentials in Kubernetes secrets
+        * Use separate database users per service
+        * Implement least privilege access
+      - High Availability:
+        * Configure appropriate replica counts
+        * Set up proper anti-affinity rules
+        * Enable automated backups
+
+examples:
+  - description: "DragonflyDB Operator Installation"
+    input: |
+      # skaffold.yaml
+      apiVersion: skaffold/v4beta1
+      kind: Config
+      deploy:
+        kubectl: {}
+    output: |
+      # skaffold.yaml
+      apiVersion: skaffold/v4beta1
+      kind: Config
+      metadata:
+        name: dragonfly-operator-install
+      manifests:
+        rawYaml:
+          - dragonfly-operator.yaml
+      deploy:
+        kubectl:
+          flags:
+            apply: ["--namespace=dragonfly-operator-system"]
+
+  - description: "DragonflyDB Instance Configuration"
+    input: |
+      # dragonfly.yaml
+      apiVersion: v1
+      kind: Pod
+      metadata:
+        name: cache
+    output: |
+      # dragonfly.yaml
+      apiVersion: dragonflydb.io/v1alpha1
+      kind: Dragonfly
+      metadata:
+        labels:
+          app.kubernetes.io/name: dragonfly
+          app.kubernetes.io/instance: service-cache
+          app.kubernetes.io/part-of: dragonfly-operator
+        name: service-cache
+      spec:
+        replicas: 3
+        resources:
+          requests:
+            cpu: 500m
+            memory: 500Mi
+          limits:
+            cpu: 600m
+            memory: 750Mi
+
+  - description: "Database Secret Configuration"
+    input: |
+      # secret.yaml without proper structure
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: db-secret
+      data:
+        password: cGFzc3dvcmQ=
+    output: |
+      # secret.yaml with proper structure
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: service-cache-credentials
+        labels:
+          app.kubernetes.io/name: dragonfly
+          app.kubernetes.io/instance: service-cache
+      type: Opaque
+      stringData:
+        username: service_user
+        password: ${SERVICE_DB_PASSWORD}
+
+metadata:
+  priority: high
+  version: 1.1.0
+  references:
+    - https://microservices.io/patterns/data/database-per-service.html
+    - https://skaffold.dev/docs/deployers/helm/
+    - https://helm.sh/docs/topics/charts/
+  evolution_history:
+    - date: "2024-03-21"
+      type: "initial"
+      description: "Initial version of database-per-service pattern with Helm deployment guidance"
+    - date: "2024-03-22"
+      type: "update"
+      description: "Added Skaffold deployment patterns and operator installation guidance"
+</rule> 
