@@ -30,6 +30,7 @@ actions:
            - Document changes in evolution history
          - Reference existing cursor rules for patterns
          - Maintain consistent rule versioning
+         - List all available rules using `ls .cursor/rules`
 
       2. **General Guidelines**:
          This section will expand to include:
@@ -63,4 +64,7 @@ metadata:
     - date: "2024-03-21"
       type: "update"
       description: "Updated version number to follow semantic versioning MAJOR.MINOR.PATCH format"
+    - date: "2024-03-21"
+      type: "update"
+      description: "Added information about listing rules using ls command"
 </rule> 
