@@ -1,0 +1,84 @@
+---
+description: Guidelines for using and creating tools to extend the AI agent's capabilities
+globs: .cursor/tools/*
+---
+
+# Tool Usage Rule
+
+This rule provides guidance for using and creating tools that extend the AI agent's capabilities.
+
+<rule>
+name: tool-usage
+description: Defines standards for tool usage and creation to enhance AI agent functionality
+
+filters:
+  - type: directory
+    pattern: ".cursor/tools/**/*"
+
+actions:
+  - type: suggest
+    message: |
+      When working with tools:
+
+      1. **Tool Discovery**:
+         - List available tools using `ls .cursor/tools`
+         - Tools can be shell scripts, Python scripts, or other executables
+         - Each tool should have a specific purpose and clear documentation
+         - Tools are stored in `.cursor/tools` directory
+
+      2. **Tool Usage**:
+         - Shell scripts should be invoked as: `./.cursor/tools/script-name.sh`
+         - Python scripts should be invoked as: `python3 ./.cursor/tools/script-name.py`
+         - Always ask for user permission before running any tool
+         - Document any required arguments or environment variables
+         - Handle errors and provide meaningful feedback
+
+      3. **Built-in Tools**:
+         - **new-scratchpad.sh**: Creates a new scratchpad for temporary work and experiments
+           - Usage: `./.cursor/tools/new-scratchpad.sh`
+           - Creates timestamped markdown files in `.cursor/scratchpad/YYYY/MM/DD/`
+         - Additional tools will be documented here as they are added
+
+      4. **Tool Creation Guidelines**:
+         When creating new tools:
+         - Use appropriate shebang lines for scripts
+         - Add executable permissions: `chmod +x script-name.sh`
+         - Include usage documentation in script headers
+         - Follow naming convention: lowercase with hyphens
+         - Implement proper error handling
+         - Add input validation where necessary
+
+      5. **Tool Categories**:
+         Tools can serve various purposes:
+         - File manipulation and organization
+         - Data gathering and analysis
+         - Web scraping and API interaction
+         - Development workflow automation
+         - System configuration and setup
+
+      6. **Security Considerations**:
+         - Never include sensitive data in tools
+         - Validate all inputs to prevent injection
+         - Use environment variables for configuration
+         - Implement proper file permissions
+         - Document security requirements
+
+examples:
+  - input: |
+      Create a new scratchpad
+    output: |
+      Request permission to run: ./.cursor/tools/new-scratchpad.sh
+  - input: |
+      Create a new tool for web scraping
+    output: |
+      Create: .cursor/tools/web-scraper.py
+      Add documentation and request review before implementation
+
+metadata:
+  priority: high
+  version: 1.0.0
+  evolution_history:
+    - date: "2024-03-21"
+      type: "initial"
+      description: "Initial version of tool usage rule"
+</rule> 
