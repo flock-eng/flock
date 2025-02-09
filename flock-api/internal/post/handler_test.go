@@ -119,9 +119,9 @@ func TestHandler_UpdatePost(t *testing.T) {
 					Value: "user123",
 				},
 				Content:       "Updated content",
-				CreatedAt:    &timestamppb.Timestamp{},
+				CreatedAt:     &timestamppb.Timestamp{},
 				LastUpdatedAt: &timestamppb.Timestamp{},
-				Version:      1,
+				Version:       1,
 			},
 			UpdateMask: &fieldmaskpb.FieldMask{
 				Paths: []string{"content"},
@@ -141,4 +141,4 @@ func TestHandler_UpdatePost(t *testing.T) {
 		assert.Nil(t, resp, "response should be nil")
 		assert.Equal(t, connect.CodeUnimplemented, connect.CodeOf(err), "error should have unimplemented code")
 	})
-} 
+}

@@ -82,7 +82,7 @@ func TestRegisterableService_Handler(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			svc := NewRegisterableService("test-service", tt.handlerFunc)
-			
+
 			// Test without options
 			path, handler := svc.Handler()
 			assert.Equal(t, tt.path, path, "handler path should match")
@@ -94,4 +94,4 @@ func TestRegisterableService_Handler(t *testing.T) {
 			assert.NotNil(t, handler, "handler should not be nil with options")
 		})
 	}
-} 
+}

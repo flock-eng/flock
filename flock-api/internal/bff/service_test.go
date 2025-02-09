@@ -22,7 +22,7 @@ func TestService_FetchHomepage(t *testing.T) {
 	t.Run("basic homepage request", func(t *testing.T) {
 		req := &bffv1.FetchHomepageRequest{
 			Pagination: &commonv1.Pagination{
-				PageSize: 10,
+				PageSize:  10,
 				PageToken: "",
 			},
 		}
@@ -50,7 +50,7 @@ func TestService_FetchUserProfilePage(t *testing.T) {
 				Value: "user123",
 			},
 			Pagination: &commonv1.Pagination{
-				PageSize: 10,
+				PageSize:  10,
 				PageToken: "",
 			},
 		}
@@ -67,4 +67,4 @@ func TestService_FetchUserProfilePage(t *testing.T) {
 		assert.Nil(t, resp, "response should be nil")
 		assert.Equal(t, connect.CodeUnimplemented, connect.CodeOf(err), "error should have unimplemented code")
 	})
-} 
+}

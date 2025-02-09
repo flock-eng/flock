@@ -124,6 +124,4 @@ func TestService_Logout(t *testing.T) {
 			}
 		})
 	}
-} 
-
-
+}

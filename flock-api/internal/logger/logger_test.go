@@ -101,4 +101,4 @@ func TestSync(t *testing.T) {
 	if err != nil {
 		assert.Contains(t, err.Error(), "failed to sync logger")
 	}
-} 
+}

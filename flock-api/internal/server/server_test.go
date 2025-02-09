@@ -222,4 +222,4 @@ func TestNewServerWithInit(t *testing.T) {
 			}
 		})
 	}
-} 
+}
