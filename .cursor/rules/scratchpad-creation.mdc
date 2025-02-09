@@ -1,0 +1,102 @@
+---
+description: 
+globs: 
+---
+# Scratchpad Creation Rule
+
+This rule enforces the proper creation of scratchpads using the designated tool.
+
+<rule>
+name: scratchpad-creation
+description: Enforces the use of new-scratchpad.sh tool for creating all scratchpads
+
+filters:
+  - type: directory
+    pattern: ".cursor/scratchpad/**/*.md"
+  - type: operation
+    pattern: "create|edit"
+
+actions:
+  - type: enforce
+    message: |
+      When creating new scratchpads:
+
+      1. **MANDATORY: Use the Creation Tool**
+         - ALWAYS use `.cursor/tools/new-scratchpad.sh` to create new scratchpads
+         - NEVER create scratchpad files directly
+         ```bash
+         # Correct way to create a scratchpad
+         .cursor/tools/new-scratchpad.sh
+         ```
+
+      2. **File Location**
+         - The tool will automatically:
+           - Create the correct directory structure (YYYY/MM/DD)
+           - Generate a proper timestamp-based filename
+           - Add required YAML frontmatter
+           - Ensure consistent metadata
+
+      3. **Metadata Requirements**
+         - The tool ensures all required metadata is present:
+           ```yaml
+           ---
+           title: "Scratchpad: [Brief Task Description]"
+           created: "YYYY-MM-DDTHH:MM:SSZ"
+           updated: "YYYY-MM-DDTHH:MM:SSZ"
+           tags: [relevant, tags, here]
+           id: "scratchpad-YYYYMMDD-HHMMSS"
+           status: "draft|prototype|complete"
+           ---
+           ```
+
+      4. **Content Structure**
+         - After creation, follow the standard sections:
+           - Context & Objectives
+           - Brainstorming & Exploration
+           - Prototypes & Experiments
+           - Thought Process
+           - Decisions & Actions
+           - Integration Path
+
+      5. **Error Prevention**
+         - The tool prevents common mistakes:
+           - Incorrect directory structure
+           - Missing or malformed metadata
+           - Inconsistent naming
+           - Timestamp conflicts
+
+examples:
+  - input: |
+      # Incorrect: Direct file creation
+      touch .cursor/scratchpad/my-scratch.md
+    output: "Error: Use .cursor/tools/new-scratchpad.sh instead"
+
+  - input: |
+      # Correct: Using the tool
+      .cursor/tools/new-scratchpad.sh
+    output: "Success: Scratchpad created with proper structure and metadata"
+
+metadata:
+  priority: high
+  version: 1.0.0
+  evolution_history:
+    - date: "2024-03-24"
+      type: "initial"
+      description: "Initial version of scratchpad creation rule to enforce use of new-scratchpad.sh tool"
+  references:
+    - scratchpad-management.mdc
+</rule>
+
+## Anti-Patterns to Avoid
+- Creating scratchpad files directly without using the tool
+- Manually creating directory structures
+- Copying existing scratchpad files
+- Modifying the timestamp-based filenames
+- Skipping or modifying the required metadata structure
+
+## Success Indicators
+- All scratchpads are created using the tool
+- Consistent directory structure across all scratchpads
+- Complete and valid metadata in all scratchpad files
+- Proper timestamp-based filenames
+- No duplicate or conflicting scratchpad IDs 
