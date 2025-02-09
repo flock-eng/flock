@@ -1,0 +1,41 @@
+linters:
+  enable:
+    - gofmt
+    - govet
+    - errcheck
+    - staticcheck
+    - gosimple
+    - ineffassign
+    - typecheck
+    - unused
+    - misspell
+    - gosec
+    - prealloc
+    - gocritic
+    - revive
+
+linters-settings:
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - style
+      - performance
+  revive:
+    rules:
+      - name: exported
+        severity: warning
+        disabled: false
+
+run:
+  timeout: 5m
+  tests: true
+  allow-parallel-runners: true
+
+issues:
+  exclude-use-default: false
+  max-issues-per-linter: 0
+  max-same-issues: 0
+
+severity:
+  default-severity: error
+  case-sensitive: false 
