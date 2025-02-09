@@ -32,14 +32,41 @@ actions:
          - Maintain consistent rule versioning
          - List all available rules using `ls .cursor/rules`
 
-      2. **General Guidelines**:
+      2. **Project-wide Code Quality and Productivity**:
+         - **Mandatory Code Checks**:
+           - After any code changes, you must run the checks defined in
+             [code-quality-checks.mdc](mdc:code-quality-checks.mdc).
+             - This ensures formatting, linting, and testing are up-to-date and pass before merging.
+           - All new or modified Go code should follow
+             [go-design-practices.mdc](mdc:go-design-practices.mdc) for structure, error handling, and idiomatic design.
+           - Unit tests should comply with
+             [go-unit-testing.mdc](mdc:go-unit-testing.mdc) guidelines (table-driven tests, clear error messages, good coverage).
+         - **Microservices & Architecture**:
+           - If you are adding or modifying a microservice, consult
+             [go-microservice-template.mdc](mdc:go-microservice-template.mdc) and
+             [microservices-design.mdc](mdc:microservices-design.mdc) for domain-driven decomposition, data isolation, and recommended folder structure.
+         - **Productivity Techniques**:
+           - Use scratchpads for exploratory work or brainstorming as described in
+             [scratchpad-management.mdc](mdc:scratchpad-management.mdc). This keeps half-baked prototypes out of production code until proven.
+           - Document any new lessons learned in
+             [adaptive-learning.mdc](mdc:adaptive-learning.mdc), so the entire team can benefit from fresh insights and patterns.
+
+      3. **Documentation and Notes**:
+         - When creating or updating any documentation, follow the guidance in
+           @documentation-management.mdc.
+         - Maintain all technical notes and design discussions in `.cursor/notes/`, keeping them organized by domain (e.g., `/backend/server`, `/frontend`, etc.).
+         - If you introduce a new technology or significantly change an existing design, be sure to add or update a note under `.cursor/notes/`.
+         - Keep docs brief yet comprehensive: future contributors should have all the context needed to understand design decisions.
+         - Regularly review and update documentation so it remains accurate over time.
+
+      4. **General Guidelines**:
          This section will expand to include:
          - Project-wide conventions
          - Common patterns
          - Standard practices
          - Cross-cutting concerns
 
-      3. **Future Extensibility**:
+      5. **Future Extensibility**:
          Additional sections can be added here for:
          - New project-wide standards
          - Common requirements
