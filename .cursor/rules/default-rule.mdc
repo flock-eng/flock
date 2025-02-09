@@ -1,0 +1,63 @@
+---
+description: Default rule applied to all files and requests
+globs: *
+---
+
+# Default Rule
+
+This rule provides default guidance that should be considered for all files and requests in the project.
+
+<rule>
+name: default-rule
+description: Default standards and considerations that apply project-wide
+
+filters:
+  # Match all files
+  - type: file_extension
+    pattern: ".*"
+
+actions:
+  - type: suggest
+    message: |
+      When working with any files in this project:
+
+      1. **Cursor Rules Management**:
+         - When creating or updating cursor rules:
+           - Follow location standards in `.cursor/rules/`
+           - Specifically, consider `.cursor/rules/cursor-rule-evolution.mdc`, `.cursor/rules/cursor-rules-guidance.mdc`, and `.cursor/rules/cursor-rule-locations.mdc`
+           - Use proper rule structure and sections
+           - Consider rule evolution triggers
+           - Document changes in evolution history
+         - Reference existing cursor rules for patterns
+         - Maintain consistent rule versioning
+
+      2. **General Guidelines**:
+         This section will expand to include:
+         - Project-wide conventions
+         - Common patterns
+         - Standard practices
+         - Cross-cutting concerns
+
+      3. **Future Extensibility**:
+         Additional sections can be added here for:
+         - New project-wide standards
+         - Common requirements
+         - Best practices
+         - Security considerations
+         - Performance guidelines
+
+examples:
+  - input: |
+      # Any file modification or creation
+      src/example.ts
+      .cursor/rules/new-rule.mdc
+    output: "Apply default guidelines and cursor rule management where applicable"
+
+metadata:
+  priority: high
+  version: 1.0
+  evolution_history:
+    - date: "2024-03-21"
+      type: "initial"
+      description: "Initial version of default project-wide rule"
+</rule> 
