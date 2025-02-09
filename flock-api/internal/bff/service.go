@@ -22,4 +22,4 @@ func (s *Service) FetchHomepage(ctx context.Context, req *bffv1.FetchHomepageReq
 func (s *Service) FetchUserProfilePage(ctx context.Context, req *bffv1.FetchUserProfilePageRequest) (*bffv1.FetchUserProfilePageResponse, error) {
 	// Stub implementation
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("bff.v1.FlockUserAggregationService.FetchUserProfilePage is not implemented"))
-} 
+}

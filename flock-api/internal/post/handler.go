@@ -45,4 +45,4 @@ func (h *Handler) UpdatePost(ctx context.Context, req *connect.Request[postv1.Up
 		return nil, err
 	}
 	return connect.NewResponse(resp), nil
-} 
+}

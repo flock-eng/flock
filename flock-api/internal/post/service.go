@@ -32,4 +32,4 @@ func (s *Service) BatchGetPost(ctx context.Context, req *postv1.BatchGetPostRequ
 func (s *Service) UpdatePost(ctx context.Context, req *postv1.UpdatePostRequest) (*postv1.UpdatePostResponse, error) {
 	// Stub implementation
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("post.v1.FlockPostService.UpdatePost is not implemented"))
-} 
+}

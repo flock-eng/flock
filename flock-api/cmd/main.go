@@ -18,7 +18,13 @@ import (
 func main() {
 	// Initialize logger
 	logger.Initialize(os.Getenv("ENV") != "production")
-	defer logger.Sync()
+	defer func() {
+		if err := logger.Sync(); err != nil {
+			// We can't use the logger here since we're shutting it down
+			// Print to stderr instead
+			os.Stderr.WriteString("Failed to sync logger: " + err.Error() + "\n")
+		}
+	}()
 	log := logger.Get()
 
 	cfg := &server.Config{

@@ -175,8 +175,12 @@ func AuthInterceptor() connect.UnaryInterceptorFunc {
 				return nil, connect.NewError(connect.CodeUnauthenticated, err)
 			}
 
-			// Add claims to context
-			newCtx := context.WithValue(ctx, "user_claims", claims)
+			// Define a type for the context key to avoid collisions
+			type contextKey string
+			const userClaimsKey contextKey = "user_claims"
+
+			// Add claims to context using typed key
+			newCtx := context.WithValue(ctx, userClaimsKey, claims)
 
 			return next(newCtx, req)
 		}

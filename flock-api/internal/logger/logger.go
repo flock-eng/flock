@@ -42,4 +42,4 @@ func With(fields ...zapcore.Field) *zap.Logger {
 // Sync flushes any buffered log entries
 func Sync() error {
 	return log.Sync()
-} 
+}

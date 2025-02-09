@@ -29,4 +29,4 @@ func (h *Handler) FetchUserProfilePage(ctx context.Context, req *connect.Request
 		return nil, err
 	}
 	return connect.NewResponse(resp), nil
-} 
+}
