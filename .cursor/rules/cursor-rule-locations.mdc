@@ -7,7 +7,7 @@ globs: *.mdc
 Rules for placing and organizing Cursor rule files in the repository.
 
 <rule>
-name: cursor_rules_location
+name: cursor-rules-location
 description: Standards for placing Cursor rule files in the correct directory
 filters:
   # Match any .mdc files

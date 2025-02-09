@@ -7,7 +7,7 @@ globs: *.mdc
 This file explains how to create and structure Cursor rule files. It describes the purpose of each section in a rule file and provides an example to guide your implementation.
 
 <rule>
-name: cursor_rules_guidance
+name: cursor-rules-guidance
 description: Guidelines for structuring Cursor rule files, including section organization and example patterns.
 
 filters:
@@ -26,7 +26,6 @@ actions:
            ---
            description: Brief description of the rule's purpose
            globs: *.mdc
-           globs: *.mdc
            ---
            ```
 
@@ -35,12 +34,13 @@ actions:
          - **Format**:
            ```
            # Cursor Rules Guidance
+           This sections highlights the purpose of the rule
            ```
 
       3. **Rule Block (<rule> ... </rule>)**:
          - **Purpose**: Encapsulates the rule’s definition.
          - **Key Sections**:
-           - **name**: A unique identifier for the rule.
+           - **name**: A unique identifier for the rule. (rule name can only contain lowercase letters, numbers, and hyphens)
            - **description**: A summary of the rule’s purpose.
            - **filters**: Conditions to select applicable files or events (e.g., matching `.mdc` files).
            - **actions**: Steps to take when filters match (such as `reject` or `suggest`), with associated messages or conditions.
@@ -50,7 +50,7 @@ actions:
       4. **Example YAML Structure**:
          This is an example structure for a Cursor rule represented using a YAML-like format:
          ```
-         name: example_rule
+         name: example-rule
          description: A sample rule demonstrating proper structure
          filters:
            - type: file_extension
@@ -77,7 +77,7 @@ actions:
 examples:
   - input: |
       # Poorly structured rule file example
-      rule_example.mdc
+      rule-example.mdc
       (missing YAML front matter and structured <rule> block)
     output: "The rule file is missing required sections."
   - input: |
@@ -87,7 +87,7 @@ examples:
       ---
       # Cursor Rules Guidance
       <rule>
-      name: sample_rule
+      name: sample-rule
       description: A sample rule file following the guidelines.
       ...
       </rule>
