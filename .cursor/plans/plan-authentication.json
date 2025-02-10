@@ -1,7 +1,7 @@
 {
     "id": "plan-authentication-001",
     "name": "Authentication System with Temporal Workflow",
-    "description": "Implementation of a new authentication system using Temporal workflows. This includes setting up auth and profile microservices (names must start with 'flock'), their respective PostgreSQL databases, a Temporal workflow service backed by ScyllaDB, and implementing the User Registration Workflow.",
+    "description": "Implementation of a new authentication system using Temporal workflows. This includes setting up auth and profile microservices (names must start with 'flock'), their respective PostgreSQL databases, a Temporal workflow service backed by ScyllaDB, and implementing the User Registration Workflow. Authentication is username-based rather than email-based. The Register RPC will execute synchronously using a Temporal workflow to ensure atomicity across user and profile creation with compensation handling.",
     "tasks": [
         {
             "id": "infra-1",
@@ -10,7 +10,8 @@
             "subtasks": [
                 "Create Kubernetes namespace for auth system",
                 "Set up monitoring and logging infrastructure",
-                "Configure network policies"
+                "Configure network policies",
+                "Set up distributed tracing for cross-service workflows"
             ],
             "status": "pending",
             "created_at": "2024-03-24T00:00:00Z",
@@ -25,7 +26,10 @@
                 "Deploy ScyllaDB cluster using operator",
                 "Configure ScyllaDB for Temporal persistence",
                 "Deploy Temporal server",
-                "Configure Temporal namespaces"
+                "Configure Temporal namespaces",
+                "Set up Temporal worker service accounts",
+                "Configure Temporal search attributes for workflow tracking",
+                "Verify Temporal connectivity and functionality"
             ],
             "status": "pending",
             "created_at": "2024-03-24T00:00:00Z",
@@ -35,20 +39,25 @@
             ]
         },
         {
-            "id": "db-1",
-            "name": "Deploy Auth Service Database",
-            "description": "Set up PostgreSQL database for auth service using CloudNativePG operator",
+            "id": "proto-1",
+            "name": "Define Service Protocols",
+            "description": "Reference and enhance existing Protocol Buffer definitions for all services and set up proto generation pipeline",
             "subtasks": [
-                "Deploy CloudNativePG operator",
-                "Create auth database cluster",
-                "Set up backup configuration",
-                "Create initial schema migrations"
+                "Reference auth.v1.FlockAuthService from /proto/auth",
+                "Reference profile.v1.FlockProfileService from /proto/profile",
+                "Set up proto generation pipeline",
+                "Document API contracts",
+                "Update auth proto to use username instead of email",
+                "Add workflow status fields to RegisterResponse",
+                "Add compensation-related fields to CreateProfileRequest",
+                "Add Validate RPC to FlockAuthService for JWT validation",
+                "Define ValidateRequest/Response messages with token status and claims"
             ],
             "status": "pending",
             "created_at": "2024-03-24T00:00:00Z",
             "completed_at": null,
             "dependencies": [
-                "infra-1"
+                "temporal-1"
             ]
         },
         {
@@ -56,42 +65,11 @@
             "name": "Deploy Profile Service Database",
             "description": "Set up PostgreSQL database for profile service using CloudNativePG operator",
             "subtasks": [
+                "Deploy CloudNativePG operator",
                 "Create profile database cluster",
                 "Set up backup configuration",
-                "Create initial schema migrations"
-            ],
-            "status": "pending",
-            "created_at": "2024-03-24T00:00:00Z",
-            "completed_at": null,
-            "dependencies": [
-                "db-1"
-            ]
-        },
-        {
-            "id": "proto-1",
-            "name": "Define Service Protocols",
-            "description": "Reference existing Protocol Buffer definitions for all services and set up proto generation pipeline",
-            "subtasks": [
-                "Reference auth service proto files from /proto/auth",
-                "Reference profile service proto files from /proto/profile",
-                "Set up proto generation pipeline",
-                "Document API contracts"
-            ],
-            "status": "pending",
-            "created_at": "2024-03-24T00:00:00Z",
-            "completed_at": null,
-            "dependencies": []
-        },
-        {
-            "id": "auth-1",
-            "name": "Create Auth Service Base",
-            "description": "Set up the basic auth service structure and core components ensuring microservice name starts with 'flock'",
-            "subtasks": [
-                "Create service skeleton",
-                "Set up dependency injection",
-                "Implement health checks",
-                "Configure logging and metrics",
-                "Ensure microservice name follows 'flock' prefix convention (e.g., flock-auth-service)"
+                "Create initial schema migrations",
+                "Update schema to use username as primary identifier"
             ],
             "status": "pending",
             "created_at": "2024-03-24T00:00:00Z",
@@ -115,99 +93,152 @@
             "created_at": "2024-03-24T00:00:00Z",
             "completed_at": null,
             "dependencies": [
-                "proto-1"
-            ]
-        },
-        {
-            "id": "temporal-2",
-            "name": "Implement Registration Workflow",
-            "description": "Create the User Registration Workflow in the auth service",
-            "subtasks": [
-                "Define workflow interface",
-                "Implement workflow logic",
-                "Create activity definitions",
-                "Set up workflow worker"
-            ],
-            "status": "pending",
-            "created_at": "2024-03-24T00:00:00Z",
-            "completed_at": null,
-            "dependencies": [
-                "temporal-1",
-                "auth-1"
-            ]
-        },
-        {
-            "id": "auth-2",
-            "name": "Implement Auth Service Core",
-            "description": "Implement core authentication functionality including conversion between DB objects and protobuf messages",
-            "subtasks": [
-                "Implement user repository",
-                "Create authentication service layer",
-                "Implement password hashing",
-                "Set up JWT token generation",
-                "Implement translation layer to convert DB objects to Protobuf messages and vice versa"
-            ],
-            "status": "pending",
-            "created_at": "2024-03-24T00:00:00Z",
-            "completed_at": null,
-            "dependencies": [
-                "auth-1",
-                "db-1"
-            ]
-        },
-        {
-            "id": "profile-2",
-            "name": "Implement Profile Service Core",
-            "description": "Implement core profile management functionality including conversion between DB objects and protobuf messages",
-            "subtasks": [
-                "Implement profile repository",
-                "Create profile service layer",
-                "Set up profile validation",
-                "Implement profile queries",
-                "Implement translation layer to convert DB objects to Protobuf messages and vice versa"
-            ],
-            "status": "pending",
-            "created_at": "2024-03-24T00:00:00Z",
-            "completed_at": null,
-            "dependencies": [
-                "profile-1",
                 "db-2"
             ]
         },
         {
-            "id": "temporal-3",
-            "name": "Implement Workflow Activities",
-            "description": "Implement the activities for the User Registration Workflow",
+            "id": "profile-2",
+            "name": "Integrate Profile Service with Database",
+            "description": "Implement core profile management functionality including conversion between DB objects and protobuf messages",
             "subtasks": [
-                "Implement create user activity",
-                "Implement create profile activity",
-                "Create compensation activities",
-                "Set up activity retry policies"
+                "Implement profile repository with transaction support",
+                "Create profile service layer implementing FlockProfileService",
+                "Set up profile validation",
+                "Implement profile queries",
+                "Implement translation layer between DB objects and profile.v1.Profile messages",
+                "Add compensation handlers for failed profile creation",
+                "Add comprehensive unit tests for profile service"
             ],
             "status": "pending",
             "created_at": "2024-03-24T00:00:00Z",
             "completed_at": null,
             "dependencies": [
-                "temporal-2",
-                "auth-2",
+                "profile-1"
+            ]
+        },
+        {
+            "id": "db-1",
+            "name": "Deploy Auth Service Database",
+            "description": "Set up PostgreSQL database for auth service using CloudNativePG operator",
+            "subtasks": [
+                "Create auth database cluster",
+                "Set up backup configuration",
+                "Create initial schema migrations",
+                "Update schema to use username as primary identifier"
+            ],
+            "status": "pending",
+            "created_at": "2024-03-24T00:00:00Z",
+            "completed_at": null,
+            "dependencies": [
                 "profile-2"
             ]
         },
         {
-            "id": "test-1",
-            "name": "Create Test Suite",
-            "description": "Implement comprehensive testing for all components",
+            "id": "auth-1",
+            "name": "Create Auth Service Base",
+            "description": "Set up the basic auth service structure and core components ensuring microservice name starts with 'flock'",
             "subtasks": [
-                "Create unit tests for all services",
-                "Implement integration tests",
-                "Set up end-to-end testing",
-                "Create load tests"
+                "Create service skeleton",
+                "Set up dependency injection",
+                "Implement health checks",
+                "Configure logging and metrics",
+                "Ensure microservice name follows 'flock' prefix convention (e.g., flock-auth-service)"
             ],
             "status": "pending",
             "created_at": "2024-03-24T00:00:00Z",
             "completed_at": null,
             "dependencies": [
-                "temporal-3"
+                "db-1"
+            ]
+        },
+        {
+            "id": "auth-2",
+            "name": "Integrate Auth Service with Database",
+            "description": "Implement core authentication functionality including conversion between DB objects and protobuf messages",
+            "subtasks": [
+                "Implement user repository with transaction support",
+                "Create authentication service layer implementing FlockAuthService",
+                "Implement password hashing",
+                "Set up JWT token generation",
+                "Implement JWT validation logic in Validate RPC",
+                "Set up token blacklist mechanism",
+                "Implement translation layer between DB objects and auth.v1 messages",
+                "Add compensation handlers for failed user creation",
+                "Add comprehensive unit tests for auth service",
+                "Add unit tests for JWT validation scenarios"
+            ],
+            "status": "pending",
+            "created_at": "2024-03-24T00:00:00Z",
+            "completed_at": null,
+            "dependencies": [
+                "auth-1"
+            ]
+        },
+        {
+            "id": "temporal-2",
+            "name": "Implement User Registration Workflow",
+            "description": "Create the User Registration Workflow in the auth service Register RPC with compensation handling",
+            "subtasks": [
+                "Define RegisterWorkflow interface with compensation support",
+                "Implement synchronous workflow execution in Register RPC",
+                "Create CreateUserActivity with rollback support",
+                "Create CreateProfileActivity with rollback support",
+                "Implement saga pattern for distributed transaction",
+                "Set up workflow worker with proper task queues",
+                "Implement compensation logic for user creation rollback",
+                "Implement compensation logic for profile creation rollback",
+                "Add workflow timeouts and retry policies",
+                "Add workflow search attributes for monitoring",
+                "Add comprehensive unit tests for the workflow",
+                "Add integration tests for compensation scenarios"
+            ],
+            "status": "pending",
+            "created_at": "2024-03-24T00:00:00Z",
+            "completed_at": null,
+            "dependencies": [
+                "auth-2"
+            ]
+        },
+        {
+            "id": "api-1",
+            "name": "Implement Auth Middleware in flock-api",
+            "description": "Add authentication middleware to the API gateway using auth service's Validate RPC",
+            "subtasks": [
+                "Create auth middleware that calls FlockAuthService.Validate",
+                "Implement token refresh logic using auth service",
+                "Add rate limiting for auth endpoints",
+                "Configure secure cookie handling",
+                "Implement token caching to reduce Validate RPC calls",
+                "Add circuit breaker for auth service calls",
+                "Add comprehensive unit tests for middleware",
+                "Add integration tests with auth service",
+                "Add performance tests for validation caching"
+            ],
+            "status": "pending",
+            "created_at": "2024-03-24T00:00:00Z",
+            "completed_at": null,
+            "dependencies": [
+                "temporal-2"
+            ]
+        },
+        {
+            "id": "test-1",
+            "name": "Integration Testing",
+            "description": "Implement comprehensive integration testing for all components",
+            "subtasks": [
+                "Create integration tests for Register workflow",
+                "Test compensation scenarios in distributed transaction",
+                "Test auth middleware in API gateway",
+                "Set up end-to-end testing",
+                "Create load tests",
+                "Test distributed tracing",
+                "Verify compensation mechanisms under load"
+            ],
+            "status": "pending",
+            "created_at": "2024-03-24T00:00:00Z",
+            "completed_at": null,
+            "dependencies": [
+                "api-1"
             ]
         },
         {
