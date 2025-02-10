@@ -10,6 +10,7 @@ import (
 
 	"connectrpc.com/connect"
 	"github.com/flock-eng/flock/flock-api/internal/logger"
+	"github.com/flock-eng/flock/flock-api/internal/server/requestid"
 	"go.uber.org/zap"
 )
 
@@ -31,16 +32,11 @@ func LoggingInterceptor() connect.UnaryInterceptorFunc {
 
 			// Extract request information
 			info := RequestInfo{
-				ID:        req.Header().Get("X-Request-ID"),
+				ID:        requestid.FromContext(ctx),
 				Procedure: req.Spec().Procedure,
 				Method:    req.HTTPMethod(),
 				ClientIP:  getClientIP(req.Header()),
 				UserAgent: req.Header().Get("User-Agent"),
-			}
-
-			// If no request ID, generate one
-			if info.ID == "" {
-				info.ID = time.Now().Format(time.RFC3339Nano)
 			}
 
 			// Log the incoming request
