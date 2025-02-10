@@ -1,0 +1,338 @@
+---
+description: This rule is helpful for configuration management in microservices to decouple configuration from code
+globs: *.go,*.mod,*.sum
+---
+# Configuration Management with Viper
+
+This rule enforces consistent configuration management across all microservices using Viper.
+
+<rule>
+name: configuration-management
+description: Standards for implementing configuration management using Viper in microservices
+
+filters:
+  - type: file_pattern
+    pattern: "**/config/config.yaml"
+  - type: file_pattern
+    pattern: "**/internal/config/config.go"
+  - type: file_pattern
+    pattern: "**/internal/config/config_test.go"
+
+actions:
+  - type: suggest
+    message: |
+      When implementing configuration management in a microservice:
+
+      1. **Directory Structure**
+         ```
+         service/
+         ├── config/
+         │   └── config.yaml       # Configuration file
+         └── internal/
+             └── config/
+                 ├── config.go     # Configuration structures and loading logic
+                 └── config_test.go # Configuration tests
+         ```
+
+      2. **Configuration File (config.yaml)**
+         - Use YAML format for readability
+         - Group related settings under namespaces
+         - Include comments for all settings
+         - Example:
+         ```yaml
+         # Server configuration
+         server:
+           # Port to listen on
+           port: "8080"
+           # HTTP read timeout
+           read_timeout: "10s"
+           # HTTP write timeout
+           write_timeout: "10s"
+           # Maximum size of request headers (1MB)
+           max_header_bytes: 1048576
+
+         # Logger configuration
+         logger:
+           # Log level (debug, info, warn, error)
+           level: "info"
+           # Log format (json, console)
+           format: "json"
+           # Log output path (stdout, stderr, or file path)
+           output_path: "stdout"
+
+         # Database configurations
+         databases:
+           # PostgreSQL configuration
+           postgres:
+             host: "localhost"
+             port: 5432
+             database: "myapp"
+             user: "${POSTGRES_USER}"        # Use env var
+             password: "${POSTGRES_PASSWORD}" # Use env var
+             ssl_mode: "disable"
+             max_open_conns: 25
+             max_idle_conns: 25
+             conn_max_lifetime: "5m"
+
+           # DragonflyDB configuration
+           dragonfly:
+             addresses: 
+               - "localhost:6379"
+             password: "${DRAGONFLY_PASSWORD}" # Use env var
+             database: 0
+             pool_size: 10
+             min_idle_conns: 5
+             max_retries: 3
+             timeout: "2s"
+
+           # ScyllaDB configuration
+           scylla:
+             hosts: 
+               - "scylla-node1:9042"
+               - "scylla-node2:9042"
+             keyspace: "mykeyspace"
+             consistency: "quorum"
+             timeout: "5s"
+             retries: 3
+             username: "${SCYLLA_USER}"     # Use env var
+             password: "${SCYLLA_PASSWORD}" # Use env var
+
+         # External services configuration
+         external_services:
+           # Temporal configuration
+           temporal:
+             address: "temporal:7233"
+             namespace: "default"
+             client_name: "my-service"
+             cert_path: "/etc/certs/temporal-cert.pem"
+             key_path: "/etc/certs/temporal-key.pem"
+             ca_path: "/etc/certs/temporal-ca.pem"
+             retry_count: 3
+             retry_timeout: "10s"
+
+           # Other microservices
+           auth_service:
+             address: "auth-service:8080"
+             timeout: "5s"
+             retry_count: 3
+             tls_enabled: true
+             cert_path: "/etc/certs/auth-cert.pem"
+         ```
+
+      3. **Configuration Code (config.go)**
+         - Define strongly typed configuration structures
+         - Use mapstructure tags for YAML mapping
+         - Implement LoadConfig function using Viper
+         - Set sensible defaults
+         - Enable environment variable overrides
+         - Example:
+         ```go
+         package config
+
+         import (
+             "errors"
+             "fmt"
+             "strings"
+             "time"
+
+             "github.com/spf13/viper"
+         )
+
+         // Config holds all configuration settings
+         type Config struct {
+             Server           ServerConfig               `mapstructure:"server"`
+             Logger           LoggerConfig              `mapstructure:"logger"`
+             Databases       DatabaseConfigs           `mapstructure:"databases"`
+             ExternalServices ExternalServicesConfig    `mapstructure:"external_services"`
+         }
+
+         // DatabaseConfigs holds all database configurations
+         type DatabaseConfigs struct {
+             Postgres  PostgresConfig  `mapstructure:"postgres"`
+             Dragonfly DragonflyConfig `mapstructure:"dragonfly"`
+             Scylla    ScyllaConfig    `mapstructure:"scylla"`
+         }
+
+         // PostgresConfig holds PostgreSQL-specific configuration
+         type PostgresConfig struct {
+             Host            string        `mapstructure:"host"`
+             Port            int           `mapstructure:"port"`
+             Database        string        `mapstructure:"database"`
+             User           string        `mapstructure:"user"`
+             Password       string        `mapstructure:"password"`
+             SSLMode        string        `mapstructure:"ssl_mode"`
+             MaxOpenConns   int           `mapstructure:"max_open_conns"`
+             MaxIdleConns   int           `mapstructure:"max_idle_conns"`
+             ConnMaxLifetime time.Duration `mapstructure:"conn_max_lifetime"`
+         }
+
+         // DragonflyConfig holds DragonflyDB-specific configuration
+         type DragonflyConfig struct {
+             Addresses      []string      `mapstructure:"addresses"`
+             Password       string        `mapstructure:"password"`
+             Database       int           `mapstructure:"database"`
+             PoolSize       int           `mapstructure:"pool_size"`
+             MinIdleConns   int           `mapstructure:"min_idle_conns"`
+             MaxRetries     int           `mapstructure:"max_retries"`
+             Timeout        time.Duration `mapstructure:"timeout"`
+         }
+
+         // ScyllaConfig holds ScyllaDB-specific configuration
+         type ScyllaConfig struct {
+             Hosts       []string      `mapstructure:"hosts"`
+             Keyspace    string        `mapstructure:"keyspace"`
+             Consistency string        `mapstructure:"consistency"`
+             Timeout     time.Duration `mapstructure:"timeout"`
+             Retries     int           `mapstructure:"retries"`
+             Username    string        `mapstructure:"username"`
+             Password    string        `mapstructure:"password"`
+         }
+
+         // ExternalServicesConfig holds configurations for external services
+         type ExternalServicesConfig struct {
+             Temporal    TemporalConfig    `mapstructure:"temporal"`
+             AuthService ServiceConfig     `mapstructure:"auth_service"`
+         }
+
+         // TemporalConfig holds Temporal-specific configuration
+         type TemporalConfig struct {
+             Address      string        `mapstructure:"address"`
+             Namespace    string        `mapstructure:"namespace"`
+             ClientName   string        `mapstructure:"client_name"`
+             CertPath     string        `mapstructure:"cert_path"`
+             KeyPath      string        `mapstructure:"key_path"`
+             CAPath       string        `mapstructure:"ca_path"`
+             RetryCount   int           `mapstructure:"retry_count"`
+             RetryTimeout time.Duration `mapstructure:"retry_timeout"`
+         }
+
+         // ServiceConfig holds configuration for other microservices
+         type ServiceConfig struct {
+             Address    string        `mapstructure:"address"`
+             Timeout    time.Duration `mapstructure:"timeout"`
+             RetryCount int           `mapstructure:"retry_count"`
+             TLSEnabled bool          `mapstructure:"tls_enabled"`
+             CertPath   string        `mapstructure:"cert_path"`
+         }
+
+         // LoadConfig loads the application configuration using Viper
+         func LoadConfig() (*Config, error) {
+             v := viper.New()
+
+             // Set default values
+             setDefaults(v)
+
+             // Set up Viper
+             v.SetConfigName("config")   
+             v.SetConfigType("yaml")     
+             v.AddConfigPath("./config") 
+             v.AddConfigPath(".")        
+
+             // Enable environment variable overrides
+             v.SetEnvPrefix("SERVICE")                          
+             v.SetEnvKeyReplacer(strings.NewReplacer(".", "_")) 
+             v.AutomaticEnv()                                   
+
+             // Read the configuration file
+             if err := v.ReadInConfig(); err != nil {
+                 var configFileNotFound viper.ConfigFileNotFoundError
+                 if !errors.As(err, &configFileNotFound) {
+                     return nil, fmt.Errorf("error reading config file: %w", err)
+                 }
+             }
+
+             var config Config
+             if err := v.Unmarshal(&config); err != nil {
+                 return nil, fmt.Errorf("unable to decode config into struct: %w", err)
+             }
+
+             return &config, nil
+         }
+
+         // setDefaults sets default values for configuration
+         func setDefaults(v *viper.Viper) {
+             // Server defaults
+             v.SetDefault("server.port", "8080")
+             v.SetDefault("server.read_timeout", "10s")
+             v.SetDefault("server.write_timeout", "10s")
+             v.SetDefault("server.max_header_bytes", 1048576)
+
+             // Database defaults
+             v.SetDefault("databases.postgres.max_open_conns", 25)
+             v.SetDefault("databases.postgres.max_idle_conns", 25)
+             v.SetDefault("databases.postgres.conn_max_lifetime", "5m")
+             v.SetDefault("databases.dragonfly.pool_size", 10)
+             v.SetDefault("databases.dragonfly.max_retries", 3)
+             v.SetDefault("databases.scylla.consistency", "quorum")
+             v.SetDefault("databases.scylla.retries", 3)
+
+             // External services defaults
+             v.SetDefault("external_services.temporal.namespace", "default")
+             v.SetDefault("external_services.temporal.retry_count", 3)
+             v.SetDefault("external_services.temporal.retry_timeout", "10s")
+         }
+         ```
+
+      4. **Environment Variables**
+         - Use uppercase with underscores
+         - Prefix with service name
+         - Match YAML structure with underscores
+         Examples:
+         ```bash
+         # Database credentials
+         export SERVICE_DATABASES_POSTGRES_USER=myuser
+         export SERVICE_DATABASES_POSTGRES_PASSWORD=mypassword
+         export SERVICE_DATABASES_DRAGONFLY_PASSWORD=mypassword
+         export SERVICE_DATABASES_SCYLLA_USERNAME=myuser
+         export SERVICE_DATABASES_SCYLLA_PASSWORD=mypassword
+
+         # External services configuration
+         export SERVICE_EXTERNAL_SERVICES_TEMPORAL_ADDRESS=temporal:7233
+         export SERVICE_EXTERNAL_SERVICES_AUTH_SERVICE_ADDRESS=auth:8080
+         ```
+
+      5. **Best Practices for Infrastructure Configuration**
+         - Always use environment variables for sensitive values
+         - Set reasonable defaults for connection pools and timeouts
+         - Include retry mechanisms and circuit breakers
+         - Use TLS/SSL where available
+         - Implement proper connection lifecycle management
+         - Consider using service discovery in containerized environments
+
+examples:
+  - input: |
+      // Loading configuration with database override
+      os.Setenv("SERVICE_DATABASES_POSTGRES_USER", "custom_user")
+      cfg, err := config.LoadConfig()
+    output: |
+      // Configuration loaded with custom PostgreSQL user
+
+  - input: |
+      // Default database configuration
+      cfg, err := config.LoadConfig()
+      fmt.Println(cfg.Databases.Postgres.MaxOpenConns) // 25
+    output: |
+      // Configuration loaded with default connection pool size
+
+metadata:
+  priority: high
+  version: 1.1.0
+  tags:
+    - configuration
+    - viper
+    - yaml
+    - infrastructure
+    - databases
+    - external-services
+  references:
+    - https://github.com/spf13/viper
+    - https://www.postgresql.org/docs/current/runtime-config.html
+    - https://docs.temporal.io/application-development/worker-service/
+  evolution_history:
+    - date: "2024-03-21"
+      type: "initial"
+      description: "Initial version defining configuration management standards using Viper"
+    - date: "2024-03-22"
+      type: "update"
+      description: "Added infrastructure and external services configuration patterns"
+</rule> 
