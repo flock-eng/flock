@@ -1,6 +1,6 @@
 ---
 description: Rule for managing and leveraging past solutions and learnings
-globs: .cursor/solutions/*.md
+globs: *
 ---
 
 # Adaptive Learning Rule
