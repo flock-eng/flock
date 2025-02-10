@@ -115,9 +115,10 @@ type Claims struct {
 
 // PublicEndpoints defines endpoints that don't require authentication
 var PublicEndpoints = map[string]bool{
+	"/healthz":                           true,
+	"/grpc.health.v1.Health/Check":    true,
 	"/auth.v1.FlockAuthService/Login":    true,
 	"/auth.v1.FlockAuthService/Register": true,
-	"/healthz":                           true,
 }
 
 // isPublicEndpoint checks if the given procedure is a public endpoint

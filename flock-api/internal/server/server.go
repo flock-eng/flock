@@ -99,8 +99,8 @@ func (b *Builder) Build() *Server {
 	// Register all handlers with common interceptors
 	options := []connect.HandlerOption{
 		connect.WithInterceptors(
-			LoggingInterceptor(),
 			AuthInterceptor(),
+			LoggingInterceptor(),
 			rateLimiter.InterceptConnect(),
 			TimeoutInterceptor(10*time.Second),
 			ValidationInterceptor(),
