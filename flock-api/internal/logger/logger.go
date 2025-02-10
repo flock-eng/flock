@@ -2,6 +2,7 @@ package logger
 
 import (
 	"fmt"
+	"strings"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -22,7 +23,25 @@ func Initialize(isDevelopment bool) {
 		config.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
 	}
 
-	log, err = config.Build()
+	// Set log level from environment variable
+	logLevel := strings.ToLower(strings.TrimSpace(config.Level.String()))
+	switch logLevel {
+	case "debug":
+		config.Level = zap.NewAtomicLevelAt(zapcore.DebugLevel)
+	case "info":
+		config.Level = zap.NewAtomicLevelAt(zapcore.InfoLevel)
+	case "warn":
+		config.Level = zap.NewAtomicLevelAt(zapcore.WarnLevel)
+	case "error":
+		config.Level = zap.NewAtomicLevelAt(zapcore.ErrorLevel)
+	default:
+		config.Level = zap.NewAtomicLevelAt(zapcore.InfoLevel)
+	}
+
+	log, err = config.Build(
+		zap.AddCaller(),
+		zap.AddStacktrace(zapcore.ErrorLevel),
+	)
 	if err != nil {
 		panic("failed to initialize logger: " + err.Error())
 	}

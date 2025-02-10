@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
@@ -9,6 +10,7 @@ import (
 	"time"
 
 	connectcors "connectrpc.com/cors"
+	"github.com/flock-eng/flock/flock-api/internal/config"
 	"github.com/flock-eng/flock/flock-api/internal/logger"
 	"github.com/flock-eng/flock/flock-api/internal/server"
 	"github.com/joho/godotenv"
@@ -18,17 +20,44 @@ import (
 	"golang.org/x/net/http2/h2c"
 )
 
+// writeError writes an error message to stderr and returns an error if the write fails
+func writeError(msg string) error {
+	_, err := os.Stderr.WriteString(msg + "\n")
+	if err != nil {
+		return fmt.Errorf("failed to write to stderr: %w", err)
+	}
+	return nil
+}
+
 // run executes the main server logic and returns an exit code
 func run() int {
-	// Initialize logger
-	logger.Initialize(os.Getenv("ENV") != "production")
+	// Load .env file if it exists (before loading config)
+	if _, err := os.Stat(".env"); err == nil {
+		if err := godotenv.Load(); err != nil {
+			// We can't use the logger yet since it's not initialized
+			if writeErr := writeError("Error loading .env file: " + err.Error()); writeErr != nil {
+				fmt.Printf("Failed to write to stderr: %v\n", writeErr)
+			}
+			return 1
+		}
+	}
+
+	// Load configuration
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		// We can't use the logger yet since it's not initialized
+		if writeErr := writeError("Failed to load configuration: " + err.Error()); writeErr != nil {
+			fmt.Printf("Failed to write to stderr: %v\n", writeErr)
+		}
+		return 1
+	}
+
+	// Initialize logger with config
+	logger.Initialize(cfg.Logger.Level == "debug")
 	defer func() {
 		if err := logger.Sync(); err != nil {
-			// We can't use the logger here since we're shutting it down
-			// Print to stderr instead
-			if _, err := os.Stderr.WriteString("Failed to sync logger: " + err.Error() + "\n"); err != nil {
-				// If we can't even write to stderr, we're in real trouble
-				return
+			if writeErr := writeError("Failed to sync logger: " + err.Error()); writeErr != nil {
+				fmt.Printf("Failed to write to stderr: %v\n", writeErr)
 			}
 		}
 	}()
@@ -38,15 +67,16 @@ func run() int {
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 
-	cfg := &server.Config{
-		Port:           "8080",
-		ReadTimeout:    10 * time.Second,
-		WriteTimeout:   10 * time.Second,
-		MaxHeaderBytes: 1 << 21, // 1MB
+	// Convert config to server.Config
+	serverCfg := &server.Config{
+		Port:           cfg.Server.Port,
+		ReadTimeout:    cfg.Server.ReadTimeout,
+		WriteTimeout:   cfg.Server.WriteTimeout,
+		MaxHeaderBytes: cfg.Server.MaxHeaderBytes,
 	}
 
 	// Initialize server with dependencies
-	srv, err := server.NewServerWithInit(ctx, cfg, nil) // Replace nil with a DependencyInitializer when needed
+	srv, err := server.NewServerWithInit(ctx, serverCfg, nil) // Replace nil with a DependencyInitializer when needed
 	if err != nil {
 		log.Error("Failed to initialize server", zap.Error(err))
 		return 1
@@ -57,17 +87,21 @@ func run() int {
 	h2cHandler := h2c.NewHandler(corsHandler, &http2.Server{})
 
 	httpServer := &http.Server{
-		Addr:           ":" + cfg.Port,
+		Addr:           ":" + serverCfg.Port,
 		Handler:        h2cHandler,
-		ReadTimeout:    cfg.ReadTimeout,
-		WriteTimeout:   cfg.WriteTimeout,
-		MaxHeaderBytes: cfg.MaxHeaderBytes,
+		ReadTimeout:    serverCfg.ReadTimeout,
+		WriteTimeout:   serverCfg.WriteTimeout,
+		MaxHeaderBytes: serverCfg.MaxHeaderBytes,
 	}
 
 	// Start server in a goroutine
 	serverErr := make(chan error, 1)
 	go func() {
-		log.Info("Starting server", zap.String("port", cfg.Port))
+		log.Info("Starting server",
+			zap.String("port", serverCfg.Port),
+			zap.String("env", os.Getenv("ENV")),
+			zap.String("log_level", cfg.Logger.Level),
+		)
 		if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Error("Server failed to start", zap.Error(err))
 			serverErr <- err
@@ -111,17 +145,4 @@ func withCORS(h http.Handler) http.Handler {
 		MaxAge:           7200,
 	})
 	return c.Handler(h)
-}
-
-func init() {
-	// Load .env file only if it exists (e.g., for local development)
-	if _, err := os.Stat(".env"); err == nil {
-		err := godotenv.Load()
-		if err != nil {
-			panic("Error loading .env file: " + err.Error())
-		}
-		logger.Get().Info("Loaded .env file")
-	} else {
-		logger.Get().Info(".env file not found, skipping")
-	}
 }
