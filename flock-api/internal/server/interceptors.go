@@ -210,6 +210,8 @@ func NewRateLimitInterceptor(tokenLimit, tokensPerPeriod int, replenishmentPerio
 }
 
 // InterceptConnect returns a connect interceptor function that implements rate limiting
+// TODO: Consider migrating this rate limiter implementation to use DragonflyDB for distributed rate limiting.
+// DragonflyDB would provide better scalability and consistency across multiple service instances.
 func (i *RateLimitInterceptor) InterceptConnect() connect.UnaryInterceptorFunc {
 	return func(next connect.UnaryFunc) connect.UnaryFunc {
 		return func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
