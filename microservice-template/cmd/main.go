@@ -9,13 +9,29 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/flock-eng/flock/template-service/internal/config"
 	"github.com/flock-eng/flock/template-service/internal/logger"
 	"github.com/flock-eng/flock/template-service/internal/server"
+	"github.com/joho/godotenv"
 	"go.uber.org/zap"
 )
 
 func run() error {
-	// Initialize logger
+	// Load .env file if it exists
+	if _, err := os.Stat(".env"); err == nil {
+		if err := godotenv.Load(); err != nil {
+			return fmt.Errorf("error loading .env file: %w", err)
+		}
+	}
+
+	// Load configuration
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		return fmt.Errorf("failed to load configuration: %w", err)
+	}
+
+	// Initialize logger with config
+	logger.Initialize(cfg.Logger.Level == "debug")
 	log := logger.Get()
 	defer func() {
 		if err := log.Sync(); err != nil {
@@ -23,31 +39,31 @@ func run() error {
 		}
 	}()
 
-	// Create server configuration
-	cfg := &server.Config{
-		Port:           "8080",
-		ReadTimeout:    10 * time.Second,
-		WriteTimeout:   10 * time.Second,
-		MaxHeaderBytes: 1 << 20, // 1MB
-	}
-
 	// Create context that listens for the interrupt signal from the OS
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
+	// Convert config to server.Config
+	serverCfg := &server.Config{
+		Port:           cfg.Server.Port,
+		ReadTimeout:    cfg.Server.ReadTimeout,
+		WriteTimeout:   cfg.Server.WriteTimeout,
+		MaxHeaderBytes: cfg.Server.MaxHeaderBytes,
+	}
+
 	// Initialize server with dependencies
-	srv, err := server.NewServerWithInit(ctx, cfg, nil)
+	srv, err := server.NewServerWithInit(ctx, serverCfg, nil)
 	if err != nil {
 		return fmt.Errorf("failed to initialize server: %w", err)
 	}
 
 	// Create HTTP server
 	httpServer := &http.Server{
-		Addr:           ":" + cfg.Port,
+		Addr:           ":" + serverCfg.Port,
 		Handler:        srv.Handler(),
-		ReadTimeout:    cfg.ReadTimeout,
-		WriteTimeout:   cfg.WriteTimeout,
-		MaxHeaderBytes: cfg.MaxHeaderBytes,
+		ReadTimeout:    serverCfg.ReadTimeout,
+		WriteTimeout:   serverCfg.WriteTimeout,
+		MaxHeaderBytes: serverCfg.MaxHeaderBytes,
 	}
 
 	// Channel to capture server errors
@@ -55,7 +71,11 @@ func run() error {
 
 	// Start server
 	go func() {
-		log.Info("Starting server", zap.String("port", cfg.Port))
+		log.Info("Starting server",
+			zap.String("port", serverCfg.Port),
+			zap.String("env", os.Getenv("ENV")),
+			zap.String("log_level", cfg.Logger.Level),
+		)
 		if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			errChan <- fmt.Errorf("server error: %w", err)
 		}

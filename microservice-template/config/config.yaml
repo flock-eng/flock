@@ -1,0 +1,19 @@
+# Server configuration
+server:
+  # Port to listen on
+  port: "8080"
+  # HTTP read timeout
+  read_timeout: "10s"
+  # HTTP write timeout
+  write_timeout: "10s"
+  # Maximum size of request headers (1MB)
+  max_header_bytes: 1048576
+
+# Logger configuration
+logger:
+  # Log level (debug, info, warn, error)
+  level: "info"
+  # Log format (json, console)
+  format: "json"
+  # Log output path (stdout, stderr, or file path)
+  output_path: "stdout" 
