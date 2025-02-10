@@ -41,3 +41,7 @@ out/
 
 # Test coverage
 coverage/
+
+# Go coverage files
+coverage.html
+coverage.txt

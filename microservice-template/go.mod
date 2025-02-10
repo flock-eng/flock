@@ -7,7 +7,6 @@ require (
 	connectrpc.com/grpchealth v1.3.0
 	connectrpc.com/grpcreflect v1.2.0
 	go.uber.org/zap v1.26.0
-	golang.org/x/net v0.17.0
 )
 
 require (
@@ -25,7 +24,6 @@ require (
 	github.com/pierrec/lz4/v4 v4.1.19 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/twmb/franz-go/pkg/kmsg v1.7.0 // indirect
-	golang.org/x/text v0.13.0 // indirect
 	google.golang.org/protobuf v1.32.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
