@@ -1,0 +1,124 @@
+---
+description: The task ensures that all ConnectRPC / gRPC requests have a request ID that is propogated for all downstream requests, allowing distributed tracing
+globs: *.go
+---
+# Request ID Propagation Rule
+
+This rule enforces consistent request ID propagation across all microservices to enable distributed tracing and request correlation.
+
+<rule>
+name: request-id-propagation
+description: Enforces request ID propagation across microservices using middleware and interceptors
+
+filters:
+  - type: file_extension
+    pattern: "\\.go$"
+  - type: path
+    pattern: "^flock-.*/(internal|cmd)/"
+
+actions:
+  - type: suggest
+    message: |
+      When implementing request handling in microservices:
+
+      1. **Request ID Generation and Propagation**:
+         - All incoming HTTP/gRPC requests must have a request ID
+         - If no request ID exists, generate a new UUID v4
+         - Use consistent header name: `X-Request-ID`
+         - Use consistent context key: `requestIDKey`
+
+      2. **Middleware Implementation**:
+         ```go
+         // Example middleware for HTTP/gRPC servers
+         type RequestIDMiddleware struct {
+             next http.Handler
+         }
+
+         func (m *RequestIDMiddleware) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+             requestID := r.Header.Get("X-Request-ID")
+             if requestID == "" {
+                 requestID = uuid.New().String()
+             }
+             ctx := context.WithValue(r.Context(), requestIDKey, requestID)
+             r = r.WithContext(ctx)
+             w.Header().Set("X-Request-ID", requestID)
+             m.next.ServeHTTP(w, r)
+         }
+         ```
+
+      3. **Connect-Go Interceptors**:
+         - Implement interceptors for both client and server:
+         ```go
+         // Server interceptor
+         func RequestIDInterceptor() connect.UnaryInterceptorFunc {
+             return connect.UnaryInterceptorFunc(func(next connect.UnaryFunc) connect.UnaryFunc {
+                 return connect.UnaryFunc(func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
+                     requestID := req.Header().Get("X-Request-ID")
+                     if requestID == "" {
+                         requestID = uuid.New().String()
+                     }
+                     ctx = context.WithValue(ctx, requestIDKey, requestID)
+                     resp, err := next(ctx, req)
+                     if resp != nil {
+                         resp.Header().Set("X-Request-ID", requestID)
+                     }
+                     return resp, err
+                 })
+             })
+         }
+
+         // Client interceptor
+         func RequestIDClientInterceptor() connect.UnaryInterceptorFunc {
+             return connect.UnaryInterceptorFunc(func(next connect.UnaryFunc) connect.UnaryFunc {
+                 return connect.UnaryFunc(func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
+                     if requestID, ok := ctx.Value(requestIDKey).(string); ok {
+                         req.Header().Set("X-Request-ID", requestID)
+                     }
+                     return next(ctx, req)
+                 })
+             })
+         }
+         ```
+
+      4. **Logger Integration**:
+         - Always include request ID in log entries
+         - Use structured logging with request ID field
+         ```go
+         logger.With(
+             zap.String("request_id", ctx.Value(requestIDKey).(string)),
+         ).Info("handling request")
+         ```
+
+      5. **Configuration Requirements**:
+         - All services must configure both server and client interceptors
+         - Request ID must be propagated in all internal service calls
+         - Logging configuration must include request ID field
+
+      6. **Testing Requirements**:
+         - Unit tests must verify request ID propagation
+         - Integration tests must verify end-to-end request ID flow
+         - Test both existing and new request ID scenarios
+
+examples:
+  - input: |
+      Creating a new HTTP handler
+    output: |
+      Ensure RequestIDMiddleware is included in the middleware chain
+      
+  - input: |
+      Implementing a new Connect service client
+    output: |
+      Configure client with RequestIDClientInterceptor
+
+metadata:
+  priority: high
+  version: 1.0.0
+  tags:
+    - microservices
+    - observability
+    - tracing
+  evolution_history:
+    - date: "2024-03-24"
+      type: "initial"
+      description: "Initial version of request ID propagation rule"
+</rule> 
